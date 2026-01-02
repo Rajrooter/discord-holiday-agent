@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Labour AI Agent Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin: 15px 0 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .robot-icon {
+            font-size: 1.2em;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #10b981;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 25px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            background: #f3f4f6;
+        }
+
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: white;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stat-card:nth-child(1) { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-card:nth-child(2) { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-card:nth-child(3) { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="datetime-local"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-label input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9ca3af;
+            font-size: 1.1em;
+        }
+
+        .holiday-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .holiday-item {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .holiday-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .holiday-info p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .holiday-date {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .log-container {
+            background: #1f2937;
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #374151;
+            color: #d1d5db;
+            display: flex;
+            gap: 10px;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #9ca3af;
+        }
+
+        .log-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .log-badge.info {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .log-badge.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .log-badge.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .log-badge.warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <span class="robot-icon">🤖</span>
+                Digital Labour AI Agent
+            </h1>
+            <p class="subtitle">Automated Holiday & Announcement System</p>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Running
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('overview')">
+                📊 Overview
+            </button>
+            <button class="tab" onclick="switchTab('holiday')">
+                🎊 Holiday Automation
+            </button>
+            <button class="tab" onclick="switchTab('custom')">
+                📢 Custom Announcements
+            </button>
+            <button class="tab" onclick="switchTab('scheduled')">
+                ⏰ Scheduled
+            </button>
+            <button class="tab" onclick="switchTab('logs')">
+                📋 Activity Logs
+            </button>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overview" class="content-section active">
+            <div class="stats">
+                <div class="stat-card">
+                    <h3>Holiday Announcements</h3>
+                    <div class="stat-number" id="holidayCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Custom Announcements</h3>
+                    <div class="stat-number" id="customCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Scheduled Items</h3>
+                    <div class="stat-number" id="scheduledCount">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📅 Today's Holiday</h2>
+                <div id="todayHoliday" class="empty-state">Loading...</div>
+            </div>
+
+            <div class="card">
+                <h2>📆 Upcoming Holidays (Next 30 Days)</h2>
+                <div id="upcomingHolidays" class="empty-state">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Holiday Automation Section -->
+        <div id="holiday" class="content-section">
+            <div class="card">
+                <h2>🎊 Automated Holiday Announcements</h2>
+                
+                <div class="alert alert-info">
+                    ℹ️ This system automatically checks for Indian holidays daily at midnight and sends AI-generated announcements with @everyone mention.
+                </div>
+                
+                <div class="form-group">
+                    <label>Select Webhook Channel for Holidays:</label>
+                    <select id="holidayWebhook">
+                        <option value="ANNOUNCEMENTS">Announcements Channel</option>
+                        <option value="HOLIDAYS">Holidays Channel</option>
+                        <option value="UPDATES">Updates Channel</option>
+                        <option value="GENERAL">General Channel</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="testHolidayTrigger()">
+                        🚀 Test Holiday Trigger Now
+                    </button>
+                    <button class="btn btn-warning" onclick="forceNewYearTest()">
+                        🎉 Force New Year Test
+                    </button>
+                    <button class="btn btn-success" onclick="refreshData()">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Announcements Section -->
+        <div id="custom" class="content-section">
+            <div class="card">
+                <h2>📢 Create Custom Announcement</h2>
+                
+                <div class="form-group">
+                    <label>Announcement Title:</label>
+                    <input type="text" id="customTitle" placeholder="📢 Alert — Important Update" value="📢 Alert — Important Update">
+                </div>
+
+                <div class="form-group">
+                    <label>Message Content:</label>
+                    <textarea id="customMessage" placeholder="Enter your announcement message here..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Roles to Mention:</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="everyone" checked>
+                            @Everyone
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Server Manager">
+                            @Server Manager
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Omnipotent">
+                            @Omnipotent
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" value="Labour">
+                            @Labour
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Enhance with AI (Gemini):</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="useAI" value="yes">
+                            Yes, enhance my message
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="useAI" value="no" checked>
+                            No, use as-is
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Include Image:</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="includeImage" value="yes">
+                            Yes
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="includeImage" value="no" checked>
+                            No
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="imageUrlGroup" style="display: none;">
+                    <label>Image URL:</label>
+                    <input type="text" id="imageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="form-group">
+                    <label>Select Webhook Channel:</label>
+                    <select id="customWebhook">
+                        <option value="ANNOUNCEMENTS">Announcements Channel</option>
+                        <option value="UPDATES">Updates Channel</option>
+                        <option value="HOLIDAYS">Holidays Channel</option>
+                        <option value="GENERAL">General Channel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Send:</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="sendTime" value="now" checked>
+                            Now
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="sendTime" value="schedule">
+                            Schedule Later
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="scheduleTimeGroup" style="display: none;">
+                    <label>Schedule Date & Time:</label>
+                    <input type="datetime-local" id="scheduleTime">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="sendCustomAnnouncement()">
+                        📤 Send Announcement
+                    </button>
+                    <button class="btn btn-danger" onclick="clearForm()">
+                        🗑️ Clear Form
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduled Section -->
+        <div id="scheduled" class="content-section">
+            <div class="card">
+                <h2>⏰ Scheduled Announcements</h2>
+                <div id="scheduledList" class="empty-state">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Activity Logs Section -->
+        <div id="logs" class="content-section">
+            <div class="card">
+                <h2>📋 Activity Log</h2>
+                <button class="btn btn-success" onclick="refreshLogs()" style="margin-bottom: 20px;">
+                    🔄 Refresh Logs
+                </button>
+                <div class="log-container" id="logContainer">
+                    <div class="log-entry">
+                        <span class="log-time">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'overview') loadOverview();
+            if (tabName === 'logs') refreshLogs();
+            if (tabName === 'scheduled') loadScheduled();
+        }
+
+        // Form interactions
+        document.querySelectorAll('input[name="includeImage"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.getElementById('imageUrlGroup').style.display = 
+                    e.target.value === 'yes' ? 'block' : 'none';
+            });
+        });
+
+        document.querySelectorAll('input[name="sendTime"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                document.getElementById('scheduleTimeGroup').style.display = 
+                    e.target.value === 'schedule' ? 'block' : 'none';
+            });
+        });
+
+        // API calls
+        async function loadOverview() {
+            try {
+                const [status, todayRes, upcomingRes] = await Promise.all([
+                    fetch('/api/status').then(r => r.json()),
+                    fetch('/api/holidays/today').then(r => r.json()),
+                    fetch('/api/holidays/upcoming').then(r => r.json())
+                ]);
+
+                document.getElementById('holidayCount').textContent = status.totalHolidayAnnouncements;
+                document.getElementById('customCount').textContent = status.totalCustomAnnouncements;
+                document.getElementById('scheduledCount').textContent = status.totalScheduledAnnouncements || 0;
+
+                // Today's holiday
+                const todayDiv = document.getElementById('todayHoliday');
+                if (todayRes.holiday) {
+                    todayDiv.innerHTML = `
+                        <div class="holiday-item">
+                            <div class="holiday-info">
+                                <h4>🎉 ${todayRes.holiday.name}</h4>
+                                <p>${todayRes.holiday.description || todayRes.holiday.type || ''}</p>
+                            </div>
+                            <div class="holiday-date">${todayRes.holiday.date}</div>
+                        </div>
+                    `;
+                } else {
+                    todayDiv.className = 'empty-state';
+                    todayDiv.textContent = 'No holiday today';
+                }
+
+                // Upcoming holidays
+                const upcomingDiv = document.getElementById('upcomingHolidays');
+                if (upcomingRes.holidays && upcomingRes.holidays.length > 0) {
+                    upcomingDiv.innerHTML = '<div class="holiday-list">' + 
+                        upcomingRes.holidays.map(h => `
+                            <div class="holiday-item">
+                                <div class="holiday-info">
+                                    <h4>${h.name}</h4>
+                                    <p>${h.description || h.type || ''}</p>
+                                </div>
+                                <div class="holiday-date">${h.date}</div>
+                            </div>
+                        `).join('') + '</div>';
+                } else {
+                    upcomingDiv.className = 'empty-state';
+                    upcomingDiv.textContent = 'No upcoming holidays';
+                }
+            } catch (error) {
+                console.error('Error loading overview:', error);
+            }
+        }
+
+        async function testHolidayTrigger() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Checking...';
+            
+            try {
+                const response = await fetch('/api/trigger/holiday', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ ' + result.message);
+                } else {
+                    alert('❌ ' + result.message);
+                }
+                loadOverview();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Test Holiday Trigger Now';
+            }
+        }
+
+        async function forceNewYearTest() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending New Year...';
+            
+            try {
+                const response = await fetch('/api/test/newyear', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ New Year announcement sent successfully!');
+                } else {
+                    alert('❌ Failed: ' + result.error);
+                }
+                loadOverview();
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🎉 Force New Year Test';
+            }
+        }
+
+        async function sendCustomAnnouncement() {
+            const title = document.getElementById('customTitle').value;
+            const message = document.getElementById('customMessage').value;
+            const webhookChannel = document.getElementById('customWebhook').value;
+            const useAI = document.querySelector('input[name="useAI"]:checked').value === 'yes';
+            const includeImage = document.querySelector('input[name="includeImage"]:checked').value === 'yes';
+            const imageUrl = includeImage ? document.getElementById('imageUrl').value : null;
+            const sendTime = document.querySelector('input[name="sendTime"]:checked').value;
+            
+            const roles = Array.from(document.querySelectorAll('.checkbox-group input:checked'))
+                .map(cb => cb.value);
+
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            const data = {
+                title,
+                message,
+                roles,
+                imageUrl,
+                webhookChannel,
+                useAI,
+                context: ''
+            };
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = '⏳ Sending...';
+
+            try {
+                let endpoint = '/api/announcement/send';
+                
+                if (sendTime === 'schedule') {
+                    const scheduleTime = document.getElementById('scheduleTime').value;
+                    if (!scheduleTime) {
+                        alert('Please select a schedule time');
+                        btn.disabled = false;
+                        btn.innerHTML = '📤 Send Announcement';
+                        return;
+                    }
+                    data.scheduleTime = scheduleTime;
+                    endpoint = '/api/announcement/schedule';
+                }
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Announcement ' + (sendTime === 'schedule' ? 'scheduled' : 'sent') + ' successfully!');
+                    clearForm();
+                    loadOverview();
+                } else {
+                    alert('❌ Failed: ' + result.error);
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '📤 Send Announcement';
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('customTitle').value = '📢 Alert — Important Update';
+            document.getElementById('customMessage').value = '';
+            document.getElementById('imageUrl').value = '';
+            document.querySelectorAll('.checkbox-group input').forEach(cb => {
+                cb.checked = cb.value === 'everyone';
+            });
+            document.querySelector('input[name="useAI"][value="no"]').checked = true;
+            document.querySelector('input[name="includeImage"][value="no"]').checked = true;
+            document.querySelector('input[name="sendTime"][value="now"]').checked = true;
+            document.getElementById('imageUrlGroup').style.display = 'none';
+            document.getElementById('scheduleTimeGroup').style.display = 'none';
+        }
+
+        async function refreshLogs() {
+            try {
+                const response = await fetch('/api/logs');
+                const logs = await response.json();
+                
+                const container = document.getElementById('logContainer');
+                if (logs.length === 0) {
+                    container.innerHTML = '<div class="log-entry"><span>No logs available</span></div>';
+                    return;
+                }
+
+                container.innerHTML = logs.map(log => {
+                    const badgeClass = log.type.toLowerCase();
+                    const time = new Date(log.timestamp).toLocaleTimeString();
+                    return `
+                        <div class="log-entry">
+                            <span class="log-time">${time}</span>
+                            <span class="log-badge ${badgeClass}">${log.type}</span>
+                            <span>${log.message}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading logs:', error);
+            }
+        }
+
+        async function loadScheduled() {
+            try {
+                const response = await fetch('/api/announcements/scheduled');
+                const result = await response.json();
+                
+                const container = document.getElementById('scheduledList');
+                if (!result.scheduled || result.scheduled.length === 0) {
+                    container.className = 'empty-state';
+                    container.textContent = 'No scheduled announcements';
+                    return;
+                }
+
+                container.className = 'holiday-list';
+                container.innerHTML = result.scheduled.map(item => `
+                    <div class="holiday-item">
+                        <div class="holiday-info">
+                            <h4>${item.data.title || 'Announcement'}</h4>
+                            <p>${item.data.message.substring(0, 100)}...</p>
+                        </div>
+                        <div class="holiday-date">
+                            ${new Date(item.scheduleTime).toLocaleString()}<br>
+                            <span style="font-size: 0.8em; color: ${item.status === 'scheduled' ? '#10b981' : '#ef4444'}">
+                                ${item.status}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading scheduled:', error);
+            }
+        }
+
+        function refreshData() {
+            loadOverview();
+            alert('✅ Data refreshed!');
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            loadOverview();
+            
+            // Set default datetime to 1 hour from now
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            const formatted = now.toISOString().slice(0, 16);
+            document.getElementById('scheduleTime').value = formatted;
+        });
+    </script>
+</body>
+</html>

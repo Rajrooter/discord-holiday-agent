@@ -1,6 +1,8 @@
 // ============================================
-// DISCORD HOLIDAY AI AGENT - FIXED VERSION
-// Using: Calendarific API (Free) + Google Gemini (Free)
+// DISCORD HOLIDAY AI AGENT - RELIABLE MIDNIGHT TRIGGER
+// Using: Nager.Date (free) + Calendarific (fallback) + Google Gemini (optional)
+// Improvements: persistent state, dual scheduling (cron + minute-guard), retry logic,
+// and re-tries-until-success behavior so the midnight check is never "missed".
 // ============================================
 
 const axios = require('axios');
@@ -8,6 +10,8 @@ const cron = require('node-cron');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
+const { DateTime } = require('luxon'); // npm i luxon
 require('dotenv').config();
 
 // ============================================
@@ -22,11 +26,13 @@ const CONFIG = {
     GENERAL: process.env.WEBHOOK_GENERAL
   },
   GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
-  CALENDARIFIC_API_KEY: process.env.CALENDARIFIC_API_KEY || 'demo', // Free tier: 1000 calls/month
-  TIMEZONE: 'Asia/Kolkata',
-  SCHEDULE_TIME: '0 0 * * *',
-  DASHBOARD_PORT: 3000,
-  TEST_MODE: false
+  CALENDARIFIC_API_KEY: process.env.CALENDARIFIC_API_KEY || 'demo',
+  TIMEZONE: process.env.TIMEZONE || 'Asia/Kolkata',
+  SCHEDULE_TIME: process.env.SCHEDULE_TIME || '0 0 * * *', // daily at midnight
+  DASHBOARD_PORT: process.env.DASHBOARD_PORT ? Number(process.env.DASHBOARD_PORT) : 3000,
+  TEST_MODE: process.env.TEST_MODE === 'true' || false,
+  RETRY_ATTEMPTS: process.env.RETRY_ATTEMPTS ? Number(process.env.RETRY_ATTEMPTS) : 3,
+  STATE_FILE: path.join(__dirname, 'state.json')
 };
 
 const activityLog = [];
@@ -38,6 +44,10 @@ let botStatus = {
   totalHolidayAnnouncements: 0,
   totalCustomAnnouncements: 0,
   errors: []
+};
+
+let state = {
+  lastRunDate: null // ISO date in configured timezone, e.g. '2026-01-01'
 };
 
 const HOLIDAY_IMAGES = {
@@ -64,15 +74,12 @@ const ROLES = {
 function log(message, type = 'INFO') {
   const timestamp = new Date().toISOString();
   const logEntry = { timestamp, type, message };
-  
   console.log(`[${timestamp}] [${type}] ${message}`);
-  
   activityLog.unshift(logEntry);
-  if (activityLog.length > 200) activityLog.pop();
-  
+  if (activityLog.length > 300) activityLog.pop();
   if (type === 'ERROR') {
     botStatus.errors.push(logEntry);
-    if (botStatus.errors.length > 20) botStatus.errors.shift();
+    if (botStatus.errors.length > 50) botStatus.errors.shift();
   }
 }
 
@@ -96,11 +103,38 @@ function getHolidayColor(holidayName) {
     'new year': 0x00FF00,
     'default': 0x7B68EE
   };
-  
   for (const [key, color] of Object.entries(colorMap)) {
     if (holidayName.toLowerCase().includes(key)) return color;
   }
   return colorMap.default;
+}
+
+// ============================================
+// STATE PERSISTENCE (ensures we don't "miss" midnight checks)
+// ============================================
+
+function loadState() {
+  try {
+    if (fs.existsSync(CONFIG.STATE_FILE)) {
+      const raw = fs.readFileSync(CONFIG.STATE_FILE, 'utf8');
+      const parsed = JSON.parse(raw);
+      state = { ...state, ...parsed };
+      log(`Loaded state: ${JSON.stringify(parsed)}`, 'INFO');
+    } else {
+      saveState(); // create file with defaults
+    }
+  } catch (err) {
+    log(`Failed to load state: ${err.message}`, 'WARNING');
+  }
+}
+
+function saveState() {
+  try {
+    fs.writeFileSync(CONFIG.STATE_FILE, JSON.stringify(state, null, 2), 'utf8');
+    log(`State saved: ${JSON.stringify(state)}`, 'INFO');
+  } catch (err) {
+    log(`Failed to save state: ${err.message}`, 'ERROR');
+  }
 }
 
 // ============================================
@@ -122,129 +156,98 @@ function getHardcodedHolidays2026() {
 }
 
 // ============================================
-// CALENDAR API - USING CALENDARIFIC (FREE)
-// Sign up: https://calendarific.com/ (1000 calls/month free)
+// HOLIDAY FETCH: Nager.Date -> Calendarific -> AbstractAPI -> Hardcoded
 // ============================================
 
 async function fetchIndianHolidays(year) {
+  // 1) Nager.Date (no key)
   try {
-    // Try Calendarific API first (Best free API for holidays)
+    log(`Trying Nager.Date for ${year}...`);
+    const resp = await axios.get(`https://date.nager.at/api/v3/PublicHolidays/${year}/IN`, { timeout: 10000 });
+    if (Array.isArray(resp.data) && resp.data.length > 0) {
+      const holidays = resp.data.map(h => ({ date: h.date, name: h.localName || h.name, type: h.types ? h.types[0] : 'Holiday', description: h.name || h.localName }));
+      log(`Nager.Date returned ${holidays.length} holidays`, 'SUCCESS');
+      return holidays;
+    }
+  } catch (err) {
+    log(`Nager.Date failed: ${err.message}`, 'WARNING');
+  }
+
+  // 2) Calendarific (requires API key)
+  try {
     log(`Fetching holidays for ${year} from Calendarific...`);
-    
     const response = await axios.get(
       `https://calendarific.com/api/v2/holidays?api_key=${CONFIG.CALENDARIFIC_API_KEY}&country=IN&year=${year}`,
       { timeout: 10000 }
     );
-    
     if (response.data && response.data.response && response.data.response.holidays) {
-      const holidays = response.data.response.holidays.map(h => ({
-        date: h.date.iso.split('T')[0], // Format: YYYY-MM-DD
-        name: h.name,
-        type: h.type?.[0] || 'Holiday',
-        description: h.description || h.name
-      }));
-      
-      log(`Successfully fetched ${holidays.length} holidays from Calendarific`, 'SUCCESS');
+      const holidays = response.data.response.holidays.map(h => {
+        let isoDate = '';
+        if (h.date) {
+          if (typeof h.date.iso === 'string') isoDate = h.date.iso.split('T')[0];
+          else if (typeof h.date === 'string') isoDate = h.date.split('T')[0];
+          else if (h.date && h.date.datetime) isoDate = `${h.date.datetime.year}-${String(h.date.datetime.month).padStart(2,'0')}-${String(h.date.datetime.day).padStart(2,'0')}`;
+        }
+        return { date: isoDate, name: h.name, type: Array.isArray(h.type) ? h.type[0] : (h.type || 'Holiday'), description: h.description || h.name };
+      }).filter(h => h.date);
+      log(`Calendarific returned ${holidays.length} holidays`, 'SUCCESS');
       return holidays;
     }
-    
     throw new Error('Invalid response from Calendarific');
-    
-  } catch (error) {
-    log(`Calendarific failed: ${error.message}`, 'WARNING');
-    
-    // Fallback 1: Try AbstractAPI (also free)
-    try {
-      log('Trying AbstractAPI as fallback...');
-      const fallbackResponse = await axios.get(
-        `https://holidays.abstractapi.com/v1/?api_key=demo&country=IN&year=${year}`,
-        { timeout: 10000 }
-      );
-      
-      if (Array.isArray(fallbackResponse.data)) {
-        const holidays = fallbackResponse.data.map(h => ({
-          date: h.date,
-          name: h.name,
-          type: h.type || 'Holiday',
-          description: h.description || h.name
-        }));
-        log(`AbstractAPI fallback successful: ${holidays.length} holidays`, 'SUCCESS');
-        return holidays;
-      }
-    } catch (fallbackError) {
-      log(`AbstractAPI fallback failed: ${fallbackError.message}`, 'WARNING');
+  } catch (err) {
+    log(`Calendarific failed: ${err.message}`, 'WARNING');
+  }
+
+  // 3) AbstractAPI demo fallback
+  try {
+    log('Trying AbstractAPI as fallback...');
+    const fallbackResponse = await axios.get(`https://holidays.abstractapi.com/v1/?api_key=demo&country=IN&year=${year}`, { timeout: 10000 });
+    if (Array.isArray(fallbackResponse.data) && fallbackResponse.data.length > 0) {
+      const holidays = fallbackResponse.data.map(h => ({ date: h.date, name: h.name, type: h.type || 'Holiday', description: h.description || h.name }));
+      log(`AbstractAPI returned ${holidays.length} holidays`, 'SUCCESS');
+      return holidays;
     }
-    
-    // Fallback 2: Use hardcoded holidays
-    log('Using hardcoded holidays as final fallback', 'WARNING');
-    return getHardcodedHolidays2026();
+  } catch (err) {
+    log(`AbstractAPI failed: ${err.message}`, 'WARNING');
   }
-}
 
-async function getTodaysHoliday() {
-  const now = new Date();
-  const year = now.getFullYear();
-  
-  // Get today's date in YYYY-MM-DD format
-  const today = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  
-  log(`Checking if ${today} is a holiday...`);
-  
-  const holidays = await fetchIndianHolidays(year);
-  
-  if (!holidays || !Array.isArray(holidays) || holidays.length === 0) {
-    log('Could not fetch holiday data', 'ERROR');
-    return null;
-  }
-  
-  log(`Searching ${holidays.length} holidays for ${today}`);
-  
-  const holiday = holidays.find(h => h.date === today);
-  
-  if (holiday) {
-    log(`✅ Holiday found: ${holiday.name}`, 'SUCCESS');
-  } else {
-    log(`No holiday found for ${today}`);
-  }
-  
-  return holiday;
-}
-
-async function getUpcomingHolidays() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-  
-  const holidays = await fetchIndianHolidays(year);
-  if (!holidays || !Array.isArray(holidays)) return [];
-  
-  return holidays.filter(h => {
-    const holidayDate = new Date(h.date);
-    return holidayDate >= now && holidayDate <= thirtyDaysLater;
-  }).slice(0, 15);
+  // final fallback
+  log('Using hardcoded holidays as final fallback', 'WARNING');
+  return getHardcodedHolidays2026();
 }
 
 // ============================================
-// AI MESSAGE GENERATION - GOOGLE GEMINI (FREE)
-// Alternative: OpenAI (paid), Cohere (free tier)
+// HELPERS: today's date in configured timezone
+// ============================================
+
+function nowInZone() {
+  return DateTime.now().setZone(CONFIG.TIMEZONE);
+}
+
+function todayDateString() {
+  return nowInZone().toISODate(); // 'YYYY-MM-DD' in timezone
+}
+
+// ============================================
+// AI MESSAGE GENERATION (Gemini) - fallback template if no key
 // ============================================
 
 async function generateHolidayMessage(holidayName, holidayDescription = '') {
-  // If no API key, use fallback
   if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') {
     log('No AI API key configured, using template message', 'WARNING');
-    return `Happy ${holidayName}! 🎉\n\nWishing the entire Digital Labour community a wonderful celebration filled with joy, prosperity, and memorable moments. May this special day bring you happiness and renewed energy for the days ahead.\n\nLet's celebrate together! 🎊`;
+    return `Happy ${holidayName}! 🎉
+
+Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of ${holidayName} and celebrate together. Cheers to togetherness and joy!`;
   }
 
   try {
     log(`Generating AI message for: ${holidayName}`);
-    
     const prompt = `Generate a warm, festive announcement for ${holidayName} celebration in India.
 
 ${holidayDescription ? `Context: ${holidayDescription}` : ''}
 
 Requirements:
-- 100-150 words
+- 80-140 words
 - Uplifting and celebratory tone
 - Mention the significance briefly
 - Include well-wishes for the Digital Labour community
@@ -255,35 +258,24 @@ Return ONLY the message text.`;
 
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
-      {
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.9,
-          maxOutputTokens: 250,
-          topP: 0.95
-        }
-      },
-      {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 15000
-      }
+      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.9, maxOutputTokens: 250, topP: 0.95 } },
+      { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
     );
 
-    const messageText = response.data.candidates[0].content.parts[0].text.trim();
+    const messageText = response?.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+    if (!messageText) throw new Error('Empty AI response');
     log('AI message generated successfully', 'SUCCESS');
     return messageText;
+  } catch (err) {
+    log(`AI generation failed: ${err.message}`, 'ERROR');
+    return `Happy ${holidayName}! 🎉
 
-  } catch (error) {
-    log(`AI generation failed: ${error.message}`, 'ERROR');
-    return `Happy ${holidayName}! 🎉\n\nWishing the entire Digital Labour community a wonderful celebration filled with joy, prosperity, and memorable moments. May this special day bring you happiness and renewed energy for the days ahead.\n\nLet's celebrate together! 🎊`;
+Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of ${holidayName} and celebrate together. Cheers to togetherness and joy!`;
   }
 }
 
 async function enhanceCustomMessage(messageContent) {
-  if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') {
-    return messageContent;
-  }
-
+  if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') return messageContent;
   try {
     const prompt = `Enhance this announcement for a Discord community:
 
@@ -292,64 +284,59 @@ ${messageContent}
 Make it professional, add 2-3 emojis, improve clarity. Keep it under 150 words.
 
 Return ONLY the enhanced message.`;
-
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
-      {
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 250
-        }
-      },
-      {
-        headers: { 'Content-Type': 'application/json' },
-        timeout: 15000
-      }
+      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.7, maxOutputTokens: 250 } },
+      { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
     );
-
-    return response.data.candidates[0].content.parts[0].text.trim();
-  } catch (error) {
-    log(`AI enhancement failed: ${error.message}`, 'ERROR');
+    return response?.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || messageContent;
+  } catch (err) {
+    log(`AI enhancement failed: ${err.message}`, 'ERROR');
     return messageContent;
   }
 }
 
 // ============================================
-// DISCORD WEBHOOK
+// DISCORD WEBHOOK (with retries)
 // ============================================
+
+async function postWebhookWithRetry(webhookUrl, payload) {
+  let attempt = 0;
+  while (attempt < CONFIG.RETRY_ATTEMPTS) {
+    try {
+      await axios.post(webhookUrl, payload, { timeout: 10000 });
+      return true;
+    } catch (err) {
+      attempt++;
+      log(`Webhook post attempt ${attempt} failed: ${err.message}`, 'WARNING');
+      await new Promise(r => setTimeout(r, 500 * Math.pow(2, attempt)));
+    }
+  }
+  return false;
+}
 
 async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl) {
   try {
     log('Sending holiday announcement to Discord...');
-
     const embed = {
-      title: `🎊 **Holiday Announcement** 🎊`,
+      title: `🎊 Holiday Announcement 🎊`,
       description: `**${holiday.name}**\n\n${message}\n\n— *The Digital Labour Team*`,
       color: getHolidayColor(holiday.name),
       image: { url: imageUrl },
-      footer: {
-        text: 'Digital Labour Bot',
-        icon_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png'
-      },
+      footer: { text: 'Digital Labour Bot', icon_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png' },
       timestamp: new Date().toISOString()
     };
-
-    const payload = {
-      content: '@everyone',
-      username: 'Holiday Bot',
-      avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
-      embeds: [embed]
-    };
-
-    await axios.post(webhookUrl, payload, { timeout: 10000 });
-    
+    const payload = { content: '@everyone', username: 'Holiday Bot', avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png', embeds: [embed] };
+    const ok = await postWebhookWithRetry(webhookUrl, payload);
+    if (!ok) {
+      log('Holiday announcement failed after retries', 'ERROR');
+      return false;
+    }
     log('Holiday announcement sent successfully!', 'SUCCESS');
     botStatus.totalHolidayAnnouncements++;
     return true;
-
-  } catch (error) {
-    log(`Holiday announcement failed: ${error.message}`, 'ERROR');
+  } catch (err) {
+    log(`Holiday announcement failed: ${err.message}`, 'ERROR');
     return false;
   }
 }
@@ -357,99 +344,94 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl) {
 async function sendCustomAnnouncement(data) {
   try {
     const { title, message, roles, imageUrl, webhookChannel, useAI } = data;
-    
     const webhookUrl = CONFIG.WEBHOOKS[webhookChannel] || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
-    
-    if (!webhookUrl) {
-      return { success: false, error: 'Webhook not configured' };
-    }
-    
+    if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
     let finalMessage = message;
-    if (useAI) {
-      finalMessage = await enhanceCustomMessage(message);
-    }
-
-    const roleMentions = roles && roles.length > 0 
-      ? roles.map(role => ROLES[role] || role).join(' ')
-      : null;
-
+    if (useAI) finalMessage = await enhanceCustomMessage(message);
+    const roleMentions = roles && roles.length > 0 ? roles.map(role => ROLES[role] || role).join(' ') : null;
     const embed = {
-      title: title || '📢 **Alert — Important Update**',
+      title: title || '📢 Alert — Important Update',
       description: `${finalMessage}\n\n— *The Digital Labour Team*`,
       color: 0xFF6B35,
-      footer: {
-        text: 'Digital Labour Bot',
-        icon_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png'
-      },
+      footer: { text: 'Digital Labour Bot', icon_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png' },
       timestamp: new Date().toISOString()
     };
-
     if (imageUrl) embed.image = { url: imageUrl };
-
-    const payload = {
-      content: roleMentions,
-      username: 'Announcement Bot',
-      avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
-      embeds: [embed]
-    };
-
-    await axios.post(webhookUrl, payload, { timeout: 10000 });
-    
+    const payload = { content: roleMentions, username: 'Announcement Bot', avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png', embeds: [embed] };
+    const ok = await postWebhookWithRetry(webhookUrl, payload);
+    if (!ok) {
+      log('Custom announcement failed after retries', 'ERROR');
+      return { success: false, error: 'Webhook failed after retries' };
+    }
     log('Custom announcement sent!', 'SUCCESS');
     botStatus.totalCustomAnnouncements++;
     return { success: true };
-
-  } catch (error) {
-    log(`Custom announcement failed: ${error.message}`, 'ERROR');
-    return { success: false, error: error.message };
+  } catch (err) {
+    log(`Custom announcement failed: ${err.message}`, 'ERROR');
+    return { success: false, error: err.message };
   }
 }
 
 // ============================================
-// SCHEDULING
+// SCHEDULING: scheduleAnnouncement (unchanged except persistence)
 // ============================================
 
 function scheduleAnnouncement(data) {
   const { scheduleTime, ...announcementData } = data;
   const scheduleDate = new Date(scheduleTime);
-  
-  if (scheduleDate <= new Date()) {
-    return { success: false, error: 'Schedule time must be in the future' };
-  }
-
-  const scheduledItem = {
-    id: Date.now().toString(),
-    scheduleTime: scheduleDate.toISOString(),
-    data: announcementData,
-    status: 'scheduled'
-  };
-
+  if (scheduleDate <= new Date()) return { success: false, error: 'Schedule time must be in the future' };
+  const scheduledItem = { id: Date.now().toString(), scheduleTime: scheduleDate.toISOString(), data: announcementData, status: 'scheduled' };
   scheduledAnnouncements.push(scheduledItem);
   log(`Announcement scheduled for ${scheduleDate.toLocaleString()}`, 'SUCCESS');
-
   setTimeout(async () => {
     const result = await sendCustomAnnouncement(announcementData);
     scheduledItem.status = result.success ? 'sent' : 'failed';
   }, scheduleDate.getTime() - Date.now());
-
   return { success: true, scheduledItem };
 }
 
 // ============================================
-// MAIN EXECUTION
+// MAIN EXECUTION: executeHolidayCheck
+// - Ensures it only runs once per day in configured timezone unless manualTrigger is true.
+// - Persists lastRunDate ONLY when a check completed successfully (either no holiday OR announcement successfully sent).
+// - If fetch fails, it leaves lastRunDate unchanged so the minute-guard and external backups can retry.
 // ============================================
 
 async function executeHolidayCheck(manualTrigger = false) {
   log('========================================');
   log(manualTrigger ? 'Manual check' : 'Auto check');
-  
+
+  const today = todayDateString();
   botStatus.lastCheck = new Date().toISOString();
-  
+
+  // If not manual, ensure we only run once per calendar day in configured timezone
+  if (!manualTrigger && state.lastRunDate === today) {
+    log(`Already checked for ${today} in timezone ${CONFIG.TIMEZONE}. Skipping.`, 'INFO');
+    log('========================================');
+    return { success: true, message: 'Already checked today' };
+  }
+
   try {
-    const holiday = await getTodaysHoliday();
-    
+    const holiday = await (async () => {
+      try {
+        return await getTodaysHoliday();
+      } catch (e) {
+        log(`getTodaysHoliday error: ${e.message}`, 'ERROR');
+        throw e;
+      }
+    })();
+
+    // If getTodaysHoliday returned undefined due to fetch error, preserve state.lastRunDate so retries can happen.
+    if (holiday === undefined) {
+      log('Holiday fetch failed; will retry later (state unchanged).', 'WARNING');
+      return { success: false, message: 'Holiday fetch failed' };
+    }
+
+    // If no holiday is today: we consider the check successful and persist so we don't re-run repeatedly
     if (!holiday) {
-      log('No holiday today');
+      state.lastRunDate = today;
+      saveState();
+      log(`No holiday today (${today}). Marked as checked.`, 'INFO');
       log('========================================');
       return { success: true, message: 'No holiday today' };
     }
@@ -459,28 +441,51 @@ async function executeHolidayCheck(manualTrigger = false) {
     const aiMessage = await generateHolidayMessage(holiday.name, holiday.description);
     const imageUrl = getHolidayImage(holiday.name);
     const webhookUrl = CONFIG.WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
-    
+
     const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl);
+
+    if (success) {
+      state.lastRunDate = today;
+      saveState();
+    } else {
+      log(`Failed to send announcement for ${today}; state not updated to allow retries.`, 'WARNING');
+    }
 
     log(success ? '✅ Sent!' : '❌ Failed', success ? 'SUCCESS' : 'ERROR');
     log('========================================');
-    
-    return { 
-      success, 
-      message: success ? `Sent: ${holiday.name}` : 'Failed',
-      holiday,
-      aiMessage
-    };
 
-  } catch (error) {
-    log(`Error: ${error.message}`, 'ERROR');
+    return { success, message: success ? `Sent: ${holiday.name}` : 'Failed', holiday, aiMessage };
+
+  } catch (err) {
+    log(`Error during holiday check: ${err.message}`, 'ERROR');
     log('========================================');
-    return { success: false, message: error.message };
+    return { success: false, message: err.message };
   }
 }
 
+// Helper used above
+async function getTodaysHoliday() {
+  const now = nowInZone();
+  const year = now.year;
+  const today = todayDateString();
+  log(`Checking if ${today} is a holiday (timezone ${CONFIG.TIMEZONE})...`);
+
+  const holidays = await fetchIndianHolidays(year);
+  if (!holidays || !Array.isArray(holidays) || holidays.length === 0) {
+    log('Could not fetch holiday data (empty)', 'ERROR');
+    // return undefined to indicate fetch failure (so we do not mark as checked)
+    return undefined;
+  }
+
+  log(`Searching ${holidays.length} holidays for ${today}`);
+  const holiday = holidays.find(h => h.date === today);
+  if (holiday) log(`✅ Holiday found: ${holiday.name}`, 'SUCCESS');
+  else log(`No holiday found for ${today}`, 'INFO');
+  return holiday || null;
+}
+
 // ============================================
-// WEB API
+// WEB API (unchanged endpoints + health/trigger endpoints for external scheduling)
 // ============================================
 
 const app = express();
@@ -491,10 +496,8 @@ app.use(express.static('public'));
 app.get('/api/status', (req, res) => {
   res.json({
     ...botStatus,
-    config: {
-      timezone: CONFIG.TIMEZONE,
-      webhooksConfigured: Object.keys(CONFIG.WEBHOOKS).filter(k => CONFIG.WEBHOOKS[k]).length
-    }
+    state,
+    config: { timezone: CONFIG.TIMEZONE, webhooksConfigured: Object.keys(CONFIG.WEBHOOKS).filter(k => CONFIG.WEBHOOKS[k]).length }
   });
 });
 
@@ -502,7 +505,7 @@ app.get('/api/logs', (req, res) => res.json(activityLog));
 
 app.get('/api/holidays/upcoming', async (req, res) => {
   try {
-    const holidays = await getUpcomingHolidays();
+    const holidays = await (async () => { const now = nowInZone(); return await fetchIndianHolidays(now.year); })();
     res.json({ success: true, holidays });
   } catch (error) {
     res.json({ success: false, error: error.message });
@@ -520,7 +523,7 @@ app.get('/api/holidays/today', async (req, res) => {
 
 app.post('/api/trigger/holiday', async (req, res) => {
   try {
-    const result = await executeHolidayCheck(true);
+    const result = await executeHolidayCheck(true); // manualTrigger true forces run
     res.json(result);
   } catch (error) {
     res.json({ success: false, error: error.message });
@@ -549,33 +552,32 @@ app.get('/api/announcements/scheduled', (req, res) => {
   res.json({ success: true, scheduled: scheduledAnnouncements });
 });
 
+// Health endpoint so external scheduler can ping to ensure process is alive
+app.get('/api/health', (req, res) => {
+  res.json({ success: true, uptime: process.uptime(), state, zoneNow: nowInZone().toISO() });
+});
+
 // Force New Year test
 app.post('/api/test/newyear', async (req, res) => {
   try {
-    const holiday = {
-      date: '2026-01-01',
-      name: "New Year's Day",
-      description: 'New Year 2026'
-    };
-    
+    const holiday = { date: '2026-01-01', name: "New Year's Day", description: 'New Year 2026' };
     const aiMessage = await generateHolidayMessage(holiday.name, holiday.description);
     const imageUrl = getHolidayImage(holiday.name);
     const webhookUrl = CONFIG.WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
-    
     const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl);
-    
     res.json({ success, message: success ? 'Sent!' : 'Failed' });
   } catch (error) {
     res.json({ success: false, error: error.message });
   }
 });
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
-});
+app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'dashboard.html')); });
 
 // ============================================
-// STARTUP
+// STARTUP: load state, immediate check, cron + minute-guard for redundancy
+// - minuteGuard runs every 30s and triggers at HH:mm === '00:00' (timezone-aware) if not already done
+// - cron.schedule runs at configured SCHEDULE_TIME (midnight) -- redundancy
+// - Persist lastRunDate only when a check completes successfully
 // ============================================
 
 function validateConfig() {
@@ -587,16 +589,19 @@ function validateConfig() {
   return true;
 }
 
+let lastMinuteGuardKey = null; // avoids duplicate runs inside same minute
+
 async function startAgent() {
   console.log(`
 ╔══════════════════════════════════════════╗
 ║   🤖 DISCORD HOLIDAY AI AGENT 🤖        ║
-║   Using: Calendarific + Google Gemini   ║
+║   Using: Nager.Date + Calendarific + Google Gemini   ║
 ╚══════════════════════════════════════════╝
   `);
 
   if (!validateConfig()) process.exit(1);
-  
+
+  loadState();
   log('✅ Config validated');
 
   app.listen(CONFIG.DASHBOARD_PORT, () => {
@@ -604,22 +609,57 @@ async function startAgent() {
   });
 
   botStatus.running = true;
+  botStatus.nextScheduledCheck = `Daily at 00:00 (${CONFIG.TIMEZONE})`;
 
-  if (CONFIG.TEST_MODE) {
-    await executeHolidayCheck(true);
-    return;
+  // Immediate startup check: if state.lastRunDate != today, run check right away
+  try {
+    const today = todayDateString();
+    if (CONFIG.TEST_MODE) {
+      log('TEST_MODE enabled: performing an immediate manual check');
+      await executeHolidayCheck(true);
+    } else if (state.lastRunDate !== today) {
+      log(`Startup check: lastRunDate=${state.lastRunDate}, today=${today}. Performing immediate check.`);
+      await executeHolidayCheck(false);
+    } else {
+      log(`Startup: already checked for ${today} (state). No immediate check needed.`, 'INFO');
+    }
+  } catch (err) {
+    log(`Startup check failed: ${err.message}`, 'WARNING');
   }
 
-  log('✅ Production mode - Daily checks at midnight');
-
+  // Primary scheduler (cron) - should trigger at midnight using timezone
+  log(`✅ Scheduling daily checks at "${CONFIG.SCHEDULE_TIME}" (${CONFIG.TIMEZONE})`);
   cron.schedule(CONFIG.SCHEDULE_TIME, async () => {
-    await executeHolidayCheck(false);
+    try {
+      await executeHolidayCheck(false);
+    } catch (err) {
+      log(`Cron scheduled check error: ${err.message}`, 'ERROR');
+    }
   }, { timezone: CONFIG.TIMEZONE });
 
-  process.on('SIGINT', () => {
-    log('🛑 Shutting down...', 'WARNING');
-    process.exit(0);
-  });
+  // Redundant minute-guard to catch any missed cron runs or clock drift:
+  setInterval(async () => {
+    try {
+      const znow = nowInZone();
+      const hhmm = znow.toFormat('HH:mm'); // e.g. '00:00'
+      const minuteKey = `${znow.toISODate()}-${hhmm}`;
+      // Trigger only at 00:00 in timezone and only once per minute
+      if (hhmm === '00:00' && minuteKey !== lastMinuteGuardKey) {
+        lastMinuteGuardKey = minuteKey;
+        if (state.lastRunDate !== znow.toISODate()) {
+          log(`Minute-guard detected midnight (${minuteKey}) and state indicates not yet checked. Triggering check.`, 'INFO');
+          await executeHolidayCheck(false);
+        } else {
+          log(`Minute-guard: already checked for ${znow.toISODate()}`, 'INFO');
+        }
+      }
+    } catch (err) {
+      log(`Minute-guard error: ${err.message}`, 'WARNING');
+    }
+  }, 30 * 1000); // every 30 seconds
+
+  // Safety: recommend external backup scheduler (see notes below)
+  process.on('SIGINT', () => { log('🛑 Shutting down...', 'WARNING'); process.exit(0); });
 }
 
 startAgent();

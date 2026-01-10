@@ -68,6 +68,20 @@ const ROLES = {
 };
 
 // ============================================
+// GLOBAL ERROR HANDLERS (for resiliency with pm2/systemd restarts)
+// ============================================
+
+process.on('unhandledRejection', (err) => {
+  try { log(`Unhandled Rejection: ${err?.stack || err}`, 'ERROR'); } catch (_) {}
+  process.exit(1);
+});
+
+process.on('uncaughtException', (err) => {
+  try { log(`Uncaught Exception: ${err?.stack || err}`, 'ERROR'); } catch (_) {}
+  process.exit(1);
+});
+
+// ============================================
 // UTILITY FUNCTIONS
 // ============================================
 
@@ -237,7 +251,7 @@ async function generateHolidayMessage(holidayName, holidayDescription = '') {
     log('No AI API key configured, using template message', 'WARNING');
     return `Happy ${holidayName}! 🎉
 
-Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of ${holidayName} and celebrate together. Cheers to togetherness and joy!`;
+Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the spirit of the occasion and celebrate together!`;
   }
 
   try {
@@ -270,7 +284,7 @@ Return ONLY the message text.`;
     log(`AI generation failed: ${err.message}`, 'ERROR');
     return `Happy ${holidayName}! 🎉
 
-Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of ${holidayName} and celebrate together. Cheers to togetherness and joy!`;
+Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the spirit of the occasion and celebrate together!`;
   }
 }
 

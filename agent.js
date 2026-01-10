@@ -178,7 +178,6 @@ function getHardcodedHolidays2026() {
 // ============================================
 
 async function fetchIndianHolidays(year) {
-  // 1) Nager.Date (no key)
   try {
     log(`Trying Nager.Date for ${year}...`);
     const resp = await axios.get(`https://date.nager.at/api/v3/PublicHolidays/${year}/IN`, { timeout: 10000 });
@@ -196,7 +195,6 @@ async function fetchIndianHolidays(year) {
     log(`Nager.Date failed: ${err.message}`, 'WARNING');
   }
 
-  // 2) Calendarific (requires API key)
   try {
     log(`Fetching holidays for ${year} from Calendarific...`);
     const response = await axios.get(
@@ -228,7 +226,6 @@ async function fetchIndianHolidays(year) {
     log(`Calendarific failed: ${err.message}`, 'WARNING');
   }
 
-  // 3) AbstractAPI demo fallback
   try {
     log('Trying AbstractAPI as fallback...');
     const fallbackResponse = await axios.get(
@@ -249,7 +246,6 @@ async function fetchIndianHolidays(year) {
     log(`AbstractAPI failed: ${err.message}`, 'WARNING');
   }
 
-  // final fallback
   log('Using hardcoded holidays as final fallback', 'WARNING');
   return getHardcodedHolidays2026();
 }
@@ -263,7 +259,7 @@ function nowInZone() {
 }
 
 function todayDateString() {
-  return nowInZone().toISODate(); // 'YYYY-MM-DD' in timezone
+  return nowInZone().toISODate();
 }
 
 // ============================================
@@ -397,8 +393,12 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl) {
 async function sendCustomAnnouncement(data) {
   try {
     const { title, message, roles, imageUrl, webhookChannel, useAI } = data;
-    const webhookUrl = CONFIG.WEBHOOKS[webhookChannel] || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
+
+    // Fallback: if no channel specified, use ANNOUNCEMENTS
+    const channelKey = webhookChannel || 'ANNOUNCEMENTS';
+    const webhookUrl = CONFIG.WEBHOOKS[channelKey] || CONFIG.WEBHOOKS.ANNOUNCEMENTS || CONFIG.WEBHOOKS.HOLIDAYS;
     if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
+
     let finalMessage = message;
     if (useAI) finalMessage = await enhanceCustomMessage(message);
     const roleMentions = roles && roles.length > 0 ? roles.map(role => ROLES[role] || role).join(' ') : null;
@@ -671,7 +671,6 @@ app.get('/api/discord/channels', async (req, res) => {
 
     log('Fetching Discord channels from server...', 'INFO');
 
-    // Fetch guild info
     const guildResponse = await axios.get(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}`,
       {
@@ -683,7 +682,6 @@ app.get('/api/discord/channels', async (req, res) => {
       }
     );
 
-    // Fetch channels
     const channelsResponse = await axios.get(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/channels`,
       {
@@ -695,9 +693,8 @@ app.get('/api/discord/channels', async (req, res) => {
       }
     );
 
-    // Filter only text channels (type 0) and announcement channels (type 5)
     const textChannels = channelsResponse.data
-      .filter(ch => ch.type === 0 || ch.type === 5) // 0 = TEXT, 5 = ANNOUNCEMENT
+      .filter(ch => ch.type === 0 || ch.type === 5)
       .map(ch => ({
         id: ch.id,
         name: ch.name,
@@ -708,15 +705,13 @@ app.get('/api/discord/channels', async (req, res) => {
       }))
       .sort((a, b) => a.position - b.position);
 
-    // Get category names
     const categories = channelsResponse.data
-      .filter(ch => ch.type === 4) // 4 = CATEGORY
+      .filter(ch => ch.type === 4)
       .reduce((acc, cat) => {
         acc[cat.id] = cat.name;
         return acc;
       }, {});
 
-    // Add category names to channels
     const channelsWithCategories = textChannels.map(ch => ({
       ...ch,
       categoryName: ch.category ? categories[ch.category] : null
@@ -785,7 +780,6 @@ app.post('/api/generate-image', async (req, res) => {
 
     log(`Image generation requested: "${prompt.substring(0, 50)}..." (${size})`, 'INFO');
 
-    // Use Unsplash for keyword-based real images
     try {
       const keywords = prompt.split(' ').filter(w => w.length > 3).slice(0, 3).join(',');
       const [width, height] = (size || '1024x1024').split('x');
@@ -797,7 +791,6 @@ app.post('/api/generate-image', async (req, res) => {
       log(`Unsplash failed: ${err.message}`, 'WARNING');
     }
 
-    // Fallback: Placeholder
     const [width, height] = (size || '1024x1024').split('x');
     const placeholderUrl = `https://placehold.co/${width}x${height}/1a1447/00d4ff?text=${encodeURIComponent('Generated+Image')}`;
 

@@ -1,435 +1,967 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Digital Labour • Holiday Agent — Dashboard</title>
-
-  <!-- Cyberpunk / terminal fonts & icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;600;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Labour • Cyberpunk Terminal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron: wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cyber-cyan': '#00f0ff',
+            'cyber-magenta': '#ff00d0',
+            'cyber-yellow': '#ffd166',
+            'cyber-dark':  '#020617',
+            'cyber-darker': '#0a0a0f',
+          },
+          fontFamily: {
+            'terminal': ['"Share Tech Mono"', 'monospace'],
+            'cyber':  ['Orbitron', 'sans-serif'],
+          },
+          animation: {
+            'blink': 'blink 1.4s infinite',
+            'glow': 'glow 2s ease-in-out infinite',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'scanline': 'scanline 8s linear infinite',
+          },
+          keyframes: {
+            blink: {
+              '0%, 49%': { opacity: '1' },
+              '50%, 100%': { opacity: '0. 3' },
+            },
+            glow: {
+              '0%, 100%': { 
+                boxShadow: '0 0 20px rgba(0, 240, 255, 0.3), 0 0 40px rgba(0, 240, 255, 0.1), inset 0 0 20px rgba(0, 240, 255, 0.05)' 
+              },
+              '50%': { 
+                boxShadow: '0 0 30px rgba(0, 240, 255, 0.6), 0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 30px rgba(0, 240, 255, 0.1)' 
+              },
+            },
+            scanline: {
+              '0%': { transform: 'translateY(-100%)' },
+              '100%': { transform: 'translateY(100%)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
 
   <style>
-    :root{
-      --bg-1: #020617;
-      --bg-2: #071029;
-      --neon-cyan: #00f0ff;
-      --neon-magenta: #ff00d0;
-      --neon-yellow: #ffd166;
-      --glass: rgba(255,255,255,0.04);
-      --glass-2: rgba(255,255,255,0.02);
-      --panel-radius: 14px;
-      --accent: linear-gradient(90deg, rgba(0,240,255,0.12), rgba(255,0,208,0.12));
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Share Tech Mono", monospace;background: radial-gradient(1200px 600px at 10% 20%, rgba(0,240,255,0.03), transparent), radial-gradient(900px 400px at 90% 80%, rgba(255,0,208,0.03), transparent), linear-gradient(180deg,var(--bg-1),var(--bg-2)); color:#dbeafe; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-
-    /* animated grid / cyber background */
-    .grid-bg{
-      position:fixed;inset:0;pointer-events:none;opacity:0.18;
-      background-image:
-        linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size:60px 60px,60px 60px;
-      transform: skewY(-2deg) translateZ(0);
-      mix-blend-mode:overlay;
-      filter:blur(1px);
+    body {
+      font-family: 'Share Tech Mono', monospace;
+      background: #0a0a0f;
+      color: #00f0ff;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    .container{max-width:1200px;margin:28px auto;padding:24px;display:grid;grid-template-columns:1fr 420px;gap:20px;align-items:start;}
-
-    /* terminal panel */
-    .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.04);
-      border-radius:var(--panel-radius);
-      padding:18px;
-      box-shadow: 0 10px 30px rgba(2,6,23,0.6), 0 0 40px rgba(0,240,255,0.03) inset;
-      backdrop-filter: blur(6px) saturate(120%);
+    /* Space background canvas */
+    #space-canvas {
+      position:  fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
     }
 
-    header.brand{
-      display:flex;align-items:center;gap:16px;padding:12px 18px;border-radius:12px;margin-bottom:14px;background:linear-gradient(90deg, rgba(0,240,255,0.02), rgba(255,0,208,0.02));
-      border:1px solid rgba(255,255,255,0.02);
+    /* Matrix effect canvas */
+    #matrix-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height:  100%;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.15;
     }
-    .logo{
-      width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-      background: linear-gradient(135deg,var(--neon-cyan),var(--neon-magenta)); color:#001; font-weight:800; font-family:"Share Tech Mono";
-      box-shadow: 0 8px 30px rgba(0,240,255,0.08), 0 0 30px rgba(255,0,208,0.06) inset;
-      transform: rotate(-6deg);
+
+    /* Scanline effect */
+    . scanline {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width:  100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 240, 255, 0.03) 0px,
+        transparent 1px,
+        transparent 2px,
+        rgba(0, 240, 255, 0.03) 3px
+      );
+      pointer-events:  none;
+      z-index:  2;
     }
-    header.brand h1{font-size:1.2rem;margin:0;color:#dbeafe}
-    header.brand p{margin:0;color:#9fb3da;font-size:0.85rem}
 
-    /* top status */
-    .status-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
-    .status-pill{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:999px;font-weight:700;font-size:0.85rem;background:var(--glass);border:1px solid rgba(255,255,255,0.03)}
-    .status-dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 10px rgba(0,240,255,0.3)}
-    .status-running{background:linear-gradient(90deg,#05222b,#09203b);border:1px solid rgba(0,240,255,0.08)}
-    .status-paused{background:linear-gradient(90deg,#2a0b12,#2f0b20);border:1px solid rgba(255,0,208,0.06)}
-
-    /* left column content */
-    .left-col{display:grid;grid-auto-rows:min-content;gap:16px}
-    .cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    .stat{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:14px;border-radius:10px;text-align:center;border:1px solid rgba(255,255,255,0.02)}
-    .stat h3{margin:0;color:#9fb3da;font-size:0.9rem}
-    .stat p{margin:6px 0 0 0;font-weight:800;font-size:1.8rem;color:#fff}
-
-    .panel-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-    .panel-title h2{font-family:"Share Tech Mono";margin:0;color:var(--neon-cyan);letter-spacing:0.8px}
-    .panel-sub{color:#9fb3da;font-size:0.85rem}
-
-    /* holiday list */
-    .holiday-list{display:grid;gap:10px}
-    .holiday-item{
-      padding:12px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.014), rgba(255,255,255,0.01));
-      border-left:4px solid rgba(0,240,255,0.12);display:flex;justify-content:space-between;align-items:center;font-size:0.95rem;
+    . scanline::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 240, 255, 0.1),
+        transparent
+      );
+      animation: scanline 8s linear infinite;
     }
-    .holiday-meta{color:#c1d8ff;font-size:0.92rem}
-    .holiday-date{color:var(--neon-magenta);font-weight:700;font-family:"Share Tech Mono"}
 
-    /* right column - terminal emulation */
-    .right-col{display:flex;flex-direction:column;gap:12px}
-    .terminal{
-      background:linear-gradient(180deg, rgba(5,6,20,0.9), rgba(3,3,9,0.7));
-      border:1px solid rgba(0,240,255,0.06);
-      padding:12px;border-radius:10px;height:420px;overflow:auto;font-family:"Share Tech Mono", monospace;color:#9ee9ff;
-      box-shadow: 0 6px 40px rgba(0,240,255,0.03) inset;
+    /* Glass morphism */
+    .glass-panel {
+      background: rgba(10, 10, 15, 0.7);
+      backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(0, 240, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.1),
+                  inset 0 0 20px rgba(0, 240, 255, 0.03);
     }
-    .terminal .line{padding:4px 0;border-bottom:1px dashed rgba(0,240,255,0.04)}
-    .terminal .meta{color:#9fb3da;font-size:0.85rem}
-    .glow{text-shadow:0 0 18px rgba(0,240,255,0.24)}
 
-    /* buttons */
-    .controls{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{
-      background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 14px;border-radius:10px;color:#cfeffd;font-weight:700;cursor:pointer;font-size:0.95rem;
-      transition:transform 0.12s ease,box-shadow 0.12s ease;
+    /* Glow text */
+    .glow-text {
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.8),
+                   0 0 20px rgba(0, 240, 255, 0.4),
+                   0 0 30px rgba(0, 240, 255, 0.2);
     }
-    .btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,240,255,0.06)}
-    .btn.primary{background:linear-gradient(90deg,var(--neon-cyan),var(--neon-magenta));color:#041018;border:0}
-    .btn.warn{background:linear-gradient(90deg,#ffd166,#ff8ab8);color:#041018;border:0}
 
-    /* logs */
-    .log-line{font-family:"Share Tech Mono",monospace;color:#9ee9ff;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.02)}
-    .log-time{color:#7fb8c9;margin-right:8px;font-size:0.85rem}
-    .log-type.INFO{color:#7fb8c9}
-    .log-type.SUCCESS{color:#9be87f'}
-    .mini{font-size:0.82rem;color:#9fb3da}
-
-    /* forms - subtle glass */
-    .form-row{display:flex;gap:10px;flex-wrap:wrap}
-    input[type="text"], textarea, select, input[type="datetime-local"]{
-      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#dbeafe;font-family:Inter;
+    . glow-text-magenta {
+      text-shadow:  0 0 10px rgba(255, 0, 208, 0.8),
+                   0 0 20px rgba(255, 0, 208, 0.4),
+                   0 0 30px rgba(255, 0, 208, 0.2);
     }
-    textarea{min-height:80px}
 
-    /* small helpers */
-    .muted{color:#9fb3da;font-size:0.86rem}
-    .right-quiet{font-size:0.85rem;color:#9fb3da}
-    .footer-note{font-size:0.82rem;color:#7ea7d6;margin-top:6px}
-
-    /* subtle flicker animation for neon badge */
-    @keyframes flicker {
-      0% { opacity: 1; }
-      50% { opacity: 0.85; }
-      100% { opacity: 1; }
+    /* Neon border */
+    .neon-border {
+      position: relative;
     }
-    .logo{animation:flicker 3s infinite}
-    .neon-pulse{box-shadow:0 0 18px rgba(0,240,255,0.08), 0 0 40px rgba(255,0,208,0.03); animation: glow 3s infinite;}
-    @keyframes glow{0%{box-shadow:0 0 6px rgba(0,240,255,0.04)}50%{box-shadow:0 0 22px rgba(0,240,255,0.08)}100%{box-shadow:0 0 6px rgba(0,240,255,0.04)}}
 
-    /* responsive */
-    @media (max-width: 980px){
-      .container{grid-template-columns:1fr; padding:16px}
-      .right-col .terminal{height:360px}
-      .cards-grid{grid-template-columns:repeat(2,1fr)}
+    .neon-border::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(45deg, #00f0ff, #ff00d0, #ffd166, #00f0ff);
+      border-radius: inherit;
+      opacity: 0.5;
+      z-index: -1;
+      filter: blur(8px);
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    /* Custom scrollbar */
+    : :-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background:  rgba(0, 240, 255, 0.05);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background:  rgba(0, 240, 255, 0.3);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 240, 255, 0.5);
+    }
+
+    /* Hover effects */
+    .cyber-button {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .cyber-button:: before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background:  rgba(0, 240, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .cyber-button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .cyber-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+    }
+
+    /* Tab animation */
+    .tab {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .tab::after {
+      content: '';
+      position: absolute;
+      bottom:  0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #00f0ff, #ff00d0);
+      transition: width 0.3s ease;
+    }
+
+    .tab:hover::after,
+    .tab.active::after {
+      width: 100%;
+    }
+
+    /* Terminal cursor */
+    .terminal-cursor {
+      display: inline-block;
+      width: 10px;
+      height: 18px;
+      background: #00f0ff;
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+
+    /* Loading spinner */
+    .loading-spinner {
+      border: 3px solid rgba(0, 240, 255, 0.1);
+      border-top: 3px solid #00f0ff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive container */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Status dot pulse */
+    .status-dot {
+      animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse-slow {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+      }
     }
   </style>
 </head>
-<body>
-  <div class="grid-bg" aria-hidden="true"></div>
+<body class="min-h-screen">
+  <!-- Space background canvas -->
+  <canvas id="space-canvas"></canvas>
+  
+  <!-- Matrix effect canvas -->
+  <canvas id="matrix-canvas"></canvas>
+  
+  <!-- Scanline overlay -->
+  <div class="scanline"></div>
 
-  <div class="container">
-    <div class="left-col">
-      <div class="panel">
-        <header class="brand">
-          <div class="logo">DL</div>
+  <!-- Main content -->
+  <div class="content-wrapper min-h-screen p-4 md:p-8">
+    <!-- Header -->
+    <header class="glass-panel rounded-2xl p-6 md:p-8 mb-6 neon-border">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-cyber-cyan to-cyber-magenta rounded-xl flex items-center justify-center text-2xl md:text-3xl font-cyber font-black text-cyber-darker shadow-lg">
+            DL
+          </div>
           <div>
-            <h1>Digital Labour • Holiday Agent</h1>
-            <p class="muted">Automated holiday detection • AI announcements • Terminal-style dashboard</p>
+            <h1 class="text-2xl md:text-4xl font-cyber font-black glow-text animate-blink">
+              DIGITAL LABOUR AI AGENT
+            </h1>
+            <p class="text-sm md:text-base text-cyan-300 font-terminal mt-1">
+              >> Automated Holiday & Announcement System_<span class="terminal-cursor"></span>
+            </p>
           </div>
-        </header>
+        </div>
+        
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 glass-panel px-4 py-2 rounded-full border border-cyber-cyan/30">
+            <div class="w-3 h-3 bg-cyber-cyan rounded-full status-dot"></div>
+            <span class="text-cyber-cyan font-terminal text-sm" id="status-text">RUNNING</span>
+          </div>
+          <div class="glass-panel px-4 py-2 rounded-full border border-cyber-magenta/30">
+            <span class="text-cyber-magenta font-terminal text-sm" id="timezone-text">TZ:  LOADING... </span>
+          </div>
+        </div>
+      </div>
+    </header>
 
-        <div class="status-row" id="statusRow">
-          <div class="status-pill status-running">
-            <span class="status-dot" id="runDot" style="background:linear-gradient(90deg,var(--neon-cyan),var(--neon-magenta))"></span>
-            <span id="runText">Running</span>
+    <!-- Navigation Tabs -->
+    <nav class="glass-panel rounded-xl p-2 mb-6 flex flex-wrap gap-2" role="tablist">
+      <button 
+        class="tab active flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+        role="tab"
+        aria-selected="true"
+        aria-controls="overview-panel"
+        tabindex="0"
+        onclick="handleTabClick('overview', this)"
+        onkeydown="handleKeyDown(event, () => handleTabClick('overview', this))"
+      >
+        <span class="glow-text">📊 OVERVIEW</span>
+      </button>
+      <button 
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+        role="tab"
+        aria-selected="false"
+        aria-controls="holidays-panel"
+        tabindex="0"
+        onclick="handleTabClick('holidays', this)"
+        onkeydown="handleKeyDown(event, () => handleTabClick('holidays', this))"
+      >
+        🎉 HOLIDAYS
+      </button>
+      <button 
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover: bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus: ring-cyber-cyan"
+        role="tab"
+        aria-selected="false"
+        aria-controls="custom-panel"
+        tabindex="0"
+        onclick="handleTabClick('custom', this)"
+        onkeydown="handleKeyDown(event, () => handleTabClick('custom', this))"
+      >
+        📢 CUSTOM
+      </button>
+      <button 
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus: ring-2 focus:ring-cyber-cyan"
+        role="tab"
+        aria-selected="false"
+        aria-controls="scheduled-panel"
+        tabindex="0"
+        onclick="handleTabClick('scheduled', this)"
+        onkeydown="handleKeyDown(event, () => handleTabClick('scheduled', this))"
+      >
+        ⏰ SCHEDULED
+      </button>
+      <button 
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+        role="tab"
+        aria-selected="false"
+        aria-controls="logs-panel"
+        tabindex="0"
+        onclick="handleTabClick('logs', this)"
+        onkeydown="handleKeyDown(event, () => handleTabClick('logs', this))"
+      >
+        📋 LOGS
+      </button>
+    </nav>
+
+    <!-- Tab Panels -->
+    <div class="space-y-6">
+      <!-- Overview Panel -->
+      <div id="overview-panel" class="tab-panel" role="tabpanel" aria-labelledby="overview-tab">
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md: grid-cols-3 gap-4 mb-6">
+          <!-- Holiday Announcements -->
+          <div class="glass-panel rounded-xl p-6 neon-border hover:scale-105 transition-transform">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-cyber-cyan font-terminal text-sm">HOLIDAY_ANNOUNCEMENTS</span>
+              <span class="text-2xl">🎊</span>
+            </div>
+            <div class="text-5xl font-cyber font-black glow-text mb-2" id="holiday-count">0</div>
+            <div class="text-xs text-cyan-300/60 font-terminal">TOTAL_SENT</div>
           </div>
-          <div class="status-pill">
-            TZ: <strong id="tzLabel" style="margin-left:8px">Loading</strong>
+
+          <!-- Custom Announcements -->
+          <div class="glass-panel rounded-xl p-6 neon-border hover:scale-105 transition-transform">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-cyber-magenta font-terminal text-sm">CUSTOM_ANNOUNCEMENTS</span>
+              <span class="text-2xl">📣</span>
+            </div>
+            <div class="text-5xl font-cyber font-black glow-text-magenta mb-2" id="custom-count">0</div>
+            <div class="text-xs text-magenta-300/60 font-terminal">TOTAL_SENT</div>
           </div>
-          <div class="status-pill">
-            Next: <strong id="nextCheck" style="margin-left:8px">--</strong>
+
+          <!-- Scheduled Items -->
+          <div class="glass-panel rounded-xl p-6 neon-border hover:scale-105 transition-transform">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-cyber-yellow font-terminal text-sm">SCHEDULED_ITEMS</span>
+              <span class="text-2xl">⏱️</span>
+            </div>
+            <div class="text-5xl font-cyber font-black text-cyber-yellow mb-2" id="scheduled-count">0</div>
+            <div class="text-xs text-yellow-300/60 font-terminal">IN_QUEUE</div>
           </div>
         </div>
 
-        <div class="cards-grid">
-          <div class="stat">
-            <h3>Holiday Announcements</h3>
-            <p id="holidayCount">0</p>
+        <!-- Today's Holiday -->
+        <div class="glass-panel rounded-xl p-6 mb-6">
+          <h2 class="text-xl font-cyber font-bold glow-text mb-4 flex items-center gap-2">
+            <span class="animate-pulse">📅</span> TODAY'S HOLIDAY
+          </h2>
+          <div id="today-holiday" class="font-terminal">
+            <div class="animate-pulse">LOADING...</div>
           </div>
-          <div class="stat">
-            <h3>Custom Announcements</h3>
-            <p id="customCount">0</p>
-          </div>
-          <div class="stat">
-            <h3>Scheduled</h3>
-            <p id="scheduledCount">0</p>
+        </div>
+
+        <!-- Upcoming Holidays -->
+        <div class="glass-panel rounded-xl p-6">
+          <h2 class="text-xl font-cyber font-bold glow-text mb-4 flex items-center gap-2">
+            <span class="animate-bounce">🔮</span> UPCOMING HOLIDAYS
+          </h2>
+          <div id="upcoming-holidays" class="space-y-3 max-h-96 overflow-y-auto font-terminal">
+            <div class="animate-pulse">LOADING...</div>
           </div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">
-          <h2>📅 Today's Holiday</h2>
-          <div class="panel-sub mini" id="lastChecked">Checking...</div>
-        </div>
+      <!-- Holidays Panel -->
+      <div id="holidays-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="holidays-tab">
+        <div class="glass-panel rounded-xl p-6">
+          <h2 class="text-2xl font-cyber font-bold glow-text mb-6">HOLIDAY AUTOMATION</h2>
+          <div class="space-y-4">
+            <div class="p-4 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/20">
+              <div class="flex items-center justify-between mb-2">
+                <span class="font-terminal text-cyber-cyan">NEXT_CHECK</span>
+                <span class="font-terminal text-sm" id="next-check-time">Daily at 00:00 IST</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-terminal text-cyber-cyan">LAST_RUN</span>
+                <span class="font-terminal text-sm" id="last-run-date">—</span>
+              </div>
+            </div>
 
-        <div id="todayCard" class="holiday-list">
-          <div class="holiday-item"><div class="holiday-meta mini">Loading...</div></div>
-        </div>
-
-        <div style="height:10px"></div>
-
-        <div class="panel-title">
-          <h2>🔮 Upcoming (30 days)</h2>
-          <div class="panel-sub mini">Refreshes from holiday API</div>
-        </div>
-
-        <div id="upcoming" class="holiday-list">
-          <div class="holiday-item"><div class="holiday-meta mini">Loading...</div></div>
+            <div class="flex flex-wrap gap-3">
+              <button 
+                class="cyber-button glass-panel px-6 py-3 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-terminal transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+                onclick="handleTriggerHoliday(this)"
+                onkeydown="handleKeyDown(event, () => handleTriggerHoliday(this))"
+                tabindex="0"
+                aria-label="Trigger holiday check manually"
+              >
+                🚀 TRIGGER_NOW
+              </button>
+              <button 
+                class="cyber-button glass-panel px-6 py-3 rounded-lg border border-cyber-magenta/50 hover:border-cyber-magenta font-terminal transition-all focus:outline-none focus:ring-2 focus:ring-cyber-magenta"
+                onclick="handleTestNewYear(this)"
+                onkeydown="handleKeyDown(event, () => handleTestNewYear(this))"
+                tabindex="0"
+                aria-label="Test New Year announcement"
+              >
+                🎉 TEST_NEW_YEAR
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">
-          <h2>⚙️ Controls</h2>
-          <div class="panel-sub mini">Manual & testing controls</div>
+      <!-- Custom Panel -->
+      <div id="custom-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="custom-tab">
+        <div class="glass-panel rounded-xl p-6">
+          <h2 class="text-2xl font-cyber font-bold glow-text mb-6">CUSTOM ANNOUNCEMENTS</h2>
+          <p class="font-terminal text-cyan-300/60">Custom announcement functionality available via API at <code class="text-cyber-cyan">/api/announcement/send</code></p>
         </div>
+      </div>
 
-        <div class="form-row" style="margin-bottom:10px">
-          <select id="holidayWebhook" style="width:100px;">
-            <option value="ANNOUNCEMENTS">Announcements</option>
-            <option value="HOLIDAYS">Holidays</option>
-            <option value="UPDATES">Updates</option>
-            <option value="GENERAL">General</option>
-          </select>
-          <button class="btn primary" onclick="triggerHoliday(this)">🚀 Test Trigger</button>
-          <button class="btn warn" onclick="forceNewYear(this)">🎉 New Year</button>
+      <!-- Scheduled Panel -->
+      <div id="scheduled-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="scheduled-tab">
+        <div class="glass-panel rounded-xl p-6">
+          <h2 class="text-2xl font-cyber font-bold glow-text mb-6">SCHEDULED ITEMS</h2>
+          <div id="scheduled-list" class="space-y-3 font-terminal">
+            <div class="animate-pulse">LOADING... </div>
+          </div>
         </div>
+      </div>
 
-        <div class="panel-sub mini">You can also use an external backup (GitHub Actions/cron) to call /api/trigger/holiday at midnight as extra insurance.</div>
+      <!-- Logs Panel -->
+      <div id="logs-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="logs-tab">
+        <div class="glass-panel rounded-xl p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-cyber font-bold glow-text">ACTIVITY LOGS</h2>
+            <button 
+              class="cyber-button glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-terminal text-sm transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+              onclick="handleRefreshLogs()"
+              onkeydown="handleKeyDown(event, handleRefreshLogs)"
+              tabindex="0"
+              aria-label="Refresh activity logs"
+            >
+              🔄 REFRESH
+            </button>
+          </div>
+          <div id="logs-container" class="bg-cyber-darker/50 rounded-lg p-4 max-h-[600px] overflow-y-auto border border-cyber-cyan/20 font-terminal text-sm">
+            <div class="animate-pulse text-cyber-cyan">LOADING LOGS...</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="right-col">
-      <div class="panel terminal" id="terminal">
-        <div class="line meta glow">[agent@digital-labour ~]$ dashboard online — listening for midnight checks</div>
-        <div id="terminalLines" aria-live="polite"></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-title">
-          <h2>📋 Activity Log</h2>
-          <div class="panel-sub mini">Latest events (click refresh)</div>
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <button class="btn" onclick="refreshLogs()">🔁 Refresh Logs</button>
-          <button class="btn" onclick="clearTerminal()">🧹 Clear Terminal</button>
-          <div style="flex:1"></div>
-          <div class="mini right-quiet">State file: <code>state.json</code></div>
-        </div>
-
-        <div id="logContainer" style="max-height:200px;overflow:auto;padding:6px;border-radius:8px;background:var(--glass-2);border:1px solid rgba(255,255,255,0.02)">
-          <div class="log-line">Loading logs...</div>
-        </div>
-
-        <div class="footer-note">Tip: For guaranteed midnight delivery enable the minute-guard (built-in), run under PM2 or systemd and add an external scheduled trigger as backup.</div>
-      </div>
-    </div>
+    <!-- Footer -->
+    <footer class="mt-8 text-center font-terminal text-xs text-cyan-300/40">
+      <p>DIGITAL_LABOUR © 2026 • POWERED_BY_NODE. JS + EXPRESS + GEMINI_AI</p>
+      <p class="mt-1">TRIPLE_REDUNDANCY:  CRON + MINUTE_GUARD + EXTERNAL_TRIGGER</p>
+    </footer>
   </div>
 
   <script>
-    // Utility: format timestamp
-    function fmtTime(ts){
-      try { const d = new Date(ts); return d.toLocaleString(); } catch(e){ return ts; }
-    }
-
-    // Append a line to terminal area
-    function term(msg, type='INFO'){
-      const t = document.getElementById('terminalLines');
-      const div = document.createElement('div');
-      div.className = 'line';
-      const time = new Date().toLocaleTimeString();
-      div.innerHTML = `<span style="color:#7fb8c9">[${time}]</span> <span style="color:#9ee9ff">${msg}</span>`;
-      t.prepend(div);
-      // keep terminal height reasonable
-      const lines = t.children;
-      if(lines.length > 120) t.removeChild(t.lastChild);
-    }
-
-    // Load overview data (status, today, upcoming, scheduled)
-    async function loadOverview(){
-      try {
-        const [statusRes, todayRes, upcomingRes, scheduledRes] = await Promise.all([
-          fetch('/api/status').then(r=>r.json()),
-          fetch('/api/holidays/today').then(r=>r.json()),
-          fetch('/api/holidays/upcoming').then(r=>r.json()),
-          fetch('/api/announcements/scheduled').then(r=>r.json())
-        ]);
-
-        // Status
-        const status = statusRes || {};
-        document.getElementById('tzLabel').textContent = (status.config && status.config.timezone) || '—';
-        document.getElementById('nextCheck').textContent = (status.nextScheduledCheck || statusRes.config?.timezone ? `Daily at 00:00 (${status.config?.timezone||'TZ'})` : '—');
-        document.getElementById('holidayCount').textContent = status.totalHolidayAnnouncements || 0;
-        document.getElementById('customCount').textContent = status.totalCustomAnnouncements || 0;
-
-        // scheduled count from scheduled endpoint
-        const scheduled = scheduledRes && scheduledRes.scheduled ? scheduledRes.scheduled.length : 0;
-        document.getElementById('scheduledCount').textContent = scheduled;
-
-        // last checked and state
-        if(status.state && status.state.lastRunDate){
-          document.getElementById('lastChecked').textContent = `Last run (tz): ${status.state.lastRunDate}`;
-        } else {
-          document.getElementById('lastChecked').textContent = 'Last run: —';
-        }
-
-        // Today's holiday
-        const todayCard = document.getElementById('todayCard');
-        todayCard.innerHTML = '';
-        if(todayRes && todayRes.holiday){
-          const h = todayRes.holiday;
-          const html = `<div class="holiday-item"><div>
-                        <div style="font-weight:800;color:#fff">${h.name}</div>
-                        <div class="holiday-meta">${h.description || h.type || ''}</div>
-                      </div>
-                      <div class="holiday-date">${h.date}</div></div>`;
-          todayCard.innerHTML = html;
-        } else {
-          todayCard.innerHTML = `<div class="holiday-item"><div class="holiday-meta">No holiday today</div></div>`;
-        }
-
-        // Upcoming
-        const up = document.getElementById('upcoming');
-        up.innerHTML = '';
-        if(upcomingRes && upcomingRes.holidays && upcomingRes.holidays.length){
-          upcomingRes.holidays.forEach(h=>{
-            const el = document.createElement('div');
-            el.className = 'holiday-item';
-            el.innerHTML = `<div><div style="font-weight:700">${h.name}</div><div class="holiday-meta">${h.description||h.type||''}</div></div><div class="holiday-date">${h.date}</div>`;
-            up.appendChild(el);
-          });
-        } else {
-          up.innerHTML = `<div class="holiday-item"><div class="holiday-meta">No upcoming holidays</div></div>`;
-        }
-
-        term('Overview refreshed', 'INFO');
-      } catch (err) {
-        console.error('loadOverview error', err);
-        term('Error refreshing overview: ' + err.message, 'ERROR');
+    // ==================== CANVAS ANIMATIONS ====================
+    
+    // Space background with stars
+    const initSpaceCanvas = () => {
+      const canvas = document.getElementById('space-canvas');
+      const ctx = canvas.getContext('2d');
+      
+      const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      
+      const stars = [];
+      const starCount = 200;
+      
+      for (let i = 0; i < starCount; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 2,
+          speed: Math.random() * 0.5 + 0.1,
+          opacity: Math.random(),
+          opacityDirection: Math.random() > 0.5 ? 1 : -1,
+        });
       }
-    }
-
-    // Trigger holiday check (manual)
-    async function triggerHoliday(btn){
-      try {
-        btn.disabled = true;
-        const orig = btn.innerHTML;
-        btn.innerHTML = '⏳ Triggering...';
-        const res = await fetch('/api/trigger/holiday', { method: 'POST' }).then(r=>r.json());
-        if(res.success) {
-          alert('✅ ' + (res.message || 'Triggered'));
-          term('Manual trigger: ' + (res.message || JSON.stringify(res)));
-        } else {
-          alert('❌ ' + (res.message || res.error || 'Failed'));
-          term('Manual trigger failed: ' + (res.message || res.error || JSON.stringify(res)), 'ERROR');
+      
+      const animateStars = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Nebula gradient
+        const gradient = ctx.createRadialGradient(
+          canvas.width / 2, canvas. height / 2, 0,
+          canvas.width / 2, canvas.height / 2, canvas.width / 2
+        );
+        gradient.addColorStop(0, 'rgba(0, 240, 255, 0.03)');
+        gradient.addColorStop(0.5, 'rgba(255, 0, 208, 0.02)');
+        gradient.addColorStop(1, 'rgba(10, 10, 15, 0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, canvas.width, canvas. height);
+        
+        // Draw stars
+        stars.forEach(star => {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.radius, 0, Math. PI * 2);
+          ctx.fillStyle = `rgba(0, 240, 255, ${star.opacity})`;
+          ctx.fill();
+          
+          // Move stars
+          star.y += star.speed;
+          if (star.y > canvas.height) {
+            star.y = 0;
+            star.x = Math.random() * canvas.width;
+          }
+          
+          // Twinkle effect
+          star.opacity += star.opacityDirection * 0.02;
+          if (star.opacity >= 1 || star.opacity <= 0.2) {
+            star.opacityDirection *= -1;
+          }
+        });
+        
+        requestAnimationFrame(animateStars);
+      };
+      
+      animateStars();
+    };
+    
+    // Matrix rain effect
+    const initMatrixCanvas = () => {
+      const canvas = document.getElementById('matrix-canvas');
+      const ctx = canvas. getContext('2d');
+      
+      const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = Array(Math.floor(columns)).fill(1);
+      
+      const matrixChars = '01アイウエオカキクケコサシスセソタチツテト';
+      
+      const animateMatrix = () => {
+        ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#00f0ff';
+        ctx.font = `${fontSize}px "Share Tech Mono"`;
+        
+        for (let i = 0; i < drops.length; i++) {
+          const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+          const x = i * fontSize;
+          const y = drops[i] * fontSize;
+          
+          ctx.fillText(text, x, y);
+          
+          if (y > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
         }
+      };
+      
+      setInterval(animateMatrix, 50);
+    };
+    
+    // ==================== STATE MANAGEMENT ====================
+    
+    let currentTab = 'overview';
+    let appState = {
+      status: {},
+      todayHoliday: null,
+      upcomingHolidays: [],
+      scheduledItems: [],
+      logs:  [],
+    };
+    
+    // ==================== TAB NAVIGATION ====================
+    
+    const handleTabClick = (tabName, element) => {
+      if (currentTab === tabName) return;
+      
+      // Update ARIA attributes
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+        tab.setAttribute('aria-selected', 'false');
+      });
+      
+      element.classList.add('active');
+      element.setAttribute('aria-selected', 'true');
+      
+      // Hide all panels
+      document.querySelectorAll('.tab-panel').forEach(panel => {
+        panel. classList.add('hidden');
+      });
+      
+      // Show selected panel
+      const panel = document.getElementById(`${tabName}-panel`);
+      if (panel) {
+        panel.classList.remove('hidden');
+      }
+      
+      currentTab = tabName;
+      
+      // Load data for specific tabs
+      if (tabName === 'scheduled') {
+        loadScheduledItems();
+      } else if (tabName === 'logs') {
+        loadLogs();
+      }
+    };
+    
+    const handleKeyDown = (event, callback) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        callback();
+      }
+    };
+    
+    // ==================== API CALLS ====================
+    
+    const fetchData = async (url) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response. status}`);
+        return await response.json();
+      } catch (error) {
+        console.error(`Error fetching ${url}:`, error);
+        return null;
+      }
+    };
+    
+    const loadOverview = async () => {
+      const [status, todayHoliday, upcomingHolidays] = await Promise.all([
+        fetchData('/api/status'),
+        fetchData('/api/holidays/today'),
+        fetchData('/api/holidays/upcoming'),
+      ]);
+      
+      if (status) {
+        appState.status = status;
+        updateStatusUI(status);
+      }
+      
+      if (todayHoliday) {
+        appState.todayHoliday = todayHoliday. holiday;
+        updateTodayHolidayUI(todayHoliday. holiday);
+      }
+      
+      if (upcomingHolidays && upcomingHolidays. holidays) {
+        appState.upcomingHolidays = upcomingHolidays.holidays;
+        updateUpcomingHolidaysUI(upcomingHolidays.holidays);
+      }
+    };
+    
+    const loadScheduledItems = async () => {
+      const data = await fetchData('/api/announcements/scheduled');
+      if (data && data.scheduled) {
+        appState.scheduledItems = data.scheduled;
+        updateScheduledUI(data.scheduled);
+      }
+    };
+    
+    const loadLogs = async () => {
+      const data = await fetchData('/api/logs');
+      if (data) {
+        appState.logs = data;
+        updateLogsUI(data);
+      }
+    };
+    
+    // ==================== UI UPDATES ====================
+    
+    const updateStatusUI = (status) => {
+      // Status text
+      const statusText = document.getElementById('status-text');
+      if (statusText) {
+        statusText. textContent = status.running ? 'RUNNING' : 'PAUSED';
+      }
+      
+      // Timezone
+      const timezoneText = document.getElementById('timezone-text');
+      if (timezoneText && status.config) {
+        timezoneText. textContent = `TZ: ${status.config.timezone || 'N/A'}`;
+      }
+      
+      // Stats
+      const holidayCount = document.getElementById('holiday-count');
+      if (holidayCount) {
+        holidayCount.textContent = status.totalHolidayAnnouncements || 0;
+      }
+      
+      const customCount = document.getElementById('custom-count');
+      if (customCount) {
+        customCount.textContent = status.totalCustomAnnouncements || 0;
+      }
+      
+      // Last run date
+      const lastRunDate = document.getElementById('last-run-date');
+      if (lastRunDate && status.state) {
+        lastRunDate. textContent = status.state.lastRunDate || '—';
+      }
+    };
+    
+    const updateTodayHolidayUI = (holiday) => {
+      const container = document.getElementById('today-holiday');
+      if (! container) return;
+      
+      if (! holiday) {
+        container.innerHTML = '<div class="text-cyan-300/60">NO_HOLIDAY_TODAY</div>';
+        return;
+      }
+      
+      container.innerHTML = `
+        <div class="flex items-center justify-between p-4 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/30">
+          <div>
+            <div class="text-xl font-cyber font-bold glow-text mb-1">${holiday.name}</div>
+            <div class="text-sm text-cyan-300/60">${holiday.description || holiday.type || ''}</div>
+          </div>
+          <div class="text-cyber-magenta font-bold text-lg">${holiday.date}</div>
+        </div>
+      `;
+    };
+    
+    const updateUpcomingHolidaysUI = (holidays) => {
+      const container = document.getElementById('upcoming-holidays');
+      if (!container) return;
+      
+      if (! holidays || holidays.length === 0) {
+        container.innerHTML = '<div class="text-cyan-300/60">NO_UPCOMING_HOLIDAYS</div>';
+        return;
+      }
+      
+      // Show next 30 days only
+      const today = new Date();
+      const next30Days = new Date(today. getTime() + 30 * 24 * 60 * 60 * 1000);
+      const filteredHolidays = holidays. filter(h => {
+        const holidayDate = new Date(h. date);
+        return holidayDate >= today && holidayDate <= next30Days;
+      });
+      
+      container.innerHTML = filteredHolidays.map(holiday => `
+        <div class="flex items-center justify-between p-3 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/20 hover:border-cyber-cyan/50 transition-all">
+          <div class="flex-1">
+            <div class="font-bold text-cyan-200">${holiday.name}</div>
+            <div class="text-xs text-cyan-300/60 mt-1">${holiday.description || holiday.type || ''}</div>
+          </div>
+          <div class="text-cyber-magenta font-bold text-sm ml-4">${holiday.date}</div>
+        </div>
+      `).join('');
+    };
+    
+    const updateScheduledUI = (items) => {
+      const container = document.getElementById('scheduled-list');
+      if (!container) return;
+      
+      const scheduledCount = document.getElementById('scheduled-count');
+      if (scheduledCount) {
+        scheduledCount.textContent = items.length;
+      }
+      
+      if (! items || items.length === 0) {
+        container.innerHTML = '<div class="text-cyan-300/60">NO_SCHEDULED_ITEMS</div>';
+        return;
+      }
+      
+      container.innerHTML = items.map(item => `
+        <div class="p-4 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/20">
+          <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-cyan-200">ID: ${item.id}</span>
+            <span class="px-2 py-1 rounded text-xs ${
+              item.status === 'scheduled' ? 'bg-cyber-yellow/20 text-cyber-yellow' :
+              item.status === 'sent' ? 'bg-green-500/20 text-green-400' :
+              'bg-red-500/20 text-red-400'
+            }">${item.status. toUpperCase()}</span>
+          </div>
+          <div class="text-sm text-cyan-300/60">
+            Scheduled: ${new Date(item.scheduleTime).toLocaleString()}
+          </div>
+        </div>
+      `).join('');
+    };
+    
+    const updateLogsUI = (logs) => {
+      const container = document.getElementById('logs-container');
+      if (!container) return;
+      
+      if (!logs || logs.length === 0) {
+        container.innerHTML = '<div class="text-cyan-300/60">NO_LOGS_AVAILABLE</div>';
+        return;
+      }
+      
+      container.innerHTML = logs.slice(0, 100).map(log => {
+        const typeColor = 
+          log.type === 'ERROR' ? 'text-red-400' :
+          log. type === 'SUCCESS' ? 'text-green-400' :
+          log.type === 'WARNING' ?  'text-yellow-400' :
+          'text-cyber-cyan';
+        
+        return `
+          <div class="mb-2 pb-2 border-b border-cyber-cyan/10">
+            <span class="text-cyan-300/60 text-xs">[${new Date(log.timestamp).toLocaleString()}]</span>
+            <span class="${typeColor} font-bold text-xs ml-2">[${log.type}]</span>
+            <div class="mt-1 text-cyan-200">${log.message}</div>
+          </div>
+        `;
+      }).join('');
+    };
+    
+    // ==================== ACTION HANDLERS ====================
+    
+    const handleTriggerHoliday = async (button) => {
+      if (button.disabled) return;
+      
+      button.disabled = true;
+      const originalText = button.innerHTML;
+      button.innerHTML = '<div class="loading-spinner inline-block"></div> TRIGGERING...';
+      
+      try {
+        const response = await fetch('/api/trigger/holiday', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('✅ Holiday check triggered successfully!\n\n' + (data.message || ''));
+        } else {
+          alert('❌ Failed to trigger holiday check:\n\n' + (data.message || data.error || 'Unknown error'));
+        }
+        
         await loadOverview();
-      } catch(e){
-        alert('❌ Error: ' + e.message);
-        term('Trigger error: ' + e.message, 'ERROR');
+      } catch (error) {
+        alert('❌ Error:  ' + error.message);
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = orig;
+        button.disabled = false;
+        button.innerHTML = originalText;
       }
-    }
-
-    // Force New Year test
-    async function forceNewYear(btn){
+    };
+    
+    const handleTestNewYear = async (button) => {
+      if (button.disabled) return;
+      
+      button.disabled = true;
+      const originalText = button. innerHTML;
+      button.innerHTML = '<div class="loading-spinner inline-block"></div> SENDING...';
+      
       try {
-        btn.disabled = true;
-        const orig = btn.innerHTML;
-        btn.innerHTML = '⏳ Sending...';
-        const res = await fetch('/api/test/newyear', { method: 'POST' }).then(r=>r.json());
-        if(res.success) {
-          alert('✅ New Year announcement sent');
-          term('New Year test sent successfully');
+        const response = await fetch('/api/test/newyear', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+          alert('✅ New Year test announcement sent successfully! ');
         } else {
-          alert('❌ Failed: ' + (res.error||'Unknown'));
-          term('New Year test failed: ' + (res.error||JSON.stringify(res)), 'ERROR');
+          alert('❌ Failed to send test announcement:\n\n' + (data.error || 'Unknown error'));
         }
+        
         await loadOverview();
-      } catch(e){
-        alert('❌ Error: ' + e.message);
-        term('New Year test error: ' + e.message, 'ERROR');
+      } catch (error) {
+        alert('❌ Error: ' + error.message);
       } finally {
-        btn.disabled = false;
-        btn.innerHTML = orig;
+        button.disabled = false;
+        button.innerHTML = originalText;
       }
+    };
+    
+    const handleRefreshLogs = async () => {
+      await loadLogs();
+    };
+    
+    // ==================== INITIALIZATION ====================
+    
+    const init = () => {
+      // Initialize canvas animations
+      initSpaceCanvas();
+      initMatrixCanvas();
+      
+      // Load initial data
+      loadOverview();
+      
+      // Auto-refresh every 60 seconds
+      setInterval(loadOverview, 60000);
+    };
+    
+    // Start when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
     }
-
-    // Logs
-    async function refreshLogs(){
-      try {
-        const logs = await fetch('/api/logs').then(r=>r.json());
-        const container = document.getElementById('logContainer');
-        if(!logs || logs.length === 0){
-          container.innerHTML = '<div class="log-line">No logs available</div>';
-          return;
-        }
-        container.innerHTML = logs.slice(0,200).map(l=>{
-          const t = new Date(l.timestamp).toLocaleString();
-          const type = (l.type || 'INFO').toUpperCase();
-          return `<div class="log-line"><span class="log-time">[${t}]</span> <span class="log-type ${type}">${type}</span> — <span style="color:#cfeffd">${l.message}</span></div>`;
-        }).join('');
-        term('Logs refreshed', 'INFO');
-      } catch(e){
-        console.error(e);
-        term('Failed to refresh logs: ' + e.message, 'ERROR');
-      }
-    }
-
-    function clearTerminal(){
-      const t = document.getElementById('terminalLines');
-      t.innerHTML = '';
-      term('Terminal cleared', 'INFO');
-    }
-
-    // Auto-refresh overview and logs every 90s to keep UI fresh
-    async function bootstrap(){
-      await loadOverview();
-      await refreshLogs();
-      setInterval(loadOverview, 90*1000);
-      setInterval(refreshLogs, 90*1000);
-    }
-
-    // Init
-    window.addEventListener('load', ()=>{
-      bootstrap();
-      term('Dashboard ready — polling status and logs');
-    });
   </script>
 </body>
 </html>

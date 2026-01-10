@@ -847,50 +847,50 @@
   <script>
     // ==================== UTILITIES ====================
     
-    const createParticles = () => {
-      const container = document.getElementById('particles');
-      for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.animationDelay = `${Math.random() * 20}s`;
-        particle.style.animationDuration = `${15 + Math.random() * 10}s`;
-        container.appendChild(particle);
-      }
-    };
+     const createParticles = () => {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = `${Math.random() * 100}%`;
+      particle.style.animationDelay = `${Math.random() * 20}s`;
+      particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+      container.appendChild(particle);
+    }
+  };
 
-    const showToast = (message, type = 'info') => {
-      const container = document.getElementById('toast-container');
-      const toast = document. createElement('div');
-      
-      const colors = {
-        success: 'from-green-500/20 to-green-600/20 border-green-400',
-        error: 'from-red-500/20 to-red-600/20 border-red-400',
-        info: 'from-neon-blue/20 to-neon-blue/20 border-neon-blue',
-        warning: 'from-yellow-500/20 to-yellow-600/20 border-yellow-400',
-      };
-      
-      const icons = {
-        success: '✅',
-        error: '❌',
-        info: 'ℹ️',
-        warning: '⚠️',
-      };
-      
-      toast.className = `toast glass-strong rounded-2xl p-4 border ${colors[type]} flex items-center gap-4`;
-      toast.innerHTML = `
-        <span class="text-3xl">${icons[type]}</span>
-        <span class="flex-1 font-semibold">${message}</span>
-        <button onclick="this.parentElement.remove()" class="text-2xl hover:scale-110 transition-transform" aria-label="Close">×</button>
-      `;
-      
-      container.appendChild(toast);
-      
-      setTimeout(() => {
-        toast.style.animation = 'fadeOut 0.3s ease-out';
-        setTimeout(() => toast.remove(), 300);
-      }, 5000);
+  const showToast = (message, type = 'info') => {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    
+    const colors = {
+      success: 'from-green-500/20 to-green-600/20 border-green-400',
+      error: 'from-red-500/20 to-red-600/20 border-red-400',
+      info: 'from-neon-blue/20 to-neon-blue/20 border-neon-blue',
+      warning: 'from-yellow-500/20 to-yellow-600/20 border-yellow-400',
     };
+    
+    const icons = {
+      success: '✅',
+      error: '❌',
+      info: 'ℹ️',
+      warning: '⚠️',
+    };
+    
+    toast.className = `toast glass-strong rounded-2xl p-4 border ${colors[type]} flex items-center gap-4`;
+    toast.innerHTML = `
+      <span class="text-3xl">${icons[type]}</span>
+      <span class="flex-1 font-semibold">${message}</span>
+      <button onclick="this.parentElement.remove()" class="text-2xl hover:scale-110 transition-transform" aria-label="Close">×</button>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.animation = 'fadeOut 0.3s ease-out';
+      setTimeout(() => toast.remove(), 300);
+    }, 5000);
+  };
 
     // ==================== COUNTDOWN ====================
     
@@ -1232,3 +1232,4 @@
   </script>
 </body>
 </html>
+

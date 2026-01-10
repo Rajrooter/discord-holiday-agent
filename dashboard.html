@@ -1,4 +1,4 @@
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -38,12 +38,11 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background:  #0a0e27;
+      background: #0a0e27;
       color: #fff;
       overflow-x: hidden;
     }
 
-    /* Animated gradient background */
     .gradient-bg {
       position: fixed;
       inset: 0;
@@ -64,14 +63,13 @@
       50% { background-position:  100% 50%; }
     }
 
-    /* Floating particles */
     .particle {
       position: fixed;
       width: 4px;
       height: 4px;
       background: rgba(0, 212, 255, 0.6);
       border-radius: 50%;
-      pointer-events: none;
+      pointer-events:  none;
       animation: float 20s infinite;
     }
 
@@ -88,7 +86,6 @@
       }
     }
 
-    /* Glass panel */
     .glass {
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(20px);
@@ -98,7 +95,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    . glass-strong {
+    .glass-strong {
       background: rgba(255, 255, 255, 0.06);
       backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -107,19 +104,17 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
-    /* Content wrapper */
     .content {
       position: relative;
       z-index: 10;
     }
 
-    /* Glowing text */
     .glow {
       text-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
                    0 0 40px rgba(0, 212, 255, 0.3);
     }
 
-    . glow-purple {
+    .glow-purple {
       text-shadow: 0 0 20px rgba(181, 55, 255, 0.5),
                    0 0 40px rgba(181, 55, 255, 0.3);
     }
@@ -129,7 +124,6 @@
                    0 0 40px rgba(255, 61, 154, 0.3);
     }
 
-    /* Button hover effects */
     .btn {
       position: relative;
       overflow: hidden;
@@ -154,12 +148,11 @@
       height: 300px;
     }
 
-    . btn: hover {
-      transform: translateY(-2px);
+    . btn:hover {
+      transform:  translateY(-2px);
       box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
     }
 
-    /* Card hover lift */
     .card {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -169,8 +162,7 @@
       box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
     }
 
-    /* Pulse animation */
-    . pulse {
+    .pulse {
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
@@ -179,8 +171,7 @@
       50% { opacity: 0.5; }
     }
 
-    /* Bounce animation */
-    .bounce {
+    . bounce {
       animation: bounce 1s infinite;
     }
 
@@ -189,7 +180,6 @@
       50% { transform: translateY(-10px); }
     }
 
-    /* Fade in animation */
     .fade-in {
       animation: fadeIn 0.6s ease-out;
     }
@@ -205,7 +195,6 @@
       }
     }
 
-    /* Scale in animation */
     .scale-in {
       animation: scaleIn 0.4s ease-out;
     }
@@ -221,14 +210,13 @@
       }
     }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
+    : :-webkit-scrollbar {
       width: 10px;
       height: 10px;
     }
 
-    ::-webkit-scrollbar-track {
-      background:  rgba(0, 212, 255, 0.05);
+    : :-webkit-scrollbar-track {
+      background: rgba(0, 212, 255, 0.05);
       border-radius: 10px;
     }
 
@@ -237,11 +225,10 @@
       border-radius: 10px;
     }
 
-    ::-webkit-scrollbar-thumb:hover {
+    : :-webkit-scrollbar-thumb: hover {
       background: rgba(0, 212, 255, 0.5);
     }
 
-    /* Robot mascot */
     .robot {
       animation: robotFloat 3s ease-in-out infinite;
     }
@@ -255,7 +242,6 @@
       }
     }
 
-    /* Status indicator */
     .status-dot {
       animation: statusPulse 2s ease-in-out infinite;
     }
@@ -269,36 +255,34 @@
       }
     }
 
-    /* Tab active state */
     .tab {
       position: relative;
       transition: all 0.3s ease;
     }
 
-    .tab::after {
+    .tab:: after {
       content: '';
       position: absolute;
       bottom:  -2px;
       left: 50%;
       width: 0;
-      height: 3px;
+      height:  3px;
       background: linear-gradient(90deg, #00d4ff, #b537ff);
       transform: translateX(-50%);
       transition: width 0.3s ease;
       border-radius: 10px;
     }
 
-    . tab.active::after,
+    . tab. active::after,
     .tab:hover::after {
       width: 80%;
     }
 
-    /* Toast notification */
     .toast {
       position: fixed;
-      top:  24px;
+      top: 24px;
       right: 24px;
-      z-index:  9999;
+      z-index: 9999;
       animation: slideDown 0.3s ease-out;
       max-width: 400px;
     }
@@ -310,54 +294,12 @@
       }
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform:  translateY(0);
       }
     }
 
-    /* Tooltip */
-    .tooltip {
-      position: relative;
-    }
-
-    .tooltip::before {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 8px 16px;
-      background: rgba(0, 212, 255, 0.95);
-      color: #0a0e27;
-      border-radius: 8px;
-      font-size:  13px;
-      font-weight:  600;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s, transform 0.3s;
-    }
-
-    .tooltip::after {
-      content: '';
-      position: absolute;
-      bottom:  calc(100% + 2px);
-      left: 50%;
-      transform: translateX(-50%);
-      border: 6px solid transparent;
-      border-top-color: rgba(0, 212, 255, 0.95);
-      opacity: 0;
-      pointer-events: none;
-      transition:  opacity 0.3s, transform 0.3s;
-    }
-
-    .tooltip:hover::before,
-    .tooltip:hover::after {
-      opacity:  1;
-    }
-
-    /* Empty state */
     .empty-state {
-      text-align:  center;
+      text-align: center;
       padding: 60px 20px;
       opacity: 0.6;
     }
@@ -372,7 +314,6 @@
       50% { transform: translateY(-20px); }
     }
 
-    /* Loading skeleton */
     .skeleton {
       background: linear-gradient(
         90deg,
@@ -390,7 +331,6 @@
       100% { background-position: 200% 0; }
     }
 
-    /* Badge */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -403,7 +343,6 @@
       border: 1px solid rgba(0, 212, 255, 0.3);
     }
 
-    /* Focus styles for accessibility */
     *:focus-visible {
       outline: 3px solid rgba(0, 212, 255, 0.6);
       outline-offset: 3px;
@@ -413,7 +352,6 @@
       display: none !important;
     }
 
-    /* Form inputs */
     input, textarea, select {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -430,44 +368,65 @@
       box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
     }
 
-    input:: placeholder, textarea::placeholder {
+    input::placeholder, textarea::placeholder {
       color: rgba(255, 255, 255, 0.4);
     }
 
     label {
       display: block;
       margin-bottom: 8px;
-      font-weight:  600;
+      font-weight: 600;
       font-size: 14px;
       color: rgba(255, 255, 255, 0.9);
     }
 
-    /* Fix dropdown visibility */
     select {
       background: rgba(10, 14, 39, 0.95) !important;
-      border: 1px solid rgba(0, 212, 255, 0.3) !important;
+      border: 2px solid rgba(0, 212, 255, 0.3) !important;
       color: white !important;
+      padding: 16px 20px !important;
+      padding-right: 40px !important;
+      font-size: 15px !important;
+      font-weight: 600 !important;
       cursor: pointer !important;
+      transition: all 0.3s ease !important;
+    }
+
+    select:hover {
+      border-color: rgba(0, 212, 255, 0.6) !important;
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.2) !important;
+    }
+
+    select:focus {
+      border-color: rgba(0, 212, 255, 1) !important;
+      box-shadow: 0 0 30px rgba(0, 212, 255, 0.4) !important;
     }
 
     select option {
       background: #0a0e27 !important;
       color: white !important;
+      padding: 16px ! important;
+      font-weight: 600 !important;
+    }
+
+    select optgroup {
+      background: #05080f !important;
+      color: #00d4ff !important;
+      font-weight: 700 !important;
       padding: 12px !important;
+      font-style: normal !important;
     }
 
-    select:hover {
-      border-color: rgba(0, 212, 255, 0.6) !important;
-    }
-
-    /* Pipeline flowchart styles */
+    /* PIPELINE STYLES */
     .pipeline {
       display: flex;
       align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 0;
+      flex-wrap: nowrap;
       justify-content: center;
-      padding: 24px;
+      padding: 40px 24px;
+      position: relative;
+      overflow: visible;
     }
 
     .pipeline-step {
@@ -475,70 +434,359 @@
       flex-direction: column;
       align-items: center;
       gap: 12px;
-      min-width: 120px;
+      position: relative;
+      z-index: 2;
     }
 
-    . pipeline-box {
+    .pipeline-box {
       background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(0, 212, 255, 0.3);
-      border-radius: 16px;
-      padding: 20px;
+      border: 2px solid rgba(0, 212, 255, 0.4);
+      border-radius: 20px;
+      padding: 24px;
       text-align: center;
-      transition: all 0.3s ease;
-      min-width: 140px;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      min-width: 160px;
+      position: relative;
+      box-shadow: 
+        0 0 20px rgba(0, 212, 255, 0.1),
+        inset 0 0 20px rgba(0, 212, 255, 0.05);
     }
 
-    . pipeline-box:hover {
-      transform: translateY(-4px);
-      border-color: rgba(0, 212, 255, 0.8);
-      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+    .pipeline-box:: before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(45deg, 
+        transparent,
+        rgba(0, 212, 255, 0.3),
+        transparent,
+        rgba(181, 55, 255, 0.3),
+        transparent
+      );
+      background-size: 200% 200%;
+      border-radius: 20px;
+      opacity: 0;
+      z-index: -1;
+      animation: borderGlow 3s ease-in-out infinite;
+      filter: blur(4px);
+    }
+
+    @keyframes borderGlow {
+      0%, 100% {
+        background-position: 0% 50%;
+        opacity: 0.3;
+      }
+      50% {
+        background-position:  100% 50%;
+        opacity: 0.6;
+      }
+    }
+
+    . pipeline-box. active {
+      transform: translateY(-8px) scale(1.05);
+      border-color: rgba(0, 212, 255, 1);
+      box-shadow: 
+        0 0 40px rgba(0, 212, 255, 0.6),
+        0 20px 60px rgba(0, 212, 255, 0.3),
+        inset 0 0 30px rgba(0, 212, 255, 0.2);
+    }
+
+    .pipeline-box: hover {
+      transform: translateY(-8px) scale(1.05);
+      border-color: rgba(0, 212, 255, 0.9);
+      box-shadow: 
+        0 0 30px rgba(0, 212, 255, 0.5),
+        0 15px 50px rgba(0, 212, 255, 0.3);
     }
 
     .pipeline-icon {
-      font-size: 32px;
-      margin-bottom:  8px;
+      font-size: 40px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
     }
 
     .pipeline-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.95);
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
     }
 
-    .pipeline-arrow {
-      font-size: 24px;
-      color: rgba(0, 212, 255, 0.6);
-      animation: arrowPulse 2s ease-in-out infinite;
+    .pipeline-connection {
+      position: relative;
+      width: 120px;
+      height: 4px;
+      margin: 0 20px;
+      background: rgba(0, 212, 255, 0.2);
+      border-radius: 10px;
+      overflow: visible;
     }
 
-    @keyframes arrowPulse {
-      0%, 100% {
-        opacity: 0. 6;
-        transform: translateX(0);
+    .pipeline-connection::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(0, 212, 255, 0.8) 30%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(0, 212, 255, 0.8) 70%,
+        transparent
+      );
+      border-radius: 10px;
+      animation: electricFlow 2s ease-in-out infinite;
+      box-shadow: 
+        0 0 10px rgba(0, 212, 255, 0.8),
+        0 0 20px rgba(0, 212, 255, 0.4);
+    }
+
+    @keyframes electricFlow {
+      0% {
+        transform: translateX(-100%);
+        opacity: 0;
       }
       50% {
-        opacity:  1;
-        transform: translateX(4px);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(200%);
+        opacity: 0;
       }
     }
 
-    . pipeline-title {
-      font-size: 18px;
-      font-weight:  700;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .pipeline-connection:: after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: #00d4ff;
+      border-radius: 50%;
+      left: 0;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 
+        0 0 15px rgba(0, 212, 255, 1),
+        0 0 30px rgba(0, 212, 255, 0.6);
+      animation: particleFlow 2s ease-in-out infinite;
     }
 
-    /* Button group */
+    @keyframes particleFlow {
+      0% {
+        left: 0;
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+      }
+      10% {
+        opacity: 1;
+        transform:  translate(-50%, -50%) scale(1);
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        left: 100%;
+        opacity: 0;
+        transform:  translate(-50%, -50%) scale(0.5);
+      }
+    }
+
+    .electric-arrow {
+      position: relative;
+      width: 80px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin:  0 10px;
+    }
+
+    .electric-arrow svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.6));
+    }
+
+    .arrow-path {
+      fill: none;
+      stroke: url(#electricGradient);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawArrow 2s ease-in-out infinite;
+    }
+
+    @keyframes drawArrow {
+      0% {
+        stroke-dashoffset: 1000;
+        opacity: 0.3;
+      }
+      50% {
+        stroke-dashoffset: 0;
+        opacity: 1;
+      }
+      100% {
+        stroke-dashoffset: -1000;
+        opacity: 0.3;
+      }
+    }
+
+    .pipeline-box:: after {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border:  2px solid rgba(0, 212, 255, 0.6);
+      border-radius: 24px;
+      opacity: 0;
+      animation:  triggerPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes triggerPulse {
+      0%, 90%, 100% {
+        transform: scale(1);
+        opacity: 0;
+      }
+      45% {
+        transform: scale(1.2);
+        opacity: 0.6;
+      }
+    }
+
+    .pipeline-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.1;
+      background-image: 
+        linear-gradient(90deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(0, 212, 255, 0.1) 1px, transparent 1px);
+      background-size:  40px 40px;
+      animation: circuitMove 20s linear infinite;
+    }
+
+    @keyframes circuitMove {
+      0% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: 40px 40px;
+      }
+    }
+
+    .connection-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #00d4ff;
+      border-radius: 50%;
+      box-shadow: 
+        0 0 20px rgba(0, 212, 255, 1),
+        0 0 40px rgba(0, 212, 255, 0.6),
+        inset 0 0 10px rgba(255, 255, 255, 0.5);
+      animation: dotPulse 2s ease-in-out infinite;
+      z-index: 3;
+    }
+
+    @keyframes dotPulse {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 
+          0 0 20px rgba(0, 212, 255, 1),
+          0 0 40px rgba(0, 212, 255, 0.6);
+      }
+      50% {
+        transform: scale(1.3);
+        box-shadow: 
+          0 0 30px rgba(0, 212, 255, 1),
+          0 0 60px rgba(0, 212, 255, 0.8);
+      }
+    }
+
+    .energy-wave {
+      position: absolute;
+      width: 100%;
+      height:  2px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(0, 212, 255, 0.5),
+        rgba(0, 212, 255, 1),
+        rgba(0, 212, 255, 0.5),
+        transparent
+      );
+      top: 50%;
+      left: 0;
+      transform:  translateY(-50%);
+      animation: waveFlow 3s ease-in-out infinite;
+      box-shadow: 0 0 15px rgba(0, 212, 255, 0.8);
+    }
+
+    @keyframes waveFlow {
+      0% {
+        transform: translateX(-100%) translateY(-50%) scaleX(0.5);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+        transform: translateX(0) translateY(-50%) scaleX(1);
+      }
+      100% {
+        transform: translateX(100%) translateY(-50%) scaleX(0.5);
+        opacity: 0;
+      }
+    }
+
+    .pipeline-connection. purple:: before {
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(181, 55, 255, 0.8) 30%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(181, 55, 255, 0.8) 70%,
+        transparent
+      );
+      box-shadow: 
+        0 0 10px rgba(181, 55, 255, 0.8),
+        0 0 20px rgba(181, 55, 255, 0.4);
+    }
+
+    .pipeline-connection.purple::after {
+      background: #b537ff;
+      box-shadow:  
+        0 0 15px rgba(181, 55, 255, 1),
+        0 0 30px rgba(181, 55, 255, 0.6);
+    }
+
+    .pipeline-box.purple {
+      border-color: rgba(181, 55, 255, 0.4);
+      box-shadow: 
+        0 0 20px rgba(181, 55, 255, 0.1),
+        inset 0 0 20px rgba(181, 55, 255, 0.05);
+    }
+
+    .pipeline-box.purple:hover {
+      border-color: rgba(181, 55, 255, 0.9);
+      box-shadow: 
+        0 0 30px rgba(181, 55, 255, 0.5),
+        0 15px 50px rgba(181, 55, 255, 0.3);
+    }
+
     .button-group {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
     }
 
-    /* Image options */
+    /* IMAGE OPTIONS */
     .image-options {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -547,10 +795,10 @@
       margin-top: 12px;
     }
 
-    . image-mode-selector {
+    .image-mode-selector {
       display: flex;
       gap: 12px;
-      margin-bottom:  24px;
+      margin-bottom: 24px;
       flex-wrap: wrap;
     }
 
@@ -566,8 +814,8 @@
       text-align: center;
     }
 
-    .image-mode-btn:hover {
-      border-color: rgba(0, 212, 255, 0.5);
+    .image-mode-btn: hover {
+      border-color:  rgba(0, 212, 255, 0.5);
       background: rgba(0, 212, 255, 0.05);
       transform: translateY(-2px);
     }
@@ -579,12 +827,12 @@
     }
 
     .image-mode-btn . icon {
-      font-size:  32px;
-      margin-bottom:  8px;
+      font-size: 32px;
+      margin-bottom: 8px;
     }
 
-    .image-mode-btn . label {
-      font-size:  13px;
+    .image-mode-btn .label {
+      font-size: 13px;
       font-weight: 600;
       color: rgba(255, 255, 255, 0.8);
     }
@@ -609,12 +857,12 @@
     }
 
     .upload-area:hover {
-      border-color: rgba(0, 212, 255, 0.6);
+      border-color:  rgba(0, 212, 255, 0.6);
       background: rgba(0, 212, 255, 0.05);
     }
 
     .upload-area.dragover {
-      border-color:  rgba(0, 212, 255, 1);
+      border-color: rgba(0, 212, 255, 1);
       background: rgba(0, 212, 255, 0.1);
     }
 
@@ -657,8 +905,8 @@
       background: rgba(0, 212, 255, 0.05);
     }
 
-    .size-option. active {
-      border-color:  rgba(0, 212, 255, 0.8);
+    .size-option.active {
+      border-color: rgba(0, 212, 255, 0.8);
       background: rgba(0, 212, 255, 0.1);
     }
 
@@ -691,8 +939,8 @@
       padding: 12px;
       background: rgba(255, 255, 255, 0.03);
       border-radius: 8px;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
+      font-size:  13px;
+      color:  rgba(255, 255, 255, 0.7);
     }
 
     input[type="file"] {
@@ -705,14 +953,13 @@
       color: white;
       padding: 16px;
       border-radius:  12px;
-      width:  100%;
+      width: 100%;
       font-family: 'Inter', sans-serif;
       margin-top: 12px;
       min-height: 80px;
       resize: vertical;
     }
 
-    /* Discord rules */
     .discord-rules {
       background: rgba(255, 165, 0, 0.1);
       border: 1px solid rgba(255, 165, 0, 0.3);
@@ -731,10 +978,10 @@
       margin-bottom: 8px;
     }
 
-    .discord-rules-list {
+    . discord-rules-list {
       list-style: none;
       padding: 0;
-      margin: 0;
+      margin:  0;
       color: rgba(255, 255, 255, 0.8);
     }
 
@@ -745,19 +992,18 @@
       gap: 8px;
     }
 
-    .discord-rules-list li::before {
+    .discord-rules-list li:: before {
       content: "→";
       color: #ffa500;
       font-weight: bold;
     }
 
-    /* Validation errors */
     .validation-error {
       background: rgba(239, 68, 68, 0.15);
       border: 2px solid rgba(239, 68, 68, 0.5);
       border-radius: 12px;
       padding: 16px;
-      margin-top: 12px;
+      margin-top:  12px;
       animation: shake 0.5s ease;
     }
 
@@ -772,7 +1018,7 @@
       align-items: center;
       gap: 8px;
       font-weight: 700;
-      color: #ef4444;
+      color:  #ef4444;
       margin-bottom: 8px;
       font-size: 15px;
     }
@@ -780,22 +1026,73 @@
     . validation-error-message {
       color: rgba(255, 255, 255, 0.9);
       font-size: 14px;
-      line-height: 1.6;
+      line-height:  1.6;
     }
 
-    . file-type-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius:  6px;
-      font-size:  11px;
-      font-weight:  700;
-      background: rgba(0, 212, 255, 0.15);
-      border: 1px solid rgba(0, 212, 255, 0.3);
+    .gif-tools-section {
+      margin-top: 20px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(181, 55, 255, 0.05));
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 16px;
+    }
+
+    .gif-tools-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
       color: #00d4ff;
-      margin:  4px;
+      margin-bottom: 16px;
     }
 
-    . success-message {
+    . gif-tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    . gif-tool-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .gif-tool-card:hover {
+      transform: translateY(-4px);
+      background: rgba(0, 212, 255, 0.1);
+      border-color: rgba(0, 212, 255, 0.5);
+      box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
+    }
+
+    .gif-tool-icon {
+      font-size: 32px;
+      margin-bottom:  8px;
+    }
+
+    .gif-tool-name {
+      font-size: 13px;
+      font-weight:  600;
+      color: #00d4ff;
+      text-align: center;
+    }
+
+    .gif-tool-desc {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .success-message {
       padding: 12px;
       background: rgba(34, 197, 94, 0.1);
       border: 1px solid rgba(34, 197, 94, 0.3);
@@ -812,20 +1109,55 @@
       border-radius: 8px;
       color: #ef4444;
       margin-top: 12px;
-      font-size:  13px;
+      font-size: 13px;
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
+    /* CHANNEL SELECTOR STYLES */
+    #bot-status {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    #bot-status.connected {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+    }
+
+    #bot-status.connected .w-2 {
+      background: #22c55e;
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    #bot-status.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+    }
+
+    #bot-status.error .w-2 {
+      background: #ef4444;
+    }
+
+    #channel-preview {
+      animation: slideDown 0.3s ease-out;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
       .pipeline {
-        flex-direction: column;
-        gap: 12px;
+        flex-wrap: wrap;
+        gap: 40px;
       }
       
-      .pipeline-arrow {
+      .pipeline-connection {
+        display: none;
+      }
+
+      .electric-arrow {
         transform: rotate(90deg);
+        margin:  20px 0;
       }
-      
+    }
+
+    @media (max-width: 768px) {
       .button-group {
         flex-direction: column;
       }
@@ -860,41 +1192,25 @@
           <!-- Cute Robot SVG -->
           <div class="robot">
             <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Robot body -->
               <rect x="30" y="40" width="60" height="50" rx="20" fill="url(#robotGradient)" />
-              
-              <!-- Robot head -->
               <rect x="40" y="15" width="40" height="35" rx="15" fill="url(#robotGradient)" />
-              
-              <!-- Antenna -->
               <line x1="60" y1="10" x2="60" y2="5" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
               <circle cx="60" cy="3" r="3" fill="#ff3d9a"/>
-              
-              <!-- Eyes -->
               <circle cx="50" cy="28" r="5" fill="#00d4ff" class="pulse"/>
               <circle cx="70" cy="28" r="5" fill="#00d4ff" class="pulse"/>
-              
-              <!-- Smile -->
               <path d="M 45 38 Q 60 45 75 38" stroke="#00d4ff" stroke-width="3" stroke-linecap="round" fill="none"/>
-              
-              <!-- Arms -->
               <rect x="20" y="50" width="10" height="25" rx="5" fill="url(#armGradient)"/>
               <rect x="90" y="50" width="10" height="25" rx="5" fill="url(#armGradient)"/>
-              
-              <!-- Legs -->
               <rect x="40" y="90" width="12" height="20" rx="6" fill="url(#legGradient)"/>
               <rect x="68" y="90" width="12" height="20" rx="6" fill="url(#legGradient)"/>
-              
-              <!-- Heart on chest -->
               <path d="M 60 55 L 65 50 Q 70 48 70 53 Q 70 58 60 65 Q 50 58 50 53 Q 50 48 55 50 Z" fill="#ff3d9a" opacity="0.8"/>
-              
               <defs>
                 <linearGradient id="robotGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.8" />
                   <stop offset="100%" style="stop-color:#b537ff;stop-opacity:0.8" />
                 </linearGradient>
                 <linearGradient id="armGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+                  <stop offset="0%" style="stop-color:#00d4ff;stop-opacity: 0.6" />
                   <stop offset="100%" style="stop-color:#b537ff;stop-opacity:0.6" />
                 </linearGradient>
                 <linearGradient id="legGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -926,11 +1242,11 @@
           </div>
           <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
             <span class="text-sm">🌍</span>
-            <span class="text-gray-300 font-semibold text-sm" id="timezone-text">Loading...</span>
+            <span class="text-gray-300 font-semibold text-sm" id="timezone-text">Loading... </span>
           </div>
           <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
             <span class="text-sm">⏰</span>
-            <span class="text-gray-300 font-semibold text-sm" id="uptime-text">Starting...</span>
+            <span class="text-gray-300 font-semibold text-sm" id="uptime-text">Starting... </span>
           </div>
         </div>
       </div>
@@ -955,7 +1271,7 @@
       <button 
         class="tab active flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        data-tooltip="Dashboard overview"
+        aria-label="Dashboard overview"
         onclick="switchTab('overview')"
       >
         📊 Overview
@@ -963,7 +1279,7 @@
       <button 
         class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        data-tooltip="Holiday management"
+        aria-label="Holiday management"
         onclick="switchTab('holidays')"
       >
         🎉 Holidays
@@ -971,7 +1287,7 @@
       <button 
         class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        data-tooltip="Custom announcements"
+        aria-label="Custom announcements"
         onclick="switchTab('custom')"
       >
         📢 Custom
@@ -979,7 +1295,7 @@
       <button 
         class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        data-tooltip="Scheduled items"
+        aria-label="Scheduled items"
         onclick="switchTab('scheduled')"
       >
         📅 Scheduled
@@ -987,7 +1303,7 @@
       <button 
         class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        data-tooltip="Activity logs"
+        aria-label="Activity logs"
         onclick="switchTab('logs')"
       >
         📋 Logs
@@ -1000,7 +1316,6 @@
       <div id="overview-panel" class="panel">
         <!-- Stats cards -->
         <div class="grid grid-cols-1 md: grid-cols-3 gap-6 mb-8">
-          <!-- Holiday announcements -->
           <div class="card glass-strong rounded-2xl p-8 scale-in">
             <div class="flex items-center justify-between mb-6">
               <span class="text-6xl bounce">🎊</span>
@@ -1014,7 +1329,6 @@
             <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
           </div>
 
-          <!-- Custom announcements -->
           <div class="card glass-strong rounded-2xl p-8 scale-in" style="animation-delay: 0.1s">
             <div class="flex items-center justify-between mb-6">
               <span class="text-6xl bounce" style="animation-delay: 0.2s">📢</span>
@@ -1028,7 +1342,6 @@
             <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
           </div>
 
-          <!-- Scheduled items -->
           <div class="card glass-strong rounded-2xl p-8 scale-in" style="animation-delay: 0.2s">
             <div class="flex items-center justify-between mb-6">
               <span class="text-6xl bounce" style="animation-delay: 0.4s">⏰</span>
@@ -1044,11 +1357,12 @@
         </div>
 
         <!-- Pipeline Flowcharts -->
-        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay:  0.25s">
+        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay: 0.25s">
           <h2 class="text-2xl font-black glow mb-8 text-center">System Pipelines</h2>
           
           <!-- Automated Holiday Pipeline -->
-          <div class="glass p-6 rounded-xl mb-6">
+          <div class="glass p-8 rounded-xl mb-6 relative overflow-hidden">
+            <div class="pipeline-bg"></div>
             <div class="pipeline-title">
               <span class="text-3xl">🎉</span>
               <span class="glow">Automated Holiday Announcement Flow</span>
@@ -1057,95 +1371,170 @@
               <div class="pipeline-step">
                 <div class="pipeline-box">
                   <div class="pipeline-icon">⏰</div>
-                  <div class="pipeline-label">Midnight Trigger</div>
+                  <div class="pipeline-label">Midnight<br>Trigger</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="electricGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.3" />
+                      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0.3" />
+                    </linearGradient>
+                  </defs>
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" />
+                </svg>
+              </div>
+              <div class="pipeline-connection">
+                <div class="energy-wave"></div>
+              </div>
+              <div class="connection-dot" style="right: -6px; top: 50%; transform: translateY(-50%);"></div>
               
               <div class="pipeline-step">
                 <div class="pipeline-box">
                   <div class="pipeline-icon">🔍</div>
-                  <div class="pipeline-label">Fetch Holidays</div>
+                  <div class="pipeline-label">Fetch<br>Holidays</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" />
+                </svg>
+              </div>
+              <div class="pipeline-connection">
+                <div class="energy-wave" style="animation-delay: 0.5s;"></div>
+              </div>
+              <div class="connection-dot" style="right: -6px; top: 50%; transform: translateY(-50%);"></div>
               
               <div class="pipeline-step">
                 <div class="pipeline-box">
                   <div class="pipeline-icon">🤖</div>
-                  <div class="pipeline-label">Gemini AI</div>
+                  <div class="pipeline-label">Gemini<br>AI</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" />
+                </svg>
+              </div>
+              <div class="pipeline-connection">
+                <div class="energy-wave" style="animation-delay:  1s;"></div>
+              </div>
+              <div class="connection-dot" style="right: -6px; top:  50%; transform: translateY(-50%);"></div>
               
               <div class="pipeline-step">
                 <div class="pipeline-box">
                   <div class="pipeline-icon">📡</div>
-                  <div class="pipeline-label">Webhook API</div>
+                  <div class="pipeline-label">Webhook<br>API</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" />
+                </svg>
+              </div>
+              <div class="pipeline-connection">
+                <div class="energy-wave" style="animation-delay:  1.5s;"></div>
+              </div>
+              <div class="connection-dot" style="right: -6px; top: 50%; transform: translateY(-50%);"></div>
               
               <div class="pipeline-step">
                 <div class="pipeline-box">
                   <div class="pipeline-icon">✅</div>
-                  <div class="pipeline-label">Discord Sent</div>
+                  <div class="pipeline-label">Discord<br>Sent</div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Custom Announcement Pipeline -->
-          <div class="glass p-6 rounded-xl">
+          <div class="glass p-8 rounded-xl relative overflow-hidden">
+            <div class="pipeline-bg"></div>
             <div class="pipeline-title">
               <span class="text-3xl">📢</span>
               <span class="glow-purple">Custom Announcement Flow</span>
             </div>
             <div class="pipeline">
               <div class="pipeline-step">
-                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                <div class="pipeline-box purple">
                   <div class="pipeline-icon">✍️</div>
-                  <div class="pipeline-label">User Input</div>
+                  <div class="pipeline-label">User<br>Input</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color:#b537ff;stop-opacity:0.3" />
+                      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:1" />
+                      <stop offset="100%" style="stop-color:#b537ff;stop-opacity:0.3" />
+                    </linearGradient>
+                  </defs>
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" style="stroke:  url(#purpleGradient);" />
+                </svg>
+              </div>
+              <div class="pipeline-connection purple">
+                <div class="energy-wave"></div>
+              </div>
               
               <div class="pipeline-step">
-                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                <div class="pipeline-box purple">
                   <div class="pipeline-icon">📝</div>
-                  <div class="pipeline-label">API Called</div>
+                  <div class="pipeline-label">API<br>Called</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" style="stroke: url(#purpleGradient);" />
+                </svg>
+              </div>
+              <div class="pipeline-connection purple">
+                <div class="energy-wave" style="animation-delay: 0.5s;"></div>
+              </div>
               
               <div class="pipeline-step">
-                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                <div class="pipeline-box purple">
                   <div class="pipeline-icon">🤖</div>
-                  <div class="pipeline-label">AI Enhance (Optional)</div>
+                  <div class="pipeline-label">AI Enhance<br>(Optional)</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" style="stroke: url(#purpleGradient);" />
+                </svg>
+              </div>
+              <div class="pipeline-connection purple">
+                <div class="energy-wave" style="animation-delay: 1s;"></div>
+              </div>
               
               <div class="pipeline-step">
-                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                <div class="pipeline-box purple">
                   <div class="pipeline-icon">📡</div>
-                  <div class="pipeline-label">Webhook API</div>
+                  <div class="pipeline-label">Webhook<br>API</div>
                 </div>
               </div>
               
-              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              <div class="electric-arrow">
+                <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+                  <path class="arrow-path" d="M 10 20 L 70 20 L 65 15 M 70 20 L 65 25" style="stroke: url(#purpleGradient);" />
+                </svg>
+              </div>
+              <div class="pipeline-connection purple">
+                <div class="energy-wave" style="animation-delay: 1.5s;"></div>
+              </div>
               
               <div class="pipeline-step">
-                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                <div class="pipeline-box purple">
                   <div class="pipeline-icon">✅</div>
-                  <div class="pipeline-label">Discord Sent</div>
+                  <div class="pipeline-label">Discord<br>Sent</div>
                 </div>
               </div>
             </div>
@@ -1153,16 +1542,16 @@
         </div>
 
         <!-- Today's holiday -->
-        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay:  0.3s">
+        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay: 0.3s">
           <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
               <span class="text-4xl bounce">📅</span>
               <h2 class="text-2xl font-black">Today's Holiday</h2>
             </div>
             <button 
-              class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10 tooltip"
-              data-tooltip="Refresh today's holiday"
+              class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10"
               onclick="loadTodayHoliday()"
+              aria-label="Refresh today's holiday"
             >
               🔄 Refresh
             </button>
@@ -1182,9 +1571,9 @@
             <div class="flex items-center gap-3">
               <span class="badge">Next 30 days</span>
               <button 
-                class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10 tooltip"
-                data-tooltip="Refresh upcoming holidays"
+                class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10"
                 onclick="loadUpcomingHolidays()"
+                aria-label="Refresh upcoming holidays"
               >
                 🔄 Refresh
               </button>
@@ -1209,8 +1598,7 @@
             </div>
           </div>
 
-          <!-- Info cards -->
-          <div class="grid grid-cols-1 md: grid-cols-2 gap-6 mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="glass p-6 rounded-xl">
               <div class="flex items-center gap-3 mb-4">
                 <span class="text-3xl">⏰</span>
@@ -1234,7 +1622,6 @@
             </div>
           </div>
 
-          <!-- Action buttons -->
           <div class="glass p-8 rounded-xl mb-8">
             <h3 class="font-bold text-xl mb-6 flex items-center gap-2">
               <span class="text-2xl">🎮</span> Quick Actions
@@ -1242,18 +1629,18 @@
             <div class="flex flex-wrap gap-4">
               <button 
                 id="trigger-btn"
-                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105 tooltip"
-                data-tooltip="Manually trigger a holiday check right now"
+                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105"
                 onclick="triggerHolidayCheck(this)"
+                aria-label="Trigger holiday check"
               >
                 <span class="text-2xl">🚀</span>
                 Trigger Check Now
               </button>
               <button 
                 id="test-btn"
-                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105 tooltip"
-                data-tooltip="Send a test New Year announcement"
+                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105"
                 onclick="testNewYear(this)"
+                aria-label="Test New Year announcement"
               >
                 <span class="text-2xl">🎆</span>
                 Test New Year
@@ -1261,7 +1648,6 @@
             </div>
           </div>
 
-          <!-- How it works -->
           <div class="glass p-8 rounded-xl bg-gradient-to-br from-neon-blue/5 to-neon-purple/5">
             <h3 class="font-bold text-xl mb-4 flex items-center gap-2">
               <span class="text-2xl">💡</span> How It Works
@@ -1299,7 +1685,6 @@
             </div>
           </div>
 
-          <!-- Custom announcement form -->
           <form id="custom-form" class="space-y-6">
             <div>
               <label for="custom-title">Announcement Title</label>
@@ -1322,20 +1707,86 @@
             </div>
 
             <div>
-              <label for="custom-webhook">Discord Channel</label>
-              <select id="custom-webhook" required>
-                <option value="ANNOUNCEMENTS">Announcements Channel</option>
-                <option value="HOLIDAYS">Holidays Channel</option>
-                <option value="UPDATES">Updates Channel</option>
-                <option value="GENERAL">General Channel</option>
-              </select>
+              <label for="custom-webhook">
+                <span class="flex items-center gap-2">
+                  Discord Channel
+                  <span id="bot-status" class="text-xs px-3 py-1 rounded-full hidden">
+                    <span class="w-2 h-2 rounded-full inline-block mr-1"></span>
+                    <span id="bot-status-text">Connecting...</span>
+                  </span>
+                </span>
+              </label>
+              
+              <div class="relative">
+                <select id="custom-webhook" required onchange="updateChannelPreview(this. value)">
+                  <option value="" disabled selected>🔄 Loading channels from Discord...</option>
+                </select>
+                
+                <div id="channel-loading" class="absolute right-3 top-1/2 -translate-y-1/2 hidden">
+                  <div class="spinner" style="width: 20px; height: 20px;"></div>
+                </div>
+              </div>
+              
+              <div id="channel-preview" class="hidden mt-4 p-5 glass rounded-xl border border-neon-blue/30">
+                <div class="flex items-start gap-4">
+                  <div class="text-5xl">
+                    <span id="preview-emoji">📢</span>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="text-xs px-2 py-1 rounded bg-neon-blue/20 text-neon-blue font-mono" id="preview-type">TEXT</span>
+                      <span class="text-xs text-gray-500" id="preview-category"></span>
+                    </div>
+                    <div class="font-bold text-xl mb-2" id="preview-name">#announcements</div>
+                    <div class="text-sm text-gray-400 mb-3" id="preview-description">Select a channel to send announcements</div>
+                    <div class="flex items-center gap-4 text-xs">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-green-400 rounded-full pulse"></div>
+                        <span class="text-green-400 font-semibold">Bot Connected</span>
+                      </div>
+                      <div class="flex items-center gap-2 text-gray-400">
+                        <span>🔗</span>
+                        <span id="preview-webhook-status">Using configured webhook</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-4 p-4 glass rounded-xl border border-neon-purple/20">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-2xl" id="server-icon">
+                      🎮
+                    </div>
+                    <div>
+                      <div class="text-xs text-gray-400">Connected Server</div>
+                      <div class="font-bold text-base" id="server-name">Loading...</div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-xs text-gray-400">Available Channels</div>
+                    <div class="font-bold text-2xl text-neon-blue" id="channel-count">0</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="channel-error" class="hidden mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+                <div class="flex items-start gap-3">
+                  <span class="text-2xl">⚠️</span>
+                  <div class="flex-1">
+                    <div class="font-bold text-red-400 mb-1">Failed to Connect Bot</div>
+                    <div class="text-sm text-gray-300" id="error-message">Could not fetch channels</div>
+                    <div class="text-xs text-gray-400 mt-2">Using fallback channel list</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <!-- Advanced Image Options -->
+            <!-- Image Options (keeping existing advanced image section) -->
             <div>
               <label>Image Options (Optional)</label>
               <div class="image-options">
-                <!-- Image Mode Selector -->
                 <div class="image-mode-selector">
                   <div class="image-mode-btn active" data-mode="url" onclick="switchImageMode('url')">
                     <div class="icon">🔗</div>
@@ -1359,7 +1810,6 @@
                   </div>
                 </div>
 
-                <!-- URL Mode -->
                 <div id="mode-url" class="image-mode-content active">
                   <input 
                     type="url" 
@@ -1369,7 +1819,6 @@
                   />
                 </div>
 
-                <!-- Upload Mode -->
                 <div id="mode-upload" class="image-mode-content">
                   <div class="upload-area" id="upload-area" onclick="document.getElementById('file-upload').click()">
                     <div class="text-5xl mb-4">📤</div>
@@ -1380,7 +1829,6 @@
                   <div id="upload-info" class="file-info hidden"></div>
                 </div>
 
-                <!-- AI Auto Mode -->
                 <div id="mode-ai-auto" class="image-mode-content">
                   <p class="text-sm text-gray-400 mb-4">
                     AI will automatically analyze your announcement and generate a relevant image
@@ -1412,7 +1860,6 @@
                   </button>
                 </div>
 
-                <!-- AI Custom Prompt Mode -->
                 <div id="mode-ai-prompt" class="image-mode-content">
                   <textarea 
                     id="ai-prompt-input"
@@ -1447,7 +1894,6 @@
                   </button>
                 </div>
 
-                <!-- GIF Mode -->
                 <div id="mode-gif" class="image-mode-content">
                   <div class="discord-rules">
                     <div class="discord-rules-title">
@@ -1455,48 +1901,65 @@
                       <span>Discord GIF Requirements</span>
                     </div>
                     <ul class="discord-rules-list">
-                      <li><strong>Max Size:</strong> 10MB (8MB recommended for smooth playback)</li>
-                      <li><strong>Format:</strong> GIF file only (animated or static)</li>
-                      <li><strong>Dimensions:</strong> Up to 1280×1280px recommended</li>
+                      <li><strong>Max Size:</strong> 10MB (8MB recommended)</li>
+                      <li><strong>Format:</strong> GIF file only</li>
+                      <li><strong>Dimensions:</strong> Up to 1280×1280px</li>
                       <li><strong>Frame Rate:</strong> 20-30 FPS optimal</li>
-                      <li><strong>Duration:</strong> Keep under 10 seconds for best performance</li>
-                      <li><strong>Optimization:</strong> Use tools like ezgif.com or giphy.com to compress</li>
+                      <li><strong>Duration:</strong> Under 10 seconds</li>
                     </ul>
                   </div>
 
                   <div class="upload-area" id="gif-upload-area" onclick="document.getElementById('gif-upload').click()">
                     <div class="text-5xl mb-4">🎬</div>
                     <p class="text-lg font-semibold mb-2">Upload GIF Animation</p>
-                    <p class="text-sm text-gray-400">Max size: 10MB • Recommended: 8MB or less</p>
+                    <p class="text-sm text-gray-400">Drop file here or click to browse</p>
+                    <p class="text-xs text-gray-500 mt-2">Max:  10MB • Recommended: 8MB or less</p>
                   </div>
                   <input type="file" id="gif-upload" accept="image/gif" onchange="handleGifUpload(event)" />
                   
                   <div id="gif-validation-error" class="hidden"></div>
                   <div id="gif-info" class="file-info hidden"></div>
                   
-                  <div class="mt-4 p-4 glass rounded-lg">
-                    <p class="text-sm font-semibold mb-2 flex items-center gap-2">
-                      <span>💡</span>
-                      <span>Need to create or optimize a GIF?</span>
-                    </p>
-                    <div class="flex flex-wrap gap-2 mt-2">
-                      <a href="https://giphy.com/create/gifmaker" target="_blank" class="file-type-badge">
-                        GIPHY Maker
+                  <div class="gif-tools-section">
+                    <div class="gif-tools-title">
+                      <span class="text-2xl">🛠️</span>
+                      <span>GIF Creation & Optimization Tools</span>
+                    </div>
+                    
+                    <div class="gif-tools-grid">
+                      <a href="https://giphy.com/create/gifmaker" target="_blank" rel="noopener noreferrer" class="gif-tool-card">
+                        <div class="gif-tool-icon">🎨</div>
+                        <div class="gif-tool-name">GIPHY Maker</div>
+                        <div class="gif-tool-desc">Create GIFs from videos</div>
                       </a>
-                      <a href="https://ezgif.com/optimize" target="_blank" class="file-type-badge">
-                        EZGif Optimizer
+                      
+                      <a href="https://ezgif.com/optimize" target="_blank" rel="noopener noreferrer" class="gif-tool-card">
+                        <div class="gif-tool-icon">⚡</div>
+                        <div class="gif-tool-name">EZGif Optimizer</div>
+                        <div class="gif-tool-desc">Compress & resize</div>
                       </a>
-                      <a href="https://tenor.com/" target="_blank" class="file-type-badge">
-                        Tenor
+                      
+                      <a href="https://tenor.com/" target="_blank" rel="noopener noreferrer" class="gif-tool-card">
+                        <div class="gif-tool-icon">🔍</div>
+                        <div class="gif-tool-name">Tenor</div>
+                        <div class="gif-tool-desc">Find & download GIFs</div>
+                      </a>
+                      
+                      <a href="https://cloudconvert.com/gif-converter" target="_blank" rel="noopener noreferrer" class="gif-tool-card">
+                        <div class="gif-tool-icon">🔄</div>
+                        <div class="gif-tool-name">CloudConvert</div>
+                        <div class="gif-tool-desc">Convert to GIF</div>
                       </a>
                     </div>
+                    
+                    <p class="text-xs text-center text-gray-500 mt-4">
+                      💡 Tip: Always optimize your GIF before uploading to ensure fast loading on Discord
+                    </p>
                   </div>
                 </div>
 
-                            <!-- Generation Status -->
                 <div id="generation-status" class="hidden"></div>
 
-                <!-- Image Preview -->
                 <div id="image-preview-container" class="image-preview-container hidden">
                   <img id="image-preview" class="image-preview" alt="Preview" />
                   <div class="p-4 flex gap-3">
@@ -1530,7 +1993,7 @@
 
             <div class="flex items-center gap-4">
               <input type="checkbox" id="use-ai" class="w-5 h-5" style="width: 20px; height: 20px; cursor: pointer;">
-              <label for="use-ai" class="! mb-0 cursor-pointer">Enhance message with AI</label>
+              <label for="use-ai" class="!  mb-0 cursor-pointer">Enhance message with AI</label>
             </div>
 
             <div class="button-group">
@@ -1560,12 +2023,11 @@
             </div>
           </form>
 
-          <!-- Delivery status -->
           <div id="delivery-status" class="mt-8 hidden">
             <div class="glass p-6 rounded-xl border-l-4 border-green-400">
               <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
                 <span class="text-2xl">✅</span>
-                Message Delivered Successfully!
+                Message Delivered Successfully! 
               </h3>
               <p class="text-sm text-gray-400" id="delivery-message">Your announcement has been sent to Discord. </p>
             </div>
@@ -1585,9 +2047,9 @@
               </div>
             </div>
             <button 
-              class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10 tooltip"
-              data-tooltip="Refresh scheduled items"
+              class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10"
               onclick="loadScheduledItems()"
+              aria-label="Refresh scheduled items"
             >
               🔄 Refresh
             </button>
@@ -1615,13 +2077,13 @@
                 type="text" 
                 id="log-search"
                 placeholder="Search logs..."
-                class="glass px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus: border-neon-blue/50 focus:outline-none w-64"
+                class="glass px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue/50 focus:outline-none w-64"
                 oninput="filterLogs(this.value)"
               />
               <button 
-                class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10 tooltip"
-                data-tooltip="Refresh activity logs"
+                class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10"
                 onclick="loadLogs()"
+                aria-label="Refresh activity logs"
               >
                 🔄 Refresh
               </button>
@@ -1651,8 +2113,7 @@
       </p>
     </footer>
   </div>
-
-  <script>
+    <script>
     // ==================== UTILITIES ====================
     
     const createParticles = () => {
@@ -1669,7 +2130,7 @@
 
     const showToast = (message, type = 'info') => {
       const container = document.getElementById('toast-container');
-      const toast = document. createElement('div');
+      const toast = document.createElement('div');
       
       const colors = {
         success: 'from-green-500/20 to-green-600/20 border-green-400',
@@ -1756,7 +2217,6 @@
     const switchTab = (tabName) => {
       console.log('Switching to:', tabName);
       
-      // Update tab buttons
       document.querySelectorAll('.tab').forEach((t, i) => {
         t.classList.remove('active');
         if ((i === 0 && tabName === 'overview') ||
@@ -1768,18 +2228,15 @@
         }
       });
       
-      // Hide all panels
       document.querySelectorAll('.panel').forEach(p => {
         p.classList.add('hidden');
       });
       
-      // Show selected panel
       const targetPanel = document.getElementById(`${tabName}-panel`);
       if (targetPanel) {
         targetPanel.classList.remove('hidden');
       }
       
-      // Load data for specific tabs
       if (tabName === 'scheduled') {
         loadScheduledItems();
       } else if (tabName === 'logs') {
@@ -1816,7 +2273,7 @@
 
     const selectSize = (element, size) => {
       selectedImageSize = size;
-      document. querySelectorAll('.size-option').forEach(opt => {
+      document.querySelectorAll('.size-option').forEach(opt => {
         opt.classList.remove('active');
       });
       element.classList.add('active');
@@ -1836,7 +2293,7 @@
         });
       }
       
-      if (file. size > maxSize) {
+      if (file.size > maxSize) {
         const sizeMB = (file.size / 1024 / 1024).toFixed(2);
         errors.push({
           title: 'File Too Large',
@@ -1986,8 +2443,8 @@
       }
       
       try {
-        const infoDiv = document.getElementById('gif-info');
-        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        const infoDiv = document. getElementById('gif-info');
+        const sizeMB = (file. size / 1024 / 1024).toFixed(2);
         const sizeStatus = 
           file.size < 8 * 1024 * 1024 ? '✓ Optimal' : 
           file.size < 10 * 1024 * 1024 ? '⚠ Large' : 
@@ -2064,10 +2521,10 @@
         return;
       }
       
-      showGenerationStatus('Analyzing your announcement and generating image...', 'loading');
+      showGenerationStatus('Analyzing your announcement and generating image... ', 'loading');
       
       try {
-        const autoPrompt = `Create a professional, modern announcement image for:  "${title}". ${message. substring(0, 200)}. Style: clean, corporate, inspiring, with vibrant colors. `;
+        const autoPrompt = `Create a professional, modern announcement image for:  "${title}".  ${message. substring(0, 200)}. Style: clean, corporate, inspiring, with vibrant colors. `;
         
         lastGenerationParams = {
           prompt: autoPrompt,
@@ -2151,7 +2608,7 @@
         showToast('⚠️ Using placeholder image', 'warning');
         
         const [width, height] = size.split('x');
-        return `https://placehold.co/${width}x${height}/1a1447/00d4ff? text=${encodeURIComponent('Generated+Image')}`;
+        return `https://placehold.co/${width}x${height}/1a1447/00d4ff?text=${encodeURIComponent('Generated+Image')}`;
       }
     };
 
@@ -2198,7 +2655,7 @@
       const preview = document.getElementById('image-preview');
       
       preview.src = '';
-      container. classList.add('hidden');
+      container.classList.add('hidden');
       
       document.getElementById('file-upload').value = '';
       document.getElementById('gif-upload').value = '';
@@ -2260,13 +2717,144 @@
       showToast('Form cleared', 'info');
     };
 
+    // ==================== DISCORD CHANNELS ====================
+    
+    window.discordChannels = [];
+    window.discordServerData = null;
+
+    const loadDiscordChannels = async () => {
+      const select = document.getElementById('custom-webhook');
+      const loadingIndicator = document.getElementById('channel-loading');
+      const botStatus = document.getElementById('bot-status');
+      const errorDiv = document.getElementById('channel-error');
+      
+      loadingIndicator.classList.remove('hidden');
+      botStatus.classList.remove('hidden');
+      botStatus.className = 'text-xs px-3 py-1 rounded-full';
+      botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1 bg-yellow-400 animate-pulse"></span><span>Connecting to Discord...</span>';
+      
+      try {
+        const response = await fetch('/api/discord/channels');
+        const data = await response.json();
+        
+        loadingIndicator.classList.add('hidden');
+        
+        if (data.success && data.channels && data.channels.length > 0) {
+          window.discordChannels = data. channels;
+          window.discordServerData = data;
+          
+          const channelsByCategory = {};
+          const uncategorized = [];
+          
+          data.channels.forEach(ch => {
+            if (ch. categoryName) {
+              if (!channelsByCategory[ch. categoryName]) {
+                channelsByCategory[ch.categoryName] = [];
+              }
+              channelsByCategory[ch.categoryName].push(ch);
+            } else {
+              uncategorized. push(ch);
+            }
+          });
+          
+          let optionsHTML = '';
+          
+          if (uncategorized.length > 0) {
+            uncategorized.forEach(ch => {
+              const icon = ch.type === 'announcement' ? '📢' : '#';
+              optionsHTML += `<option value="${ch.id}">${icon} ${ch.name}</option>`;
+            });
+          }
+          
+          Object.entries(channelsByCategory).forEach(([category, channels]) => {
+            optionsHTML += `<optgroup label="── ${category. toUpperCase()} ──">`;
+            channels.forEach(ch => {
+              const icon = ch.type === 'announcement' ? '📢' :  '#';
+              optionsHTML += `<option value="${ch.id}">${icon} ${ch.name}</option>`;
+            });
+            optionsHTML += `</optgroup>`;
+          });
+          
+          select.innerHTML = optionsHTML;
+          
+          document.getElementById('server-name').textContent = data.serverName || 'Digital Labour';
+          document.getElementById('channel-count').textContent = data.totalChannels;
+          
+          if (data.serverIcon) {
+            const iconEl = document.getElementById('server-icon');
+            iconEl.innerHTML = `<img src="https://cdn.discordapp.com/icons/${data.serverName}/${data.serverIcon}. png" class="w-full h-full rounded-full object-cover" />`;
+          }
+          
+          botStatus.classList.add('connected');
+          botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1"></span><span id="bot-status-text">Bot Connected</span>';
+          
+          if (data.channels.length > 0) {
+            select.value = data.channels[0].id;
+            updateChannelPreview(data.channels[0]. id);
+          }
+          
+          errorDiv.classList.add('hidden');
+          
+          showToast(`✓ Connected!  Found ${data.totalChannels} channels in ${data.serverName}`, 'success');
+          
+        } else {
+          throw new Error(data.error || 'No channels found');
+        }
+        
+      } catch (error) {
+        console.error('Error loading Discord channels:', error);
+        loadingIndicator.classList.add('hidden');
+        
+        botStatus.classList.add('error');
+        botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1"></span><span>Connection Failed</span>';
+        
+        errorDiv.classList.remove('hidden');
+        document.getElementById('error-message').textContent = error.message || 'Could not connect to Discord bot';
+        
+        select.innerHTML = `
+          <option value="ANNOUNCEMENTS">📢 Announcements Channel</option>
+          <option value="HOLIDAYS">🎉 Holidays Channel</option>
+          <option value="UPDATES">📰 Updates Channel</option>
+          <option value="GENERAL">💬 General Channel</option>
+        `;
+        
+        document.getElementById('server-name').textContent = 'Digital Labour (Fallback)';
+        document.getElementById('channel-count').textContent = '4';
+        
+        showToast('Using fallback channels.  Check bot token in . env', 'warning');
+      }
+    };
+
+    const updateChannelPreview = (channelId) => {
+      const channel = window.discordChannels. find(ch => ch.id === channelId);
+      
+      if (! channel) {
+        document.getElementById('channel-preview').classList.add('hidden');
+        return;
+      }
+      
+      const emoji = channel.type === 'announcement' ? '📢' : 
+                   channel.nsfw ? '🔞' :  '💬';
+      
+      document.getElementById('preview-emoji').textContent = emoji;
+      document.getElementById('preview-type').textContent = channel.type. toUpperCase();
+      document.getElementById('preview-name').textContent = `#${channel.name}`;
+      document.getElementById('preview-category').textContent = channel.categoryName ?  `in ${channel.categoryName}` : 'No category';
+      document.getElementById('preview-description').textContent = 
+        channel.type === 'announcement' 
+          ? 'Announcement channel - followers can see messages' 
+          : 'Text channel for conversations';
+      
+      document.getElementById('channel-preview').classList.remove('hidden');
+    };
+
     // ==================== DATA LOADING ====================
     
     let allLogs = [];
 
     const loadDashboard = async () => {
       try {
-        const [status, todayHoliday, upcomingHolidays] = await Promise. all([
+        const [status, todayHoliday, upcomingHolidays] = await Promise.all([
           fetch('/api/status').then(r => r.json()).catch(() => null),
           fetch('/api/holidays/today').then(r => r.json()).catch(() => null),
           fetch('/api/holidays/upcoming').then(r => r.json()).catch(() => null),
@@ -2336,7 +2924,7 @@
       const container = document.getElementById('upcoming-holidays');
       if (!container) return;
       
-      if (!holidays || holidays.length === 0) {
+      if (! holidays || holidays.length === 0) {
         container.innerHTML = `
           <div class="empty-state py-12">
             <div class="empty-icon">🔮</div>
@@ -2395,10 +2983,7 @@
             <div class="empty-state py-12">
               <div class="empty-icon">📅</div>
               <h3 class="text-2xl font-bold mb-2">No Scheduled Items</h3>
-              <p class="text-gray-400">Schedule announcements via the API</p>
-              <code class="inline-block mt-4 px-4 py-2 glass rounded-lg text-neon-blue font-mono text-sm">
-                POST /api/announcement/schedule
-              </code>
+              <p class="text-gray-400">Schedule announcements via the Custom tab</p>
             </div>
           `;
           return;
@@ -2419,7 +3004,7 @@
                 </span>
               </div>
               <p class="text-sm text-gray-400">
-                <span class="font-semibold">Scheduled: </span> ${new Date(item. scheduleTime).toLocaleString()}
+                <span class="font-semibold">Scheduled: </span> ${new Date(item.scheduleTime).toLocaleString()}
               </p>
             </div>
           `;
@@ -2501,7 +3086,7 @@
         const data = await response.json();
         
         if (data.success) {
-          showToast('✅ Holiday check completed successfully! ', 'success');
+          showToast('✅ Holiday check completed successfully!', 'success');
         } else {
           showToast(data.message || 'Failed to trigger holiday check', 'error');
         }
@@ -2519,7 +3104,7 @@
     const testNewYear = async (button) => {
       button.disabled = true;
       const originalHTML = button.innerHTML;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Sending... ';
+      button.innerHTML = '<span class="text-2xl">⏳</span> Sending...';
       
       try {
         const response = await fetch('/api/test/newyear', { method: 'POST' });
@@ -2544,7 +3129,7 @@
     const loadTodayHoliday = async () => {
       try {
         const data = await fetch('/api/holidays/today').then(r => r.json());
-        updateTodayHoliday(data?. holiday);
+        updateTodayHoliday(data?.holiday);
         showToast('Today\'s holiday refreshed', 'info');
       } catch (error) {
         showToast('Failed to refresh', 'error');
@@ -2589,7 +3174,7 @@
           })
         });
         
-        const data = await response.json();
+        const data = await response. json();
         
         if (data.success) {
           showToast('✅ Announcement sent successfully!', 'success');
@@ -2669,6 +3254,28 @@
       }
     };
 
+    // ==================== PIPELINE EFFECTS ====================
+    
+    const initPipelineEffects = () => {
+      const pipelineBoxes = document.querySelectorAll('.pipeline-box');
+      
+      pipelineBoxes.forEach((box, index) => {
+        setTimeout(() => {
+          box.classList.add('active');
+          setTimeout(() => {
+            box.classList.remove('active');
+          }, 1000);
+        }, index * 600);
+        
+        setInterval(() => {
+          box.classList.add('active');
+          setTimeout(() => {
+            box.classList.remove('active');
+          }, 1000);
+        }, pipelineBoxes.length * 600 + 3000);
+      });
+    };
+
     // ==================== INITIALIZATION ====================
     
     const init = () => {
@@ -2677,8 +3284,10 @@
       createParticles();
       loadDashboard();
       setupDragAndDrop();
+      loadDiscordChannels();
       
       setInterval(loadDashboard, 60000);
+      setTimeout(initPipelineEffects, 2000);
       
       console.log('Dashboard initialized');
     };

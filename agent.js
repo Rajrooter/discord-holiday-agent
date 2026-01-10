@@ -372,7 +372,7 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl) {
     };
     const payload = {
       content: '@everyone',
-      username: 'Holiday Bot',
+      username: 'Labour',
       avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
       embeds: [embed]
     };
@@ -412,7 +412,7 @@ async function sendCustomAnnouncement(data) {
     if (imageUrl) embed.image = { url: imageUrl };
     const payload = {
       content: roleMentions,
-      username: 'Announcement Bot',
+      username: 'Labour',
       avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
       embeds: [embed]
     };
@@ -900,3 +900,4 @@ async function startAgent() {
 }
 
 startAgent();
+

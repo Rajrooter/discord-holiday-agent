@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<! DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -22,7 +22,7 @@
           },
           fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
-            'mono':  ['"Space Mono"', 'monospace'],
+            'mono': ['"Space Mono"', 'monospace'],
           },
         },
       },
@@ -32,7 +32,7 @@
   <style>
     * {
       margin: 0;
-      padding:  0;
+      padding: 0;
       box-sizing: border-box;
     }
 
@@ -43,6 +43,7 @@
       overflow-x: hidden;
     }
 
+    /* Animated gradient background */
     .gradient-bg {
       position: fixed;
       inset: 0;
@@ -60,9 +61,10 @@
 
     @keyframes gradientShift {
       0%, 100% { background-position:  0% 50%; }
-      50% { background-position: 100% 50%; }
+      50% { background-position:  100% 50%; }
     }
 
+    /* Floating particles */
     .particle {
       position: fixed;
       width: 4px;
@@ -86,6 +88,7 @@
       }
     }
 
+    /* Glass panel */
     .glass {
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(20px);
@@ -95,7 +98,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    .glass-strong {
+    . glass-strong {
       background: rgba(255, 255, 255, 0.06);
       backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -104,17 +107,19 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
+    /* Content wrapper */
     .content {
       position: relative;
       z-index: 10;
     }
 
+    /* Glowing text */
     .glow {
       text-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
                    0 0 40px rgba(0, 212, 255, 0.3);
     }
 
-    .glow-purple {
+    . glow-purple {
       text-shadow: 0 0 20px rgba(181, 55, 255, 0.5),
                    0 0 40px rgba(181, 55, 255, 0.3);
     }
@@ -124,13 +129,14 @@
                    0 0 40px rgba(255, 61, 154, 0.3);
     }
 
+    /* Button hover effects */
     .btn {
       position: relative;
       overflow: hidden;
       transition: all 0.3s ease;
     }
 
-    .btn:: before {
+    .btn::before {
       content: '';
       position: absolute;
       top: 50%;
@@ -148,11 +154,12 @@
       height: 300px;
     }
 
-    . btn:hover {
-      transform:  translateY(-2px);
+    . btn: hover {
+      transform: translateY(-2px);
       box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
     }
 
+    /* Card hover lift */
     .card {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -162,7 +169,8 @@
       box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
     }
 
-    .pulse {
+    /* Pulse animation */
+    . pulse {
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
@@ -171,7 +179,8 @@
       50% { opacity: 0.5; }
     }
 
-    . bounce {
+    /* Bounce animation */
+    .bounce {
       animation: bounce 1s infinite;
     }
 
@@ -180,6 +189,7 @@
       50% { transform: translateY(-10px); }
     }
 
+    /* Fade in animation */
     .fade-in {
       animation: fadeIn 0.6s ease-out;
     }
@@ -195,6 +205,7 @@
       }
     }
 
+    /* Scale in animation */
     .scale-in {
       animation: scaleIn 0.4s ease-out;
     }
@@ -210,13 +221,14 @@
       }
     }
 
-    : :-webkit-scrollbar {
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
       width: 10px;
       height: 10px;
     }
 
     ::-webkit-scrollbar-track {
-      background: rgba(0, 212, 255, 0.05);
+      background:  rgba(0, 212, 255, 0.05);
       border-radius: 10px;
     }
 
@@ -229,6 +241,7 @@
       background: rgba(0, 212, 255, 0.5);
     }
 
+    /* Robot mascot */
     .robot {
       animation: robotFloat 3s ease-in-out infinite;
     }
@@ -242,6 +255,7 @@
       }
     }
 
+    /* Status indicator */
     .status-dot {
       animation: statusPulse 2s ease-in-out infinite;
     }
@@ -255,18 +269,19 @@
       }
     }
 
+    /* Tab active state */
     .tab {
       position: relative;
       transition: all 0.3s ease;
     }
 
-    .tab:: after {
+    .tab::after {
       content: '';
       position: absolute;
       bottom:  -2px;
       left: 50%;
       width: 0;
-      height:  3px;
+      height: 3px;
       background: linear-gradient(90deg, #00d4ff, #b537ff);
       transform: translateX(-50%);
       transition: width 0.3s ease;
@@ -278,9 +293,10 @@
       width: 80%;
     }
 
+    /* Toast notification */
     .toast {
       position: fixed;
-      top: 24px;
+      top:  24px;
       right: 24px;
       z-index:  9999;
       animation: slideDown 0.3s ease-out;
@@ -298,6 +314,7 @@
       }
     }
 
+    /* Tooltip */
     .tooltip {
       position: relative;
     }
@@ -312,7 +329,7 @@
       background: rgba(0, 212, 255, 0.95);
       color: #0a0e27;
       border-radius: 8px;
-      font-size: 13px;
+      font-size:  13px;
       font-weight:  600;
       white-space: nowrap;
       opacity: 0;
@@ -320,26 +337,27 @@
       transition: opacity 0.3s, transform 0.3s;
     }
 
-    .tooltip:: after {
+    .tooltip::after {
       content: '';
       position: absolute;
-      bottom: calc(100% + 2px);
+      bottom:  calc(100% + 2px);
       left: 50%;
       transform: translateX(-50%);
-      border:  6px solid transparent;
+      border: 6px solid transparent;
       border-top-color: rgba(0, 212, 255, 0.95);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s, transform 0.3s;
+      transition:  opacity 0.3s, transform 0.3s;
     }
 
     .tooltip:hover::before,
     .tooltip:hover::after {
-      opacity: 1;
+      opacity:  1;
     }
 
+    /* Empty state */
     .empty-state {
-      text-align: center;
+      text-align:  center;
       padding: 60px 20px;
       opacity: 0.6;
     }
@@ -351,9 +369,10 @@
 
     @keyframes floatSlow {
       0%, 100% { transform: translateY(0); }
-      50% { transform:  translateY(-20px); }
+      50% { transform: translateY(-20px); }
     }
 
+    /* Loading skeleton */
     .skeleton {
       background: linear-gradient(
         90deg,
@@ -371,6 +390,7 @@
       100% { background-position: 200% 0; }
     }
 
+    /* Badge */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -383,6 +403,7 @@
       border: 1px solid rgba(0, 212, 255, 0.3);
     }
 
+    /* Focus styles for accessibility */
     *:focus-visible {
       outline: 3px solid rgba(0, 212, 255, 0.6);
       outline-offset: 3px;
@@ -392,12 +413,13 @@
       display: none !important;
     }
 
+    /* Form inputs */
     input, textarea, select {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: white;
       padding: 12px;
-      border-radius:  12px;
+      border-radius: 12px;
       width: 100%;
       font-family: 'Inter', sans-serif;
     }
@@ -408,7 +430,7 @@
       box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
     }
 
-    input::placeholder, textarea::placeholder {
+    input:: placeholder, textarea::placeholder {
       color: rgba(255, 255, 255, 0.4);
     }
 
@@ -418,6 +440,403 @@
       font-weight:  600;
       font-size: 14px;
       color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Fix dropdown visibility */
+    select {
+      background: rgba(10, 14, 39, 0.95) !important;
+      border: 1px solid rgba(0, 212, 255, 0.3) !important;
+      color: white !important;
+      cursor: pointer !important;
+    }
+
+    select option {
+      background: #0a0e27 !important;
+      color: white !important;
+      padding: 12px !important;
+    }
+
+    select:hover {
+      border-color: rgba(0, 212, 255, 0.6) !important;
+    }
+
+    /* Pipeline flowchart styles */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .pipeline-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      min-width: 120px;
+    }
+
+    . pipeline-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(0, 212, 255, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      min-width: 140px;
+    }
+
+    . pipeline-box:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 212, 255, 0.8);
+      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
+    }
+
+    .pipeline-icon {
+      font-size: 32px;
+      margin-bottom:  8px;
+    }
+
+    .pipeline-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .pipeline-arrow {
+      font-size: 24px;
+      color: rgba(0, 212, 255, 0.6);
+      animation: arrowPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes arrowPulse {
+      0%, 100% {
+        opacity: 0. 6;
+        transform: translateX(0);
+      }
+      50% {
+        opacity:  1;
+        transform: translateX(4px);
+      }
+    }
+
+    . pipeline-title {
+      font-size: 18px;
+      font-weight:  700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Button group */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Image options */
+    .image-options {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 12px;
+    }
+
+    . image-mode-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom:  24px;
+      flex-wrap: wrap;
+    }
+
+    .image-mode-btn {
+      flex: 1;
+      min-width: 140px;
+      padding: 16px;
+      border: 2px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .image-mode-btn:hover {
+      border-color: rgba(0, 212, 255, 0.5);
+      background: rgba(0, 212, 255, 0.05);
+      transform: translateY(-2px);
+    }
+
+    .image-mode-btn.active {
+      border-color: rgba(0, 212, 255, 0.8);
+      background: rgba(0, 212, 255, 0.1);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+    }
+
+    .image-mode-btn . icon {
+      font-size:  32px;
+      margin-bottom:  8px;
+    }
+
+    .image-mode-btn . label {
+      font-size:  13px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .image-mode-content {
+      display: none;
+    }
+
+    .image-mode-content.active {
+      display: block;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    . upload-area {
+      border: 2px dashed rgba(0, 212, 255, 0.3);
+      border-radius: 16px;
+      padding: 40px;
+      text-align:  center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .upload-area:hover {
+      border-color: rgba(0, 212, 255, 0.6);
+      background: rgba(0, 212, 255, 0.05);
+    }
+
+    .upload-area.dragover {
+      border-color:  rgba(0, 212, 255, 1);
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    .image-preview-container {
+      margin-top: 20px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.3);
+      max-width: 100%;
+    }
+
+    .image-preview {
+      max-width: 100%;
+      max-height: 400px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .size-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    . size-option {
+      padding: 12px;
+      border: 2px solid rgba(0, 212, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .size-option:hover {
+      border-color: rgba(0, 212, 255, 0.5);
+      background: rgba(0, 212, 255, 0.05);
+    }
+
+    .size-option. active {
+      border-color:  rgba(0, 212, 255, 0.8);
+      background: rgba(0, 212, 255, 0.1);
+    }
+
+    .generating-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px;
+      background: rgba(0, 212, 255, 0.05);
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(0, 212, 255, 0.2);
+      border-top-color: #00d4ff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .file-info {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .prompt-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 16px;
+      border-radius:  12px;
+      width:  100%;
+      font-family: 'Inter', sans-serif;
+      margin-top: 12px;
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    /* Discord rules */
+    .discord-rules {
+      background: rgba(255, 165, 0, 0.1);
+      border: 1px solid rgba(255, 165, 0, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top:  12px;
+      font-size: 13px;
+    }
+
+    .discord-rules-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: #ffa500;
+      margin-bottom: 8px;
+    }
+
+    .discord-rules-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .discord-rules-list li {
+      padding: 6px 0;
+      display: flex;
+      align-items: start;
+      gap: 8px;
+    }
+
+    .discord-rules-list li::before {
+      content: "→";
+      color: #ffa500;
+      font-weight: bold;
+    }
+
+    /* Validation errors */
+    .validation-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 2px solid rgba(239, 68, 68, 0.5);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 12px;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .validation-error-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      color: #ef4444;
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    . validation-error-message {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    . file-type-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius:  6px;
+      font-size:  11px;
+      font-weight:  700;
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      color: #00d4ff;
+      margin:  4px;
+    }
+
+    . success-message {
+      padding: 12px;
+      background: rgba(34, 197, 94, 0.1);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 8px;
+      color: #22c55e;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+
+    .error-message {
+      padding: 12px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      color: #ef4444;
+      margin-top: 12px;
+      font-size:  13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .pipeline {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .pipeline-arrow {
+        transform: rotate(90deg);
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      .button-group button {
+        width: 100%;
+      }
+
+      .image-mode-selector {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
   </style>
 </head>
@@ -624,6 +1043,115 @@
           </div>
         </div>
 
+        <!-- Pipeline Flowcharts -->
+        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay:  0.25s">
+          <h2 class="text-2xl font-black glow mb-8 text-center">System Pipelines</h2>
+          
+          <!-- Automated Holiday Pipeline -->
+          <div class="glass p-6 rounded-xl mb-6">
+            <div class="pipeline-title">
+              <span class="text-3xl">🎉</span>
+              <span class="glow">Automated Holiday Announcement Flow</span>
+            </div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="pipeline-box">
+                  <div class="pipeline-icon">⏰</div>
+                  <div class="pipeline-label">Midnight Trigger</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box">
+                  <div class="pipeline-icon">🔍</div>
+                  <div class="pipeline-label">Fetch Holidays</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box">
+                  <div class="pipeline-icon">🤖</div>
+                  <div class="pipeline-label">Gemini AI</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box">
+                  <div class="pipeline-icon">📡</div>
+                  <div class="pipeline-label">Webhook API</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box">
+                  <div class="pipeline-icon">✅</div>
+                  <div class="pipeline-label">Discord Sent</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Announcement Pipeline -->
+          <div class="glass p-6 rounded-xl">
+            <div class="pipeline-title">
+              <span class="text-3xl">📢</span>
+              <span class="glow-purple">Custom Announcement Flow</span>
+            </div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                  <div class="pipeline-icon">✍️</div>
+                  <div class="pipeline-label">User Input</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                  <div class="pipeline-icon">📝</div>
+                  <div class="pipeline-label">API Called</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                  <div class="pipeline-icon">🤖</div>
+                  <div class="pipeline-label">AI Enhance (Optional)</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                  <div class="pipeline-icon">📡</div>
+                  <div class="pipeline-label">Webhook API</div>
+                </div>
+              </div>
+              
+              <div class="pipeline-arrow" style="color: rgba(181, 55, 255, 0.6)">→</div>
+              
+              <div class="pipeline-step">
+                <div class="pipeline-box" style="border-color: rgba(181, 55, 255, 0.3)">
+                  <div class="pipeline-icon">✅</div>
+                  <div class="pipeline-label">Discord Sent</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Today's holiday -->
         <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay:  0.3s">
           <div class="flex items-center justify-between mb-6">
@@ -682,7 +1210,7 @@
           </div>
 
           <!-- Info cards -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="grid grid-cols-1 md: grid-cols-2 gap-6 mb-8">
             <div class="glass p-6 rounded-xl">
               <div class="flex items-center gap-3 mb-4">
                 <span class="text-3xl">⏰</span>
@@ -803,34 +1331,231 @@
               </select>
             </div>
 
+            <!-- Advanced Image Options -->
             <div>
-              <label for="custom-image">Image URL (optional)</label>
+              <label>Image Options (Optional)</label>
+              <div class="image-options">
+                <!-- Image Mode Selector -->
+                <div class="image-mode-selector">
+                  <div class="image-mode-btn active" data-mode="url" onclick="switchImageMode('url')">
+                    <div class="icon">🔗</div>
+                    <div class="label">URL</div>
+                  </div>
+                  <div class="image-mode-btn" data-mode="upload" onclick="switchImageMode('upload')">
+                    <div class="icon">📁</div>
+                    <div class="label">Upload</div>
+                  </div>
+                  <div class="image-mode-btn" data-mode="ai-auto" onclick="switchImageMode('ai-auto')">
+                    <div class="icon">🤖</div>
+                    <div class="label">AI Auto</div>
+                  </div>
+                  <div class="image-mode-btn" data-mode="ai-prompt" onclick="switchImageMode('ai-prompt')">
+                    <div class="icon">✨</div>
+                    <div class="label">AI Custom</div>
+                  </div>
+                  <div class="image-mode-btn" data-mode="gif" onclick="switchImageMode('gif')">
+                    <div class="icon">🎬</div>
+                    <div class="label">GIF</div>
+                  </div>
+                </div>
+
+                <!-- URL Mode -->
+                <div id="mode-url" class="image-mode-content active">
+                  <input 
+                    type="url" 
+                    id="image-url-input"
+                    placeholder="https://example.com/image.png"
+                    class="w-full"
+                  />
+                </div>
+
+                <!-- Upload Mode -->
+                <div id="mode-upload" class="image-mode-content">
+                  <div class="upload-area" id="upload-area" onclick="document.getElementById('file-upload').click()">
+                    <div class="text-5xl mb-4">📤</div>
+                    <p class="text-lg font-semibold mb-2">Drop image here or click to browse</p>
+                    <p class="text-sm text-gray-400">Supports:  JPG, PNG, WebP (Max 10MB)</p>
+                  </div>
+                  <input type="file" id="file-upload" accept="image/*" onchange="handleFileUpload(event)" />
+                  <div id="upload-info" class="file-info hidden"></div>
+                </div>
+
+                <!-- AI Auto Mode -->
+                <div id="mode-ai-auto" class="image-mode-content">
+                  <p class="text-sm text-gray-400 mb-4">
+                    AI will automatically analyze your announcement and generate a relevant image
+                  </p>
+                  <div class="size-selector">
+                    <div class="size-option active" data-size="1024x1024" onclick="selectSize(this, '1024x1024')">
+                      <div class="text-lg mb-1">🖼️</div>
+                      <div>Square</div>
+                      <div class="text-xs text-gray-400">1024×1024</div>
+                    </div>
+                    <div class="size-option" data-size="1792x1024" onclick="selectSize(this, '1792x1024')">
+                      <div class="text-lg mb-1">🖼️</div>
+                      <div>Landscape</div>
+                      <div class="text-xs text-gray-400">1792×1024</div>
+                    </div>
+                    <div class="size-option" data-size="1024x1792" onclick="selectSize(this, '1024x1792')">
+                      <div class="text-lg mb-1">🖼️</div>
+                      <div>Portrait</div>
+                      <div class="text-xs text-gray-400">1024×1792</div>
+                    </div>
+                  </div>
+                  <button 
+                    type="button"
+                    class="btn glass-strong px-6 py-3 rounded-xl font-semibold w-full mt-4 hover:scale-105 flex items-center justify-center gap-2"
+                    onclick="generateAutoImage()"
+                  >
+                    <span class="text-xl">🎨</span>
+                    Generate Image from Theme
+                  </button>
+                </div>
+
+                <!-- AI Custom Prompt Mode -->
+                <div id="mode-ai-prompt" class="image-mode-content">
+                  <textarea 
+                    id="ai-prompt-input"
+                    class="prompt-input"
+                    placeholder="Describe the image you want to generate...  e.g., 'A futuristic cityscape at sunset with neon lights and flying cars'"
+                    rows="4"
+                  ></textarea>
+                  <div class="size-selector mt-4">
+                    <div class="size-option active" data-size="1024x1024" onclick="selectSize(this, '1024x1024')">
+                      <div class="text-lg mb-1">🖼️</div>
+                      <div>Square</div>
+                      <div class="text-xs text-gray-400">1024×1024</div>
+                    </div>
+                    <div class="size-option" data-size="1792x1024" onclick="selectSize(this, '1792x1024')">
+                      <div class="text-lg mb-1">🖼️</div>
+                      <div>Landscape</div>
+                      <div class="text-xs text-gray-400">1792×1024</div>
+                    </div>
+                    <div class="size-option" data-size="1024x1792" onclick="selectSize(this, '1024x1792')">
+                      <div class="text-lg mb-1">🖼️</div>
+                      <div>Portrait</div>
+                      <div class="text-xs text-gray-400">1024×1792</div>
+                    </div>
+                  </div>
+                  <button 
+                    type="button"
+                    class="btn glass-strong px-6 py-3 rounded-xl font-semibold w-full mt-4 hover:scale-105 flex items-center justify-center gap-2"
+                    onclick="generateCustomImage()"
+                  >
+                    <span class="text-xl">✨</span>
+                    Generate from Prompt
+                  </button>
+                </div>
+
+                <!-- GIF Mode -->
+                <div id="mode-gif" class="image-mode-content">
+                  <div class="discord-rules">
+                    <div class="discord-rules-title">
+                      <span class="text-xl">⚠️</span>
+                      <span>Discord GIF Requirements</span>
+                    </div>
+                    <ul class="discord-rules-list">
+                      <li><strong>Max Size:</strong> 10MB (8MB recommended for smooth playback)</li>
+                      <li><strong>Format:</strong> GIF file only (animated or static)</li>
+                      <li><strong>Dimensions:</strong> Up to 1280×1280px recommended</li>
+                      <li><strong>Frame Rate:</strong> 20-30 FPS optimal</li>
+                      <li><strong>Duration:</strong> Keep under 10 seconds for best performance</li>
+                      <li><strong>Optimization:</strong> Use tools like ezgif.com or giphy.com to compress</li>
+                    </ul>
+                  </div>
+
+                  <div class="upload-area" id="gif-upload-area" onclick="document.getElementById('gif-upload').click()">
+                    <div class="text-5xl mb-4">🎬</div>
+                    <p class="text-lg font-semibold mb-2">Upload GIF Animation</p>
+                    <p class="text-sm text-gray-400">Max size: 10MB • Recommended: 8MB or less</p>
+                  </div>
+                  <input type="file" id="gif-upload" accept="image/gif" onchange="handleGifUpload(event)" />
+                  
+                  <div id="gif-validation-error" class="hidden"></div>
+                  <div id="gif-info" class="file-info hidden"></div>
+                  
+                  <div class="mt-4 p-4 glass rounded-lg">
+                    <p class="text-sm font-semibold mb-2 flex items-center gap-2">
+                      <span>💡</span>
+                      <span>Need to create or optimize a GIF?</span>
+                    </p>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                      <a href="https://giphy.com/create/gifmaker" target="_blank" class="file-type-badge">
+                        GIPHY Maker
+                      </a>
+                      <a href="https://ezgif.com/optimize" target="_blank" class="file-type-badge">
+                        EZGif Optimizer
+                      </a>
+                      <a href="https://tenor.com/" target="_blank" class="file-type-badge">
+                        Tenor
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                            <!-- Generation Status -->
+                <div id="generation-status" class="hidden"></div>
+
+                <!-- Image Preview -->
+                <div id="image-preview-container" class="image-preview-container hidden">
+                  <img id="image-preview" class="image-preview" alt="Preview" />
+                  <div class="p-4 flex gap-3">
+                    <button 
+                      type="button"
+                      class="btn glass px-4 py-2 rounded-lg font-semibold text-sm flex-1 hover:scale-105"
+                      onclick="regenerateImage()"
+                    >
+                      🔄 Regenerate
+                    </button>
+                    <button 
+                      type="button"
+                      class="btn glass px-4 py-2 rounded-lg font-semibold text-sm flex-1 hover:scale-105"
+                      onclick="clearImage()"
+                    >
+                      🗑️ Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="schedule-time">Schedule Time (optional)</label>
               <input 
-                type="url" 
-                id="custom-image" 
-                placeholder="https://example.com/image.png"
+                type="datetime-local" 
+                id="schedule-time"
               />
+              <p class="text-xs text-gray-400 mt-2">Leave empty to send immediately</p>
             </div>
 
             <div class="flex items-center gap-4">
-              <input type="checkbox" id="use-ai" class="w-5 h-5">
-              <label for="use-ai" class="! mb-0">Enhance message with AI</label>
+              <input type="checkbox" id="use-ai" class="w-5 h-5" style="width: 20px; height: 20px; cursor: pointer;">
+              <label for="use-ai" class="! mb-0 cursor-pointer">Enhance message with AI</label>
             </div>
 
-            <div class="flex gap-4">
+            <div class="button-group">
               <button 
                 type="submit"
-                class="btn glass-strong px-8 py-4 rounded-xl font-bold flex-1 hover:scale-105"
+                class="btn glass-strong px-8 py-4 rounded-xl font-bold flex-1 hover:scale-105 flex items-center justify-center gap-2"
               >
-                <span class="text-xl mr-2">🚀</span>
+                <span class="text-xl">🚀</span>
                 Send Now
               </button>
               <button 
                 type="button"
-                class="btn glass px-6 py-4 rounded-xl font-semibold hover:scale-105"
-                onclick="document.getElementById('custom-form').reset()"
+                id="schedule-btn"
+                class="btn glass-strong px-8 py-4 rounded-xl font-bold flex-1 hover:scale-105 flex items-center justify-center gap-2"
+                onclick="scheduleAnnouncement()"
               >
-                Clear
+                <span class="text-xl">📅</span>
+                Schedule Message
+              </button>
+              <button 
+                type="button"
+                class="btn glass px-6 py-4 rounded-xl font-semibold hover:scale-105"
+                onclick="resetForm()"
+              >
+                Clear All
               </button>
             </div>
           </form>
@@ -840,7 +1565,7 @@
             <div class="glass p-6 rounded-xl border-l-4 border-green-400">
               <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
                 <span class="text-2xl">✅</span>
-                Message Delivered Successfully! 
+                Message Delivered Successfully!
               </h3>
               <p class="text-sm text-gray-400" id="delivery-message">Your announcement has been sent to Discord. </p>
             </div>
@@ -890,7 +1615,7 @@
                 type="text" 
                 id="log-search"
                 placeholder="Search logs..."
-                class="glass px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue/50 focus:outline-none w-64"
+                class="glass px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus: border-neon-blue/50 focus:outline-none w-64"
                 oninput="filterLogs(this.value)"
               />
               <button 
@@ -1045,7 +1770,7 @@
       
       // Hide all panels
       document.querySelectorAll('.panel').forEach(p => {
-        p.classList. add('hidden');
+        p.classList.add('hidden');
       });
       
       // Show selected panel
@@ -1064,22 +1789,492 @@
       showToast(`Switched to ${tabName}`, 'info');
     };
 
+    // ==================== IMAGE HANDLING ====================
+    
+    let currentImageMode = 'url';
+    let selectedImageSize = '1024x1024';
+    let currentImageData = null;
+    let lastGenerationParams = null;
+
+    const switchImageMode = (mode) => {
+      currentImageMode = mode;
+      
+      document.querySelectorAll('.image-mode-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.mode === mode) {
+          btn.classList.add('active');
+        }
+      });
+      
+      document.querySelectorAll('.image-mode-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(`mode-${mode}`).classList.add('active');
+      
+      clearImage();
+    };
+
+    const selectSize = (element, size) => {
+      selectedImageSize = size;
+      document. querySelectorAll('.size-option').forEach(opt => {
+        opt.classList.remove('active');
+      });
+      element.classList.add('active');
+    };
+
+    const validateImageFile = (file) => {
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      const maxSize = 10 * 1024 * 1024;
+      
+      const errors = [];
+      
+      if (! validTypes.includes(file.type)) {
+        errors.push({
+          title: 'Invalid File Type',
+          message: `You uploaded a ${file.type || 'unknown'} file. Discord only accepts:  JPG, PNG, WebP. `,
+          suggestion: 'Please convert your image to a supported format.'
+        });
+      }
+      
+      if (file. size > maxSize) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        errors.push({
+          title: 'File Too Large',
+          message: `Your file is ${sizeMB}MB. Discord limits images to 10MB.`,
+          suggestion: 'Please compress or resize your image using tools like TinyPNG or ImageOptim.'
+        });
+      }
+      
+      return { valid: errors.length === 0, errors };
+    };
+
+    const validateGifFile = (file) => {
+      const maxSize = 10 * 1024 * 1024;
+      const recommendedSize = 8 * 1024 * 1024;
+      
+      const errors = [];
+      const warnings = [];
+      
+      if (file.type !== 'image/gif') {
+        errors.push({
+          title: 'Invalid File Type',
+          message: `You uploaded a ${file.type || 'unknown'} file. Only GIF files are supported in this mode.`,
+          suggestion: 'Use a regular image mode for JPG/PNG, or convert your file to GIF format.'
+        });
+      }
+      
+      if (file.size > maxSize) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        errors.push({
+          title: 'File Too Large',
+          message: `Your GIF is ${sizeMB}MB. Discord limits files to 10MB.`,
+          suggestion: 'Compress your GIF using ezgif.com or giphy.com.  Reduce dimensions, frame rate, or duration.'
+        });
+      } else if (file.size > recommendedSize) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        warnings.push({
+          title: 'Large File Size',
+          message: `Your GIF is ${sizeMB}MB. While under the 10MB limit, it may load slowly on Discord.`,
+          suggestion: 'Consider compressing to 8MB or less for optimal performance.'
+        });
+      }
+      
+      return { valid:  errors.length === 0, errors, warnings };
+    };
+
+    const showValidationError = (containerId, errorData) => {
+      const container = document.getElementById(containerId);
+      
+      const errorHtml = errorData.map(err => `
+        <div class="validation-error">
+          <div class="validation-error-title">
+            <span class="text-2xl">❌</span>
+            <span>${err.title}</span>
+          </div>
+          <div class="validation-error-message">
+            <p class="mb-2">${err.message}</p>
+            <p class="text-sm" style="color: #ffa500;"><strong>Suggestion:</strong> ${err.suggestion}</p>
+          </div>
+        </div>
+      `).join('');
+      
+      container.innerHTML = errorHtml;
+      container.classList.remove('hidden');
+    };
+
+    const showValidationWarning = (containerId, warningData) => {
+      const container = document.getElementById(containerId);
+      
+      const warningHtml = warningData.map(warn => `
+        <div class="discord-rules">
+          <div class="discord-rules-title">
+            <span class="text-xl">⚠️</span>
+            <span>${warn.title}</span>
+          </div>
+          <p class="mb-2" style="color: rgba(255, 255, 255, 0.9);">${warn.message}</p>
+          <p class="text-sm" style="color: #ffa500;"><strong>Tip:</strong> ${warn.suggestion}</p>
+        </div>
+      `).join('');
+      
+      container.innerHTML = warningHtml;
+      container.classList.remove('hidden');
+    };
+
+    const handleFileUpload = async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      document.getElementById('upload-info').classList.add('hidden');
+      
+      const validation = validateImageFile(file);
+      
+      if (!validation.valid) {
+        showValidationError('upload-info', validation.errors);
+        event.target.value = '';
+        showToast('Invalid file - please check the error details', 'error');
+        return;
+      }
+      
+      try {
+        const infoDiv = document.getElementById('upload-info');
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        const sizeStatus = file.size < 5 * 1024 * 1024 ? '✓ Optimal' : '⚠ Large';
+        
+        infoDiv.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold">${file.name}</div>
+              <div class="text-xs text-gray-400">${sizeMB} MB • ${file.type} • ${sizeStatus}</div>
+            </div>
+            <div class="text-green-400 text-2xl">✓</div>
+          </div>
+        `;
+        infoDiv.classList.remove('hidden');
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          currentImageData = e.target.result;
+          showImagePreview(currentImageData);
+          showToast('✅ Image uploaded successfully', 'success');
+        };
+        reader.readAsDataURL(file);
+        
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        showToast('Failed to upload image', 'error');
+      }
+    };
+
+    const handleGifUpload = async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      document.getElementById('gif-validation-error').classList.add('hidden');
+      document.getElementById('gif-info').classList.add('hidden');
+      
+      const validation = validateGifFile(file);
+      
+      if (!validation.valid) {
+        showValidationError('gif-validation-error', validation.errors);
+        event.target.value = '';
+        showToast('Invalid GIF - please check the error details', 'error');
+        return;
+      }
+      
+      if (validation.warnings && validation.warnings.length > 0) {
+        showValidationWarning('gif-validation-error', validation.warnings);
+      }
+      
+      try {
+        const infoDiv = document.getElementById('gif-info');
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        const sizeStatus = 
+          file.size < 8 * 1024 * 1024 ? '✓ Optimal' : 
+          file.size < 10 * 1024 * 1024 ? '⚠ Large' : 
+          '❌ Too Large';
+        
+        infoDiv.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-semibold">${file.name}</div>
+              <div class="text-xs text-gray-400">${sizeMB} MB • Animated GIF • ${sizeStatus}</div>
+            </div>
+            <div class="text-green-400 text-2xl">✓</div>
+          </div>
+        `;
+        infoDiv.classList.remove('hidden');
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          currentImageData = e. target.result;
+          showImagePreview(currentImageData);
+          showToast('✅ GIF uploaded successfully', 'success');
+        };
+        reader. readAsDataURL(file);
+        
+      } catch (error) {
+        console.error('Error uploading GIF:', error);
+        showToast('Failed to upload GIF', 'error');
+      }
+    };
+
+    const setupDragAndDrop = () => {
+      const uploadArea = document.getElementById('upload-area');
+      const gifUploadArea = document.getElementById('gif-upload-area');
+      
+      [uploadArea, gifUploadArea]. forEach(area => {
+        if (! area) return;
+        
+        area.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          area.classList.add('dragover');
+        });
+        
+        area.addEventListener('dragleave', () => {
+          area. classList.remove('dragover');
+        });
+        
+        area. addEventListener('drop', (e) => {
+          e.preventDefault();
+          area.classList.remove('dragover');
+          
+          const file = e.dataTransfer.files[0];
+          if (file) {
+            const input = area.id === 'upload-area' ?  
+              document.getElementById('file-upload') : 
+              document.getElementById('gif-upload');
+            
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items. add(file);
+            input. files = dataTransfer.files;
+            
+            const event = new Event('change', { bubbles: true });
+            input.dispatchEvent(event);
+          }
+        });
+      });
+    };
+
+    const generateAutoImage = async () => {
+      const title = document.getElementById('custom-title').value;
+      const message = document.getElementById('custom-message').value;
+      
+      if (!title && !message) {
+        showToast('Please enter a title or message first', 'warning');
+        return;
+      }
+      
+      showGenerationStatus('Analyzing your announcement and generating image...', 'loading');
+      
+      try {
+        const autoPrompt = `Create a professional, modern announcement image for:  "${title}". ${message. substring(0, 200)}. Style: clean, corporate, inspiring, with vibrant colors. `;
+        
+        lastGenerationParams = {
+          prompt: autoPrompt,
+          size: selectedImageSize
+        };
+        
+        const imageUrl = await callImageGenerationAPI(autoPrompt, selectedImageSize);
+        
+        if (imageUrl) {
+          currentImageData = imageUrl;
+          showImagePreview(imageUrl);
+          showGenerationStatus('Image generated successfully!', 'success');
+          setTimeout(() => hideGenerationStatus(), 3000);
+        } else {
+          throw new Error('Failed to generate image');
+        }
+        
+      } catch (error) {
+        console.error('Error generating image:', error);
+        showGenerationStatus('Failed to generate image.  Please try again.', 'error');
+        setTimeout(() => hideGenerationStatus(), 5000);
+      }
+    };
+
+    const generateCustomImage = async () => {
+      const prompt = document.getElementById('ai-prompt-input').value.trim();
+      
+      if (! prompt) {
+        showToast('Please enter a prompt', 'warning');
+        return;
+      }
+      
+      showGenerationStatus('Generating your custom image...', 'loading');
+      
+      try {
+        lastGenerationParams = {
+          prompt: prompt,
+          size: selectedImageSize
+        };
+        
+        const imageUrl = await callImageGenerationAPI(prompt, selectedImageSize);
+        
+        if (imageUrl) {
+          currentImageData = imageUrl;
+          showImagePreview(imageUrl);
+          showGenerationStatus('Image generated successfully!', 'success');
+          setTimeout(() => hideGenerationStatus(), 3000);
+        } else {
+          throw new Error('Failed to generate image');
+        }
+        
+      } catch (error) {
+        console.error('Error generating image:', error);
+        showGenerationStatus('Failed to generate image. Please try again.', 'error');
+        setTimeout(() => hideGenerationStatus(), 5000);
+      }
+    };
+
+    const callImageGenerationAPI = async (prompt, size) => {
+      try {
+        const response = await fetch('/api/generate-image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, size })
+        });
+        
+        if (!response.ok) {
+          throw new Error('Image generation failed');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.imageUrl) {
+          return data. imageUrl;
+        } else {
+          throw new Error(data. error || 'Failed to generate image');
+        }
+        
+      } catch (error) {
+        console.error('Image generation error:', error);
+        showToast('⚠️ Using placeholder image', 'warning');
+        
+        const [width, height] = size.split('x');
+        return `https://placehold.co/${width}x${height}/1a1447/00d4ff? text=${encodeURIComponent('Generated+Image')}`;
+      }
+    };
+
+    const regenerateImage = async () => {
+      if (!lastGenerationParams) {
+        showToast('No image to regenerate', 'warning');
+        return;
+      }
+      
+      showGenerationStatus('Regenerating image...', 'loading');
+      
+      try {
+        const imageUrl = await callImageGenerationAPI(
+          lastGenerationParams.prompt,
+          lastGenerationParams.size
+        );
+        
+        if (imageUrl) {
+          currentImageData = imageUrl;
+          showImagePreview(imageUrl);
+          showGenerationStatus('Image regenerated successfully!', 'success');
+          setTimeout(() => hideGenerationStatus(), 3000);
+        }
+      } catch (error) {
+        console.error('Error regenerating image:', error);
+        showGenerationStatus('Failed to regenerate image', 'error');
+        setTimeout(() => hideGenerationStatus(), 5000);
+      }
+    };
+
+    const showImagePreview = (imageData) => {
+      const container = document.getElementById('image-preview-container');
+      const preview = document.getElementById('image-preview');
+      
+      preview.src = imageData;
+      container.classList.remove('hidden');
+    };
+
+    const clearImage = () => {
+      currentImageData = null;
+      lastGenerationParams = null;
+      
+      const container = document.getElementById('image-preview-container');
+      const preview = document.getElementById('image-preview');
+      
+      preview.src = '';
+      container. classList.add('hidden');
+      
+      document.getElementById('file-upload').value = '';
+      document.getElementById('gif-upload').value = '';
+      document.getElementById('image-url-input').value = '';
+      document.getElementById('ai-prompt-input').value = '';
+      
+      document.getElementById('upload-info').classList.add('hidden');
+      document.getElementById('gif-info').classList.add('hidden');
+      document.getElementById('gif-validation-error').classList.add('hidden');
+      
+      hideGenerationStatus();
+    };
+
+    const showGenerationStatus = (message, type) => {
+      const statusDiv = document.getElementById('generation-status');
+      
+      let icon = '';
+      let className = '';
+      
+      if (type === 'loading') {
+        icon = '<div class="spinner"></div>';
+        className = 'generating-indicator';
+      } else if (type === 'success') {
+        icon = '<span class="text-2xl">✅</span>';
+        className = 'success-message';
+      } else if (type === 'error') {
+        icon = '<span class="text-2xl">❌</span>';
+        className = 'error-message';
+      }
+      
+      statusDiv.innerHTML = `
+        <div class="${className}">
+          ${icon}
+          <span>${message}</span>
+        </div>
+      `;
+      statusDiv.classList.remove('hidden');
+    };
+
+    const hideGenerationStatus = () => {
+      const statusDiv = document.getElementById('generation-status');
+      statusDiv.classList.add('hidden');
+      statusDiv.innerHTML = '';
+    };
+
+    const getFinalImageUrl = () => {
+      if (currentImageMode === 'url') {
+        return document.getElementById('image-url-input').value;
+      }
+      return currentImageData;
+    };
+
+    const resetForm = () => {
+      document. getElementById('custom-form').reset();
+      clearImage();
+      switchImageMode('url');
+      selectedImageSize = '1024x1024';
+      document.getElementById('delivery-status').classList.add('hidden');
+      showToast('Form cleared', 'info');
+    };
+
     // ==================== DATA LOADING ====================
     
     let allLogs = [];
 
     const loadDashboard = async () => {
       try {
-        const [status, todayHoliday, upcomingHolidays] = await Promise.all([
+        const [status, todayHoliday, upcomingHolidays] = await Promise. all([
           fetch('/api/status').then(r => r.json()).catch(() => null),
           fetch('/api/holidays/today').then(r => r.json()).catch(() => null),
           fetch('/api/holidays/upcoming').then(r => r.json()).catch(() => null),
         ]);
 
-        // Update status
         if (status) {
           const statusEl = document.getElementById('status-text');
-          if (statusEl) statusEl.textContent = status. running ? 'ACTIVE' : 'PAUSED';
+          if (statusEl) statusEl.textContent = status.running ? 'ACTIVE' : 'PAUSED';
           
           const timezoneEl = document.getElementById('timezone-text');
           if (timezoneEl) timezoneEl.textContent = status.config?. timezone || 'N/A';
@@ -1094,10 +2289,7 @@
           if (lastRunEl) lastRunEl.textContent = status.state?. lastRunDate || '—';
         }
 
-        // Update today's holiday
         updateTodayHoliday(todayHoliday?. holiday);
-
-        // Update upcoming holidays
         updateUpcomingHolidays(upcomingHolidays?.holidays);
 
       } catch (error) {
@@ -1108,7 +2300,7 @@
 
     const updateTodayHoliday = (holiday) => {
       const container = document.getElementById('today-holiday');
-      if (!container) return;
+      if (! container) return;
       
       if (! holiday) {
         container.innerHTML = `
@@ -1144,7 +2336,7 @@
       const container = document.getElementById('upcoming-holidays');
       if (!container) return;
       
-      if (! holidays || holidays.length === 0) {
+      if (!holidays || holidays.length === 0) {
         container.innerHTML = `
           <div class="empty-state py-12">
             <div class="empty-icon">🔮</div>
@@ -1178,7 +2370,7 @@
         <div class="glass p-5 rounded-xl hover:scale-[1.02] transition-all cursor-pointer fade-in" style="animation-delay: ${i * 0.05}s">
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <h4 class="font-bold text-lg mb-1">${h. name}</h4>
+              <h4 class="font-bold text-lg mb-1">${h.name}</h4>
               <p class="text-sm text-gray-400">${h.description || h.type || ''}</p>
             </div>
             <div class="font-mono font-bold text-neon-purple ml-4">${h.date}</div>
@@ -1302,7 +2494,7 @@
     const triggerHolidayCheck = async (button) => {
       button.disabled = true;
       const originalHTML = button.innerHTML;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Checking... ';
+      button.innerHTML = '<span class="text-2xl">⏳</span> Checking...';
       
       try {
         const response = await fetch('/api/trigger/holiday', { method: 'POST' });
@@ -1327,7 +2519,7 @@
     const testNewYear = async (button) => {
       button.disabled = true;
       const originalHTML = button.innerHTML;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Sending...';
+      button.innerHTML = '<span class="text-2xl">⏳</span> Sending... ';
       
       try {
         const response = await fetch('/api/test/newyear', { method: 'POST' });
@@ -1352,7 +2544,7 @@
     const loadTodayHoliday = async () => {
       try {
         const data = await fetch('/api/holidays/today').then(r => r.json());
-        updateTodayHoliday(data?.holiday);
+        updateTodayHoliday(data?. holiday);
         showToast('Today\'s holiday refreshed', 'info');
       } catch (error) {
         showToast('Failed to refresh', 'error');
@@ -1369,7 +2561,7 @@
       }
     };
 
-    // ==================== CUSTOM ANNOUNCEMENT FORM ====================
+    // ==================== FORM SUBMISSION ====================
     
     document.getElementById('custom-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -1377,7 +2569,7 @@
       const title = document.getElementById('custom-title').value;
       const message = document.getElementById('custom-message').value;
       const webhookChannel = document.getElementById('custom-webhook').value;
-      const imageUrl = document.getElementById('custom-image').value;
+      const imageUrl = getFinalImageUrl();
       const useAI = document.getElementById('use-ai').checked;
       
       const deliveryStatus = document.getElementById('delivery-status');
@@ -1397,16 +2589,15 @@
           })
         });
         
-        const data = await response. json();
+        const data = await response.json();
         
         if (data.success) {
           showToast('✅ Announcement sent successfully!', 'success');
           deliveryStatus.classList.remove('hidden');
           document.getElementById('delivery-message').textContent = 
-            `Your announcement "${title}" has been delivered to Discord ${webhookChannel} channel.`;
-          document.getElementById('custom-form').reset();
+            `Your announcement "${title}" has been delivered to Discord ${webhookChannel} channel. `;
           
-          // Update stats
+          setTimeout(() => resetForm(), 3000);
           await loadDashboard();
         } else {
           showToast('❌ Failed to send announcement:  ' + (data.error || 'Unknown error'), 'error');
@@ -1417,15 +2608,76 @@
       }
     });
 
+    const scheduleAnnouncement = async () => {
+      const title = document.getElementById('custom-title').value;
+      const message = document.getElementById('custom-message').value;
+      const webhookChannel = document.getElementById('custom-webhook').value;
+      const imageUrl = getFinalImageUrl();
+      const scheduleTime = document.getElementById('schedule-time').value;
+      const useAI = document.getElementById('use-ai').checked;
+      
+      if (!title || !message) {
+        showToast('Please fill in title and message', 'warning');
+        return;
+      }
+      
+      if (!scheduleTime) {
+        showToast('Please select a schedule time', 'warning');
+        return;
+      }
+      
+      const scheduleDate = new Date(scheduleTime);
+      if (scheduleDate <= new Date()) {
+        showToast('Schedule time must be in the future', 'error');
+        return;
+      }
+      
+      const deliveryStatus = document.getElementById('delivery-status');
+      deliveryStatus.classList.add('hidden');
+      
+      try {
+        const response = await fetch('/api/announcement/schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:  JSON.stringify({
+            scheduleTime:  scheduleDate.toISOString(),
+            title,
+            message,
+            webhookChannel,
+            imageUrl,
+            useAI,
+            roles: []
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('✅ Announcement scheduled successfully!', 'success');
+          deliveryStatus.classList.remove('hidden');
+          document.getElementById('delivery-message').textContent = 
+            `Your announcement "${title}" has been scheduled for ${scheduleDate.toLocaleString()}.`;
+          
+          setTimeout(() => resetForm(), 3000);
+          await loadDashboard();
+        } else {
+          showToast('❌ Failed to schedule announcement: ' + (data. error || 'Unknown error'), 'error');
+        }
+      } catch (error) {
+        console.error('Error scheduling announcement:', error);
+        showToast('❌ Error: ' + error.message, 'error');
+      }
+    };
+
     // ==================== INITIALIZATION ====================
     
     const init = () => {
-      console.log('Initializing dashboard.. .');
+      console.log('Initializing dashboard...');
       
       createParticles();
       loadDashboard();
+      setupDragAndDrop();
       
-      // Auto-refresh every minute
       setInterval(loadDashboard, 60000);
       
       console.log('Dashboard initialized');

@@ -1605,6 +1605,14 @@
             <h3 class="font-bold text-xl mb-6 flex items-center gap-2">
               <span class="text-2xl">🎮</span> Quick Actions
             </h3>
+             <!-- ADD ROLE SELECTOR HERE ⬇️ -->
+  <div class="mb-6">
+    <label for="holiday-roles">Mention Roles (Holiday Announcements)</label>
+    <select id="holiday-roles" multiple class="h-32">
+      <option value="everyone" selected>@everyone</option>
+    </select>
+    <p class="text-xs text-gray-400 mt-2">Hold Ctrl/Cmd to select multiple</p>
+  </div>
             <div class="flex flex-wrap gap-4">
               <button 
                 id="trigger-btn"
@@ -1760,7 +1768,14 @@
                 </div>
               </div>
             </div>
-
+<!-- ADD ROLE SELECTOR HERE ⬇️ -->
+<div>
+  <label for="custom-roles">Mention Roles (optional)</label>
+  <select id="custom-roles" multiple class="h-32">
+    <option value="everyone">@everyone</option>
+  </select>
+  <p class="text-xs text-gray-400 mt-2">Hold Ctrl/Cmd to select multiple</p>
+</div>
             <div>
               <label>Image Options (Optional)</label>
               <div class="image-options">
@@ -3275,3 +3290,4 @@
   </script>
 </body>
 </html>
+

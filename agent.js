@@ -677,3 +677,19 @@ async function startAgent() {
 }
 
 startAgent();
+// Near the end of agent.js, update the dashboard route: 
+
+app.get('/', (req, res) => { 
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html')); 
+});
+
+// Make sure the /api/health endpoint exists:
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    success: true, 
+    uptime: process.uptime(), 
+    state, 
+    zoneNow:  nowInZone().toISO(),
+    timestamp: new Date().toISOString()
+  });
+});

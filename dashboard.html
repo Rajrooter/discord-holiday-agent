@@ -3,82 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital Labour • AI Agent Dashboard</title>
+  <title>Holiday Bot • Digital Labour Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Space+Mono&display=swap" rel="stylesheet">
   
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            'cyber-cyan': '#00f0ff',
-            'cyber-magenta': '#ff00d0',
-            'cyber-yellow': '#ffd166',
-            'cyber-dark':  '#020617',
-            'cyber-darker': '#0a0a0f',
+            'neon-blue': '#00d4ff',
+            'neon-purple': '#b537ff',
+            'neon-pink': '#ff3d9a',
+            'dark-space': '#0a0e27',
+            'dark-void': '#050810',
           },
           fontFamily: {
-            'terminal': ['"Share Tech Mono"', 'monospace'],
-            'cyber': ['Orbitron', 'sans-serif'],
-            'sans': ['Poppins', 'sans-serif'],
-          },
-          animation: {
-            'blink': 'blink 1. 4s infinite',
-            'glow': 'glow 2s ease-in-out infinite',
-            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            'scanline': 'scanline 8s linear infinite',
-            'float': 'float 3s ease-in-out infinite',
-            'bounce-slow': 'bounce 2s infinite',
-            'slide-up': 'slideUp 0.3s ease-out',
-            'slide-down': 'slideDown 0.3s ease-out',
-            'fade-in': 'fadeIn 0.4s ease-out',
-            'scale-in': 'scaleIn 0.3s ease-out',
-            'wiggle': 'wiggle 1s ease-in-out infinite',
-          },
-          keyframes: {
-            blink: {
-              '0%, 49%': { opacity: '1' },
-              '50%, 100%': { opacity: '0.3' },
-            },
-            glow: {
-              '0%, 100%': { 
-                boxShadow: '0 0 20px rgba(0, 240, 255, 0.3), 0 0 40px rgba(0, 240, 255, 0.1), inset 0 0 20px rgba(0, 240, 255, 0.05)' 
-              },
-              '50%': { 
-                boxShadow: '0 0 30px rgba(0, 240, 255, 0.6), 0 0 60px rgba(0, 240, 255, 0.3), inset 0 0 30px rgba(0, 240, 255, 0.1)' 
-              },
-            },
-            scanline: {
-              '0%': { transform: 'translateY(-100%)' },
-              '100%':  { transform: 'translateY(100%)' },
-            },
-            float: {
-              '0%, 100%': { transform:  'translateY(0px)' },
-              '50%': { transform: 'translateY(-20px)' },
-            },
-            slideUp: {
-              '0%': { transform: 'translateY(20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' },
-            },
-            slideDown: {
-              '0%': { transform: 'translateY(-20px)', opacity: '0' },
-              '100%': { transform: 'translateY(0)', opacity: '1' },
-            },
-            fadeIn: {
-              '0%': { opacity: '0' },
-              '100%': { opacity: '1' },
-            },
-            scaleIn: {
-              '0%': { transform: 'scale(0.9)', opacity: '0' },
-              '100%': { transform:  'scale(1)', opacity: '1' },
-            },
-            wiggle: {
-              '0%, 100%': { transform: 'rotate(-3deg)' },
-              '50%': { transform: 'rotate(3deg)' },
-            },
+            'sans': ['Inter', 'system-ui', 'sans-serif'],
+            'mono': ['"Space Mono"', 'monospace'],
           },
         },
       },
@@ -93,141 +37,110 @@
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
-      background:  #0a0a0f;
-      color: #00f0ff;
+      font-family: 'Inter', sans-serif;
+      background:  #0a0e27;
+      color: #fff;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* Space background canvas */
-    #space-canvas {
+    /* Animated gradient background */
+    .gradient-bg {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      background: linear-gradient(135deg, 
+        #0a0e27 0%,
+        #1a1447 25%,
+        #0f1b3d 50%,
+        #1a1447 75%,
+        #0a0e27 100%
+      );
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
       z-index: 0;
-      pointer-events: none;
     }
 
-    /* Matrix effect canvas */
-    #matrix-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width:  100%;
-      height: 100%;
-      z-index:  1;
-      pointer-events: none;
-      opacity: 0.08;
+    @keyframes gradientShift {
+      0%, 100% { background-position:  0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
-    /* Scanline effect */
-    . scanline {
+    /* Floating particles */
+    .particle {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 240, 255, 0.03) 0px,
-        transparent 1px,
-        transparent 2px,
-        rgba(0, 240, 255, 0.03) 3px
-      );
+      width: 4px;
+      height: 4px;
+      background: rgba(0, 212, 255, 0.6);
+      border-radius: 50%;
       pointer-events:  none;
-      z-index:  2;
+      animation: float 20s infinite;
     }
 
-    . scanline:: before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left:  0;
-      width: 100%;
-      height: 20px;
-      background: linear-gradient(
-        to bottom,
-        rgba(0, 240, 255, 0.1),
-        transparent
-      );
-      animation: scanline 8s linear infinite;
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity:  1;
+      }
+      100% {
+        transform: translateY(-100vh) translateX(50px);
+        opacity: 0;
+      }
     }
 
-    /* Glass morphism */
-    .glass-panel {
-      background: rgba(10, 10, 15, 0.7);
-      backdrop-filter: blur(16px) saturate(180%);
-      border: 1px solid rgba(0, 240, 255, 0.2);
-      box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.1),
-                  inset 0 0 20px rgba(0, 240, 255, 0.03);
+    /* Glass panel */
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    /* Glow text */
-    .glow-text {
-      text-shadow: 0 0 10px rgba(0, 240, 255, 0.8),
-                   0 0 20px rgba(0, 240, 255, 0.4),
-                   0 0 30px rgba(0, 240, 255, 0.2);
+    . glass-strong {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        0 12px 48px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
-    .glow-text-magenta {
-      text-shadow:  0 0 10px rgba(255, 0, 208, 0.8),
-                   0 0 20px rgba(255, 0, 208, 0.4),
-                   0 0 30px rgba(255, 0, 208, 0.2);
-    }
-
-    .glow-text-yellow {
-      text-shadow: 0 0 10px rgba(255, 209, 102, 0.8),
-                   0 0 20px rgba(255, 209, 102, 0.4),
-                   0 0 30px rgba(255, 209, 102, 0.2);
-    }
-
-    /* Neon border */
-    .neon-border {
+    /* Content wrapper */
+    .content {
       position: relative;
+      z-index: 10;
     }
 
-    .neon-border::before {
-      content: '';
-      position: absolute;
-      inset: -2px;
-      background: linear-gradient(45deg, #00f0ff, #ff00d0, #ffd166, #00f0ff);
-      border-radius: inherit;
-      opacity: 0.3;
-      z-index: -1;
-      filter: blur(8px);
-      animation: glow 2s ease-in-out infinite;
+    /* Glowing text */
+    .glow {
+      text-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
+                   0 0 40px rgba(0, 212, 255, 0.3);
     }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+    . glow-purple {
+      text-shadow: 0 0 20px rgba(181, 55, 255, 0.5),
+                   0 0 40px rgba(181, 55, 255, 0.3);
     }
 
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 240, 255, 0.05);
+    .glow-pink {
+      text-shadow: 0 0 20px rgba(255, 61, 154, 0.5),
+                   0 0 40px rgba(255, 61, 154, 0.3);
     }
 
-    ::-webkit-scrollbar-thumb {
-      background:  rgba(0, 240, 255, 0.3);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 240, 255, 0.5);
-    }
-
-    /* Hover effects */
-    .cyber-button {
+    /* Button hover effects */
+    .btn {
       position: relative;
       overflow: hidden;
       transition: all 0.3s ease;
     }
 
-    .cyber-button:: before {
+    .btn::before {
       content: '';
       position: absolute;
       top: 50%;
@@ -235,26 +148,140 @@
       width: 0;
       height: 0;
       border-radius: 50%;
-      background:  rgba(0, 240, 255, 0.3);
+      background:  rgba(255, 255, 255, 0.2);
       transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+      transition: width 0.5s, height 0.5s;
     }
 
-    .cyber-button:hover::before {
-      width: 300px;
+    .btn:hover::before {
+      width:  300px;
       height: 300px;
     }
 
-    . cyber-button:hover {
+    .btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
     }
 
-    .cyber-button:active {
-      transform: translateY(0);
+    /* Card hover lift */
+    .card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Tab animation */
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+    }
+
+    /* Pulse animation */
+    .pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity:  0.5;
+      }
+    }
+
+    /* Bounce animation */
+    .bounce {
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Fade in animation */
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Scale in animation */
+    .scale-in {
+      animation: scaleIn 0.4s ease-out;
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform:  scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    : :-webkit-scrollbar-track {
+      background: rgba(0, 212, 255, 0.05);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 212, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 212, 255, 0.5);
+    }
+
+    /* Robot mascot */
+    .robot {
+      animation: robotFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes robotFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-15px) rotate(5deg);
+      }
+    }
+
+    /* Status indicator */
+    .status-dot {
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(0, 255, 163, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(0, 255, 163, 0);
+      }
+    }
+
+    /* Tab active state */
     .tab {
       position: relative;
       transition: all 0.3s ease;
@@ -263,76 +290,40 @@
     .tab::after {
       content: '';
       position: absolute;
-      bottom:  0;
-      left: 0;
+      bottom:  -2px;
+      left: 50%;
       width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, #00f0ff, #ff00d0);
+      height: 3px;
+      background: linear-gradient(90deg, #00d4ff, #b537ff);
+      transform: translateX(-50%);
       transition: width 0.3s ease;
+      border-radius: 10px;
     }
 
-    .tab:hover::after,
-    .tab.active::after {
-      width: 100%;
-    }
-
-    /* Terminal cursor */
-    .terminal-cursor {
-      display: inline-block;
-      width: 10px;
-      height: 18px;
-      background: #00f0ff;
-      animation: blink 1s step-end infinite;
-      margin-left: 2px;
-    }
-
-    /* Loading spinner */
-    .loading-spinner {
-      border: 3px solid rgba(0, 240, 255, 0.1);
-      border-top: 3px solid #00f0ff;
-      border-radius: 50%;
-      width:  24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Responsive container */
-    . content-wrapper {
-      position: relative;
-      z-index: 10;
-    }
-
-    /* Status dot pulse */
-    .status-dot {
-      animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    /* Card hover lift */
-    .stat-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .stat-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 60px rgba(0, 240, 255, 0.3);
+    . tab. active::after,
+    .tab:hover::after {
+      width: 80%;
     }
 
     /* Toast notification */
     .toast {
       position: fixed;
-      top:  20px;
-      right:  20px;
+      top:  24px;
+      right: 24px;
       z-index: 9999;
-      animation: slide-down 0.3s ease-out;
+      animation: slideDown 0.3s ease-out;
+      max-width: 400px;
     }
 
-    . toast.hide {
-      animation: slide-up 0.3s ease-out;
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform:  translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform:  translateY(0);
+      }
     }
 
     /* Tooltip */
@@ -343,30 +334,29 @@
     .tooltip::before {
       content: attr(data-tooltip);
       position: absolute;
-      bottom: 100%;
+      bottom: calc(100% + 8px);
       left: 50%;
-      transform: translateX(-50%) translateY(-8px);
-      padding: 8px 12px;
-      background: rgba(0, 240, 255, 0.9);
-      color: #0a0a0f;
+      transform: translateX(-50%);
+      padding: 8px 16px;
+      background: rgba(0, 212, 255, 0.95);
+      color: #0a0e27;
       border-radius: 8px;
-      font-size: 12px;
-      white-space:  nowrap;
-      opacity: 0;
-      pointer-events:  none;
-      transition: opacity 0.3s, transform 0.3s;
-      font-family: 'Poppins', sans-serif;
+      font-size:  13px;
       font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
     }
 
     .tooltip:: after {
       content: '';
       position: absolute;
-      bottom: 100%;
+      bottom: calc(100% + 2px);
       left: 50%;
       transform: translateX(-50%);
-      border:  6px solid transparent;
-      border-top-color: rgba(0, 240, 255, 0.9);
+      border: 6px solid transparent;
+      border-top-color: rgba(0, 212, 255, 0.95);
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.3s, transform 0.3s;
@@ -374,50 +364,50 @@
 
     .tooltip:hover::before,
     .tooltip:hover::after {
-      opacity:  1;
-      transform: translateX(-50%) translateY(-4px);
+      opacity: 1;
     }
 
     /* Empty state */
     .empty-state {
       text-align: center;
       padding: 60px 20px;
-      color: rgba(0, 240, 255, 0.4);
+      opacity: 0.6;
     }
 
-    .empty-state-icon {
-      font-size:  80px;
-      margin-bottom:  20px;
-      opacity: 0.3;
-      animation: float 3s ease-in-out infinite;
+    .empty-icon {
+      font-size: 80px;
+      animation: floatSlow 4s ease-in-out infinite;
     }
 
-    /* Skeleton loading */
+    @keyframes floatSlow {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    /* Loading skeleton */
     .skeleton {
       background: linear-gradient(
         90deg,
-        rgba(0, 240, 255, 0.05) 25%,
-        rgba(0, 240, 255, 0.1) 50%,
-        rgba(0, 240, 255, 0.05) 75%
+        rgba(255, 255, 255, 0.03) 25%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0.03) 75%
       );
-      background-size: 200% 100%;
-      animation: skeleton-loading 1.5s ease-in-out infinite;
+      background-size:  200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
+      border-radius:  8px;
     }
 
-    @keyframes skeleton-loading {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* Smooth scroll */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* Focus visible for accessibility */
-    *:focus-visible {
-      outline: 2px solid #00f0ff;
-      outline-offset: 4px;
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
     }
 
     /* Badge */
@@ -425,609 +415,450 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius:  999px;
-      font-size:  12px;
-      font-weight: 600;
-      background: rgba(0, 240, 255, 0.1);
-      border: 1px solid rgba(0, 240, 255, 0.3);
+      font-size:  13px;
+      font-weight:  600;
+      background: rgba(0, 212, 255, 0.15);
+      border: 1px solid rgba(0, 212, 255, 0.3);
     }
 
-    /* Progress bar */
-    .progress-bar {
-      width: 100%;
-      height: 4px;
-      background: rgba(0, 240, 255, 0.1);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      background: linear-gradient(90deg, #00f0ff, #ff00d0);
-      border-radius: 999px;
-      transition: width 0.3s ease;
-    }
-
-    /* Floating action button */
-    .fab {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 60px;
-      height: 60px;
-      border-radius:  50%;
-      background: linear-gradient(135deg, #00f0ff, #ff00d0);
-      color: #0a0a0f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      box-shadow:  0 8px 30px rgba(0, 240, 255, 0.4);
-      cursor: pointer;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-
-    .fab:hover {
-      transform: scale(1.1) rotate(90deg);
-      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.6);
-    }
-
-    /* Cute robot mascot */
-    .robot-mascot {
-      position: fixed;
-      bottom: 100px;
-      right: 30px;
-      z-index: 999;
-      animation: float 3s ease-in-out infinite;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-    }
-
-    .robot-mascot:hover {
-      animation: wiggle 1s ease-in-out infinite;
+    /* Focus styles for accessibility */
+    *:focus-visible {
+      outline: 3px solid rgba(0, 212, 255, 0.6);
+      outline-offset: 3px;
     }
   </style>
 </head>
-<body class="min-h-screen">
-  <!-- Space background canvas -->
-  <canvas id="space-canvas"></canvas>
-  
-  <!-- Matrix effect canvas -->
-  <canvas id="matrix-canvas"></canvas>
-  
-  <!-- Scanline overlay -->
-  <div class="scanline"></div>
+<body>
+  <!-- Animated gradient background -->
+  <div class="gradient-bg"></div>
+
+  <!-- Floating particles -->
+  <div id="particles"></div>
 
   <!-- Toast container -->
   <div id="toast-container"></div>
 
-  <!-- Cute robot mascot -->
-  <div class="robot-mascot hidden md:block" onclick="handleRobotClick()" data-tooltip="Click me for help!">
-    <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="30" fill="url(#gradient1)" opacity="0.8"/>
-      <circle cx="42" cy="45" r="4" fill="#0a0a0f"/>
-      <circle cx="58" cy="45" r="4" fill="#0a0a0f"/>
-      <path d="M 40 58 Q 50 63 60 58" stroke="#0a0a0f" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <rect x="44" y="25" width="4" height="10" fill="#00f0ff" opacity="0.6"/>
-      <rect x="52" y="25" width="4" height="10" fill="#ff00d0" opacity="0.6"/>
-      <defs>
-        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#ff00d0;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-    </svg>
-  </div>
-
-  <!-- Floating action button -->
-  <button 
-    class="fab tooltip"
-    data-tooltip="Quick Actions"
-    onclick="handleFabClick()"
-    onkeydown="handleKeyDown(event, handleFabClick)"
-    tabindex="0"
-    aria-label="Quick actions menu"
-  >
-    ⚡
-  </button>
-
   <!-- Main content -->
-  <div class="content-wrapper min-h-screen p-4 md:p-8">
-    <!-- Header -->
-    <header class="glass-panel rounded-2xl p-6 md:p-8 mb-6 neon-border animate-fade-in">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-4">
-          <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-cyber-cyan to-cyber-magenta rounded-xl flex items-center justify-center text-2xl md:text-3xl font-cyber font-black text-cyber-darker shadow-lg animate-pulse-slow">
-            DL
+  <div class="content min-h-screen p-4 md:p-8">
+    <!-- Header with cute robot -->
+    <header class="glass-strong rounded-3xl p-6 md:p-10 mb-8 fade-in">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <!-- Robot mascot and title -->
+        <div class="flex items-center gap-6">
+          <!-- Cute Robot SVG -->
+          <div class="robot">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Robot body -->
+              <rect x="30" y="40" width="60" height="50" rx="20" fill="url(#robotGradient)" />
+              
+              <!-- Robot head -->
+              <rect x="40" y="15" width="40" height="35" rx="15" fill="url(#robotGradient)" />
+              
+              <!-- Antenna -->
+              <line x1="60" y1="10" x2="60" y2="5" stroke="#00d4ff" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="60" cy="3" r="3" fill="#ff3d9a"/>
+              
+              <!-- Eyes -->
+              <circle cx="50" cy="28" r="5" fill="#00d4ff" class="pulse"/>
+              <circle cx="70" cy="28" r="5" fill="#00d4ff" class="pulse"/>
+              
+              <!-- Smile -->
+              <path d="M 45 38 Q 60 45 75 38" stroke="#00d4ff" stroke-width="3" stroke-linecap="round" fill="none"/>
+              
+              <!-- Arms -->
+              <rect x="20" y="50" width="10" height="25" rx="5" fill="url(#armGradient)"/>
+              <rect x="90" y="50" width="10" height="25" rx="5" fill="url(#armGradient)"/>
+              
+              <!-- Legs -->
+              <rect x="40" y="90" width="12" height="20" rx="6" fill="url(#legGradient)"/>
+              <rect x="68" y="90" width="12" height="20" rx="6" fill="url(#legGradient)"/>
+              
+              <!-- Heart on chest -->
+              <path d="M 60 55 L 65 50 Q 70 48 70 53 Q 70 58 60 65 Q 50 58 50 53 Q 50 48 55 50 Z" fill="#ff3d9a" opacity="0.8"/>
+              
+              <defs>
+                <linearGradient id="robotGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.8" />
+                  <stop offset="100%" style="stop-color:#b537ff;stop-opacity:0.8" />
+                </linearGradient>
+                <linearGradient id="armGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+                  <stop offset="100%" style="stop-color:#b537ff;stop-opacity:0.6" />
+                </linearGradient>
+                <linearGradient id="legGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+                  <stop offset="100%" style="stop-color:#b537ff;stop-opacity:0.6" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
+          
           <div>
-            <h1 class="text-2xl md:text-4xl font-cyber font-black glow-text animate-blink">
-              DIGITAL LABOUR AI AGENT
+            <h1 class="text-3xl md:text-5xl font-black glow mb-2">
+              Holiday Bot
             </h1>
-            <p class="text-sm md:text-base text-cyan-300 font-sans mt-1 font-light">
-              Automated Holiday & Announcement System 🤖
+            <p class="text-base md:text-lg text-gray-300 font-medium">
+              Your friendly AI assistant for holiday announcements 🎉
+            </p>
+            <p class="text-sm text-gray-400 mt-1">
+              Digital Labour • Automated & Intelligent
             </p>
           </div>
         </div>
         
-        <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2 glass-panel px-4 py-2 rounded-full border border-cyber-cyan/30 tooltip" data-tooltip="System Status">
-            <div class="w-3 h-3 bg-cyber-cyan rounded-full status-dot"></div>
-            <span class="text-cyber-cyan font-sans text-sm font-semibold" id="status-text">RUNNING</span>
+        <!-- Status badges -->
+        <div class="flex flex-col gap-3">
+          <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
+            <div class="w-3 h-3 bg-green-400 rounded-full status-dot"></div>
+            <span class="text-green-400 font-bold text-sm" id="status-text">ACTIVE</span>
           </div>
-          <div class="glass-panel px-4 py-2 rounded-full border border-cyber-magenta/30 tooltip" data-tooltip="Current Timezone">
-            <span class="text-cyber-magenta font-sans text-sm font-semibold" id="timezone-text">TZ:  Loading...</span>
+          <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
+            <span class="text-sm">🌍</span>
+            <span class="text-gray-300 font-semibold text-sm" id="timezone-text">Loading...</span>
+          </div>
+          <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
+            <span class="text-sm">⏰</span>
+            <span class="text-gray-300 font-semibold text-sm" id="uptime-text">Starting... </span>
           </div>
         </div>
       </div>
 
-      <!-- Next check countdown -->
-      <div class="mt-4 pt-4 border-t border-cyber-cyan/20">
-        <div class="flex items-center justify-between text-sm">
-          <span class="text-cyan-300/60 font-sans">Next midnight check in:</span>
-          <span class="font-cyber text-cyber-cyan font-bold" id="countdown-text">Calculating...</span>
+      <!-- Countdown progress -->
+      <div class="mt-8 pt-6 border-t border-white/10">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">⏳</span>
+            <span class="text-gray-300 font-semibold">Next midnight check in</span>
+          </div>
+          <span class="font-mono font-bold text-xl glow" id="countdown-text">--:--:--</span>
         </div>
-        <div class="progress-bar mt-2">
-          <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+        <div class="h-3 bg-white/5 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-neon-blue to-neon-purple rounded-full transition-all duration-1000" id="progress-bar" style="width: 0%"></div>
         </div>
       </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <nav class="glass-panel rounded-xl p-2 mb-6 flex flex-wrap gap-2 animate-slide-up" role="tablist">
+    <!-- Navigation tabs -->
+    <nav class="glass rounded-2xl p-2 mb-8 flex flex-wrap gap-2 fade-in" role="tablist" style="animation-delay: 0.1s">
       <button 
-        class="tab active flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
+        class="tab active flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        aria-selected="true"
-        aria-controls="overview-panel"
-        tabindex="0"
-        data-tooltip="View system overview"
-        onclick="handleTabClick('overview', this)"
-        onkeydown="handleKeyDown(event, () => handleTabClick('overview', this))"
+        data-tooltip="Dashboard overview"
+        onclick="switchTab('overview', this)"
       >
-        <span class="glow-text">📊 Overview</span>
+        📊 Overview
       </button>
       <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
+        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        aria-selected="false"
-        aria-controls="holidays-panel"
-        tabindex="0"
-        data-tooltip="Manage holidays"
-        onclick="handleTabClick('holidays', this)"
-        onkeydown="handleKeyDown(event, () => handleTabClick('holidays', this))"
+        data-tooltip="Holiday management"
+        onclick="switchTab('holidays', this)"
       >
         🎉 Holidays
       </button>
       <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus: outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
+        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        aria-selected="false"
-        aria-controls="custom-panel"
-        tabindex="0"
-        data-tooltip="Custom announcements"
-        onclick="handleTabClick('custom', this)"
-        onkeydown="handleKeyDown(event, () => handleTabClick('custom', this))"
+        data-tooltip="Scheduled items"
+        onclick="switchTab('scheduled', this)"
       >
-        📢 Custom
+        📅 Scheduled
       </button>
       <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
+        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
-        aria-selected="false"
-        aria-controls="scheduled-panel"
-        tabindex="0"
-        data-tooltip="View scheduled items"
-        onclick="handleTabClick('scheduled', this)"
-        onkeydown="handleKeyDown(event, () => handleTabClick('scheduled', this))"
-      >
-        ⏰ Scheduled
-      </button>
-      <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
-        role="tab"
-        aria-selected="false"
-        aria-controls="logs-panel"
-        tabindex="0"
-        data-tooltip="View activity logs"
-        onclick="handleTabClick('logs', this)"
-        onkeydown="handleKeyDown(event, () => handleTabClick('logs', this))"
+        data-tooltip="Activity logs"
+        onclick="switchTab('logs', this)"
       >
         📋 Logs
       </button>
     </nav>
 
-    <!-- Tab Panels -->
-    <div class="space-y-6">
+    <!-- Tab panels -->
+    <div>
       <!-- Overview Panel -->
-      <div id="overview-panel" class="tab-panel animate-scale-in" role="tabpanel" aria-labelledby="overview-tab">
-        <!-- Stats Grid -->
-        <div class="grid grid-cols-1 md: grid-cols-3 gap-4 mb-6">
-          <!-- Holiday Announcements -->
-          <div class="stat-card glass-panel rounded-xl p-6 neon-border cursor-pointer" onclick="handleStatClick('holidays')">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-cyber-cyan font-sans text-sm font-semibold">Holiday Announcements</span>
-              <span class="text-3xl animate-bounce-slow">🎊</span>
+      <div id="overview-panel" class="panel">
+        <!-- Stats cards -->
+        <div class="grid grid-cols-1 md: grid-cols-3 gap-6 mb-8">
+          <!-- Holiday announcements -->
+          <div class="card glass-strong rounded-2xl p-8 scale-in">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-6xl bounce">🎊</span>
+              <div class="badge">
+                <span class="w-2 h-2 bg-neon-blue rounded-full pulse"></span>
+                Active
+              </div>
             </div>
-            <div class="text-5xl font-cyber font-black glow-text mb-2" id="holiday-count">
-              <div class="skeleton h-14 w-20 rounded"></div>
+            <div class="text-6xl font-black glow mb-3" id="holiday-count">
+              <div class="skeleton h-16 w-24"></div>
             </div>
-            <div class="text-xs text-cyan-300/60 font-sans">Total sent successfully</div>
+            <h3 class="text-lg font-bold text-gray-300">Holiday Announcements</h3>
+            <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
           </div>
 
-          <!-- Custom Announcements -->
-          <div class="stat-card glass-panel rounded-xl p-6 neon-border cursor-pointer" onclick="handleStatClick('custom')">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-cyber-magenta font-sans text-sm font-semibold">Custom Announcements</span>
-              <span class="text-3xl animate-bounce-slow" style="animation-delay: 0.2s">📣</span>
+          <!-- Custom announcements -->
+          <div class="card glass-strong rounded-2xl p-8 scale-in" style="animation-delay: 0.1s">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-6xl bounce" style="animation-delay: 0.2s">📢</span>
+              <div class="badge" style="background: rgba(181, 55, 255, 0.15); border-color: rgba(181, 55, 255, 0.3)">
+                <span class="w-2 h-2 bg-neon-purple rounded-full pulse"></span>
+                Ready
+              </div>
             </div>
-            <div class="text-5xl font-cyber font-black glow-text-magenta mb-2" id="custom-count">
-              <div class="skeleton h-14 w-20 rounded"></div>
+            <div class="text-6xl font-black glow-purple mb-3" id="custom-count">
+              <div class="skeleton h-16 w-24"></div>
             </div>
-            <div class="text-xs text-magenta-300/60 font-sans">Total sent successfully</div>
+            <h3 class="text-lg font-bold text-gray-300">Custom Announcements</h3>
+            <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
           </div>
 
-          <!-- Scheduled Items -->
-          <div class="stat-card glass-panel rounded-xl p-6 neon-border cursor-pointer" onclick="handleStatClick('scheduled')">
-            <div class="flex items-center justify-between mb-4">
-              <span class="text-cyber-yellow font-sans text-sm font-semibold">Scheduled Items</span>
-              <span class="text-3xl animate-bounce-slow" style="animation-delay: 0.4s">⏱️</span>
+          <!-- Scheduled items -->
+          <div class="card glass-strong rounded-2xl p-8 scale-in" style="animation-delay: 0.2s">
+            <div class="flex items-center justify-between mb-6">
+              <span class="text-6xl bounce" style="animation-delay: 0.4s">⏰</span>
+              <div class="badge" style="background: rgba(255, 61, 154, 0.15); border-color: rgba(255, 61, 154, 0.3)">
+                <span class="w-2 h-2 bg-neon-pink rounded-full pulse"></span>
+                Queue
+              </div>
             </div>
-            <div class="text-5xl font-cyber font-black glow-text-yellow mb-2" id="scheduled-count">
-              <div class="skeleton h-14 w-20 rounded"></div>
+            <div class="text-6xl font-black glow-pink mb-3" id="scheduled-count">
+              <div class="skeleton h-16 w-24"></div>
             </div>
-            <div class="text-xs text-yellow-300/60 font-sans">Pending in queue</div>
+            <h3 class="text-lg font-bold text-gray-300">Scheduled Items</h3>
+            <p class="text-sm text-gray-400 mt-1">Pending in queue</p>
           </div>
         </div>
 
-        <!-- Today's Holiday -->
-        <div class="glass-panel rounded-xl p-6 mb-6 animate-slide-up">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-cyber font-bold glow-text flex items-center gap-2">
-              <span class="animate-pulse">📅</span> Today's Holiday
-            </h2>
+        <!-- Today's holiday -->
+        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay:  0.3s">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-4xl bounce">📅</span>
+              <h2 class="text-2xl font-black">Today's Holiday</h2>
+            </div>
             <button 
-              class="cyber-button glass-panel px-3 py-1 rounded-lg border border-cyber-cyan/30 hover:border-cyber-cyan font-sans text-xs font-semibold transition-all tooltip"
+              class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10 tooltip"
               data-tooltip="Refresh today's holiday"
-              onclick="handleRefreshToday()"
-              onkeydown="handleKeyDown(event, handleRefreshToday)"
-              tabindex="0"
+              onclick="loadTodayHoliday()"
             >
               🔄 Refresh
             </button>
           </div>
-          <div id="today-holiday" class="font-sans">
-            <div class="skeleton h-24 w-full rounded-lg"></div>
+          <div id="today-holiday">
+            <div class="skeleton h-32 w-full rounded-xl"></div>
           </div>
         </div>
 
-        <!-- Upcoming Holidays -->
-        <div class="glass-panel rounded-xl p-6 animate-slide-up" style="animation-delay: 0.1s">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-cyber font-bold glow-text flex items-center gap-2">
-              <span class="animate-float">🔮</span> Upcoming Holidays
-            </h2>
-            <div class="flex items-center gap-2">
-              <span class="badge">
-                <span class="w-2 h-2 bg-cyber-cyan rounded-full animate-pulse"></span>
-                Next 30 days
-              </span>
+        <!-- Upcoming holidays -->
+        <div class="glass-strong rounded-2xl p-8 fade-in" style="animation-delay: 0.4s">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center gap-3">
+              <span class="text-4xl">🔮</span>
+              <h2 class="text-2xl font-black">Upcoming Holidays</h2>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="badge">Next 30 days</span>
               <button 
-                class="cyber-button glass-panel px-3 py-1 rounded-lg border border-cyber-cyan/30 hover:border-cyber-cyan font-sans text-xs font-semibold transition-all tooltip"
+                class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10 tooltip"
                 data-tooltip="Refresh upcoming holidays"
-                onclick="handleRefreshUpcoming()"
-                onkeydown="handleKeyDown(event, handleRefreshUpcoming)"
-                tabindex="0"
+                onclick="loadUpcomingHolidays()"
               >
                 🔄 Refresh
               </button>
             </div>
           </div>
-          <div id="upcoming-holidays" class="space-y-3 max-h-96 overflow-y-auto font-sans">
-            <div class="skeleton h-20 w-full rounded-lg mb-3"></div>
-            <div class="skeleton h-20 w-full rounded-lg mb-3"></div>
-            <div class="skeleton h-20 w-full rounded-lg"></div>
+          <div id="upcoming-holidays" class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+            <div class="skeleton h-24 w-full rounded-xl mb-4"></div>
+            <div class="skeleton h-24 w-full rounded-xl mb-4"></div>
+            <div class="skeleton h-24 w-full rounded-xl"></div>
           </div>
         </div>
       </div>
 
       <!-- Holidays Panel -->
-      <div id="holidays-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="holidays-tab">
-        <div class="glass-panel rounded-xl p-6 animate-scale-in">
-          <h2 class="text-2xl font-cyber font-bold glow-text mb-6 flex items-center gap-3">
-            <span class="text-4xl">🎉</span> Holiday Automation
-          </h2>
-          
-          <div class="space-y-4">
-            <!-- Status cards -->
-            <div class="grid grid-cols-1 md: grid-cols-2 gap-4">
-              <div class="p-4 bg-gradient-to-br from-cyber-cyan/10 to-cyber-cyan/5 rounded-lg border border-cyber-cyan/20">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-sans text-cyber-cyan font-semibold flex items-center gap-2">
-                    <span class="text-xl">⏰</span> Next Check
-                  </span>
-                  <span class="badge bg-cyber-cyan/20">
-                    <span class="w-2 h-2 bg-cyber-cyan rounded-full animate-pulse"></span>
-                    Scheduled
-                  </span>
-                </div>
-                <div class="font-terminal text-sm mt-2" id="next-check-time">Daily at 00:00 IST</div>
-              </div>
-
-              <div class="p-4 bg-gradient-to-br from-cyber-magenta/10 to-cyber-magenta/5 rounded-lg border border-cyber-magenta/20">
-                <div class="flex items-center justify-between mb-2">
-                  <span class="font-sans text-cyber-magenta font-semibold flex items-center gap-2">
-                    <span class="text-xl">📊</span> Last Run
-                  </span>
-                  <span class="badge bg-cyber-magenta/20">
-                    <span class="w-2 h-2 bg-cyber-magenta rounded-full"></span>
-                    Completed
-                  </span>
-                </div>
-                <div class="font-terminal text-sm mt-2" id="last-run-date">—</div>
-              </div>
-            </div>
-
-            <!-- Action buttons -->
-            <div class="p-6 bg-gradient-to-br from-cyber-cyan/5 to-transparent rounded-lg border border-cyber-cyan/10">
-              <h3 class="font-cyber font-bold text-cyber-cyan mb-4 flex items-center gap-2">
-                <span class="text-xl">🎮</span> Quick Actions
-              </h3>
-              <div class="flex flex-wrap gap-3">
-                <button 
-                  class="cyber-button glass-panel px-6 py-3 rounded-lg border-2 border-cyber-cyan/50 hover:border-cyber-cyan font-sans font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan flex items-center gap-2 tooltip"
-                  data-tooltip="Manually trigger holiday check now"
-                  onclick="handleTriggerHoliday(this)"
-                  onkeydown="handleKeyDown(event, () => handleTriggerHoliday(this))"
-                  tabindex="0"
-                  aria-label="Trigger holiday check manually"
-                >
-                  <span class="text-xl">🚀</span> Trigger Check Now
-                </button>
-                <button 
-                  class="cyber-button glass-panel px-6 py-3 rounded-lg border-2 border-cyber-magenta/50 hover:border-cyber-magenta font-sans font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-cyber-magenta flex items-center gap-2 tooltip"
-                  data-tooltip="Send test New Year announcement"
-                  onclick="handleTestNewYear(this)"
-                  onkeydown="handleKeyDown(event, () => handleTestNewYear(this))"
-                  tabindex="0"
-                  aria-label="Test New Year announcement"
-                >
-                  <span class="text-xl">🎆</span> Test New Year
-                </button>
-              </div>
-            </div>
-
-            <!-- Info cards -->
-            <div class="p-6 bg-gradient-to-br from-cyber-yellow/5 to-transparent rounded-lg border border-cyber-yellow/10">
-              <h3 class="font-cyber font-bold text-cyber-yellow mb-3 flex items-center gap-2">
-                <span class="text-xl">💡</span> How It Works
-              </h3>
-              <div class="space-y-2 text-sm font-sans text-cyan-300/80">
-                <div class="flex items-start gap-2">
-                  <span class="text-cyber-cyan mt-1">•</span>
-                  <span>The bot checks for holidays every day at midnight (00:00) in your configured timezone</span>
-                </div>
-                <div class="flex items-start gap-2">
-                  <span class="text-cyber-cyan mt-1">•</span>
-                  <span>Uses triple redundancy:  cron scheduler + minute-guard + external trigger for 100% reliability</span>
-                </div>
-                <div class="flex items-start gap-2">
-                  <span class="text-cyber-cyan mt-1">•</span>
-                  <span>AI-powered messages via Google Gemini with smart fallback templates</span>
-                </div>
-                <div class="flex items-start gap-2">
-                  <span class="text-cyber-cyan mt-1">•</span>
-                  <span>State persistence ensures no checks are ever missed</span>
-                </div>
-              </div>
+      <div id="holidays-panel" class="panel hidden">
+        <div class="glass-strong rounded-2xl p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <span class="text-6xl">🎉</span>
+            <div>
+              <h2 class="text-3xl font-black glow mb-2">Holiday Automation</h2>
+              <p class="text-gray-400">Manage and test holiday announcements</p>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Custom Panel -->
-      <div id="custom-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="custom-tab">
-        <div class="glass-panel rounded-xl p-6 animate-scale-in">
-          <h2 class="text-2xl font-cyber font-bold glow-text mb-6 flex items-center gap-3">
-            <span class="text-4xl">📢</span> Custom Announcements
-          </h2>
-          <div class="empty-state">
-            <div class="empty-state-icon">📣</div>
-            <h3 class="text-xl font-cyber font-bold mb-2 text-cyan-300">Custom Announcements</h3>
-            <p class="font-sans text-cyan-300/60 max-w-md mx-auto mb-4">
-              Send custom announcements via the API endpoint
-            </p>
-            <code class="inline-block px-4 py-2 bg-cyber-darker rounded-lg border border-cyber-cyan/20 text-cyber-cyan font-terminal text-sm">
-              POST /api/announcement/send
-            </code>
-            <p class="mt-4 text-xs text-cyan-300/40 font-sans">Check the API documentation for payload structure</p>
+          <!-- Info cards -->
+          <div class="grid grid-cols-1 md: grid-cols-2 gap-6 mb-8">
+            <div class="glass p-6 rounded-xl">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="text-3xl">⏰</span>
+                <div>
+                  <h3 class="font-bold text-lg">Next Check</h3>
+                  <p class="text-sm text-gray-400">Automated midnight scan</p>
+                </div>
+              </div>
+              <p class="font-mono text-neon-blue font-bold" id="next-check-time">Daily at 00:00 IST</p>
+            </div>
+
+            <div class="glass p-6 rounded-xl">
+              <div class="flex items-center gap-3 mb-4">
+                <span class="text-3xl">✅</span>
+                <div>
+                  <h3 class="font-bold text-lg">Last Run</h3>
+                  <p class="text-sm text-gray-400">Most recent check</p>
+                </div>
+              </div>
+              <p class="font-mono text-neon-purple font-bold" id="last-run-date">—</p>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="glass p-8 rounded-xl">
+            <h3 class="font-bold text-xl mb-6 flex items-center gap-2">
+              <span class="text-2xl">🎮</span> Quick Actions
+            </h3>
+            <div class="flex flex-wrap gap-4">
+              <button 
+                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105 tooltip"
+                data-tooltip="Manually trigger a holiday check right now"
+                onclick="triggerHolidayCheck(this)"
+              >
+                <span class="text-2xl">🚀</span>
+                Trigger Check Now
+              </button>
+              <button 
+                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105 tooltip"
+                data-tooltip="Send a test New Year announcement"
+                onclick="testNewYear(this)"
+              >
+                <span class="text-2xl">🎆</span>
+                Test New Year
+              </button>
+            </div>
+          </div>
+
+          <!-- How it works -->
+          <div class="glass p-8 rounded-xl mt-8 bg-gradient-to-br from-neon-blue/5 to-neon-purple/5">
+            <h3 class="font-bold text-xl mb-4 flex items-center gap-2">
+              <span class="text-2xl">💡</span> How It Works
+            </h3>
+            <div class="space-y-3 text-gray-300">
+              <div class="flex items-start gap-3">
+                <span class="text-neon-blue text-xl mt-1">→</span>
+                <p>Checks for holidays automatically at midnight (00:00) in your timezone</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-neon-blue text-xl mt-1">→</span>
+                <p>Uses triple redundancy (cron + minute-guard + external trigger) for 100% reliability</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-neon-blue text-xl mt-1">→</span>
+                <p>Generates AI-powered messages via Google Gemini with smart fallback templates</p>
+              </div>
+              <div class="flex items-start gap-3">
+                <span class="text-neon-blue text-xl mt-1">→</span>
+                <p>State persistence ensures no checks are ever missed</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Scheduled Panel -->
-      <div id="scheduled-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="scheduled-tab">
-        <div class="glass-panel rounded-xl p-6 animate-scale-in">
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-cyber font-bold glow-text flex items-center gap-3">
-              <span class="text-4xl">⏰</span> Scheduled Items
-            </h2>
+      <div id="scheduled-panel" class="panel hidden">
+        <div class="glass-strong rounded-2xl p-8">
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+              <span class="text-6xl">📅</span>
+              <div>
+                <h2 class="text-3xl font-black glow mb-2">Scheduled Items</h2>
+                <p class="text-gray-400">View and manage scheduled announcements</p>
+              </div>
+            </div>
             <button 
-              class="cyber-button glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-sans text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan flex items-center gap-2 tooltip"
+              class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10 tooltip"
               data-tooltip="Refresh scheduled items"
-              onclick="handleRefreshScheduled()"
-              onkeydown="handleKeyDown(event, handleRefreshScheduled)"
-              tabindex="0"
-              aria-label="Refresh scheduled items"
+              onclick="loadScheduledItems()"
             >
               🔄 Refresh
             </button>
           </div>
-          <div id="scheduled-list" class="space-y-3 font-sans">
-            <div class="skeleton h-24 w-full rounded-lg mb-3"></div>
-            <div class="skeleton h-24 w-full rounded-lg mb-3"></div>
+          <div id="scheduled-list" class="space-y-4">
+            <div class="skeleton h-28 w-full rounded-xl mb-4"></div>
+            <div class="skeleton h-28 w-full rounded-xl"></div>
           </div>
         </div>
       </div>
 
       <!-- Logs Panel -->
-      <div id="logs-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="logs-tab">
-        <div class="glass-panel rounded-xl p-6 animate-scale-in">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-2xl font-cyber font-bold glow-text flex items-center gap-3">
-              <span class="text-4xl">📋</span> Activity Logs
-            </h2>
-            <div class="flex items-center gap-2">
+      <div id="logs-panel" class="panel hidden">
+        <div class="glass-strong rounded-2xl p-8">
+          <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+              <span class="text-6xl">📋</span>
+              <div>
+                <h2 class="text-3xl font-black glow mb-2">Activity Logs</h2>
+                <p class="text-gray-400">Monitor system activity and events</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
               <input 
                 type="text" 
                 id="log-search"
                 placeholder="Search logs..."
-                class="glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/30 focus:border-cyber-cyan font-sans text-sm bg-transparent text-cyan-200 placeholder-cyan-300/40 focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
-                oninput="handleLogSearch(this. value)"
+                class="glass px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue/50 focus:outline-none w-64"
+                oninput="filterLogs(this. value)"
               />
               <button 
-                class="cyber-button glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-sans text-sm font-semibold transition-all focus:outline-none focus: ring-2 focus:ring-cyber-cyan flex items-center gap-2 tooltip"
+                class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10 tooltip"
                 data-tooltip="Refresh activity logs"
-                onclick="handleRefreshLogs()"
-                onkeydown="handleKeyDown(event, handleRefreshLogs)"
-                tabindex="0"
-                aria-label="Refresh activity logs"
+                onclick="loadLogs()"
               >
                 🔄 Refresh
               </button>
             </div>
           </div>
-          <div id="logs-container" class="bg-cyber-darker/50 rounded-lg p-4 max-h-[600px] overflow-y-auto border border-cyber-cyan/20 font-terminal text-sm">
-            <div class="skeleton h-8 w-full rounded mb-2"></div>
-            <div class="skeleton h-8 w-full rounded mb-2"></div>
-            <div class="skeleton h-8 w-full rounded mb-2"></div>
+          <div id="logs-container" class="glass p-6 rounded-xl max-h-[700px] overflow-y-auto font-mono text-sm">
+            <div class="skeleton h-10 w-full rounded mb-3"></div>
+            <div class="skeleton h-10 w-full rounded mb-3"></div>
+            <div class="skeleton h-10 w-full rounded"></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Footer -->
-    <footer class="mt-8 text-center font-sans text-xs text-cyan-300/40 animate-fade-in" style="animation-delay: 0.5s">
-      <p>Digital Labour © 2026 • Powered by Node.js + Express + Gemini AI</p>
-      <p class="mt-1">Triple Redundancy:  Cron + Minute-Guard + External Trigger ✨</p>
-      <p class="mt-1 flex items-center justify-center gap-2">
-        Made with <span class="text-red-400 animate-pulse">❤️</span> by the Digital Labour Team
+    <footer class="mt-12 text-center text-gray-400 text-sm fade-in" style="animation-delay: 0.6s">
+      <div class="flex items-center justify-center gap-2 mb-2">
+        <span>Made with</span>
+        <span class="text-red-400 text-xl pulse">❤️</span>
+        <span>by Digital Labour Team</span>
+      </div>
+      <p class="text-xs text-gray-500">
+        Powered by Node.js • Express • Google Gemini AI
+      </p>
+      <p class="text-xs text-gray-600 mt-1">
+        © 2026 Digital Labour • All rights reserved
       </p>
     </footer>
   </div>
 
   <script>
-    // ==================== CANVAS ANIMATIONS ====================
+    // ==================== UTILITIES ====================
     
-    const initSpaceCanvas = () => {
-      const canvas = document.getElementById('space-canvas');
-      const ctx = canvas. getContext('2d');
-      
-      const resizeCanvas = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      };
-      
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-      
-      const stars = [];
-      const starCount = 200;
-      
-      for (let i = 0; i < starCount; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          radius: Math.random() * 2,
-          speed: Math.random() * 0.5 + 0.1,
-          opacity: Math.random(),
-          opacityDirection: Math.random() > 0.5 ? 1 : -1,
-        });
+    const createParticles = () => {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+        container.appendChild(particle);
       }
-      
-      const animateStars = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        const gradient = ctx.createRadialGradient(
-          canvas.width / 2, canvas.height / 2, 0,
-          canvas.width / 2, canvas.height / 2, canvas.width / 2
-        );
-        gradient.addColorStop(0, 'rgba(0, 240, 255, 0.03)');
-        gradient.addColorStop(0.5, 'rgba(255, 0, 208, 0.02)');
-        gradient.addColorStop(1, 'rgba(10, 10, 15, 0)');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, canvas.width, canvas. height);
-        
-        stars. forEach(star => {
-          ctx.beginPath();
-          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(0, 240, 255, ${star.opacity})`;
-          ctx.fill();
-          
-          star.y += star.speed;
-          if (star.y > canvas.height) {
-            star.y = 0;
-            star.x = Math.random() * canvas.width;
-          }
-          
-          star.opacity += star.opacityDirection * 0.02;
-          if (star.opacity >= 1 || star.opacity <= 0.2) {
-            star.opacityDirection *= -1;
-          }
-        });
-        
-        requestAnimationFrame(animateStars);
-      };
-      
-      animateStars();
     };
-    
-    const initMatrixCanvas = () => {
-      const canvas = document.getElementById('matrix-canvas');
-      const ctx = canvas.getContext('2d');
-      
-      const resizeCanvas = () => {
-        canvas. width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      };
-      
-      resizeCanvas();
-      window.addEventListener('resize', resizeCanvas);
-      
-      const fontSize = 14;
-      const columns = canvas.width / fontSize;
-      const drops = Array(Math.floor(columns)).fill(1);
-      
-      const matrixChars = '01アイウエオカキクケコサシスセソタチツテト';
-      
-      const animateMatrix = () => {
-        ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#00f0ff';
-        ctx.font = `${fontSize}px "Share Tech Mono"`;
-        
-        for (let i = 0; i < drops.length; i++) {
-          const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-          const x = i * fontSize;
-          const y = drops[i] * fontSize;
-          
-          ctx.fillText(text, x, y);
-          
-          if (y > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-          }
-          drops[i]++;
-        }
-      };
-      
-      setInterval(animateMatrix, 50);
-    };
-    
-    // ==================== TOAST NOTIFICATIONS ====================
-    
+
     const showToast = (message, type = 'info') => {
       const container = document.getElementById('toast-container');
       const toast = document. createElement('div');
@@ -1035,7 +866,7 @@
       const colors = {
         success: 'from-green-500/20 to-green-600/20 border-green-400',
         error: 'from-red-500/20 to-red-600/20 border-red-400',
-        info:  'from-cyber-cyan/20 to-cyber-cyan/20 border-cyber-cyan',
+        info: 'from-neon-blue/20 to-neon-blue/20 border-neon-blue',
         warning: 'from-yellow-500/20 to-yellow-600/20 border-yellow-400',
       };
       
@@ -1046,280 +877,358 @@
         warning: '⚠️',
       };
       
-      toast.className = `toast glass-panel rounded-lg p-4 border ${colors[type]} mb-4 flex items-center gap-3 min-w-[300px] max-w-[500px]`;
+      toast.className = `toast glass-strong rounded-2xl p-4 border ${colors[type]} flex items-center gap-4`;
       toast.innerHTML = `
-        <span class="text-2xl">${icons[type]}</span>
-        <span class="flex-1 font-sans text-sm text-cyan-200">${message}</span>
-        <button onclick="this.parentElement.remove()" class="text-cyan-300 hover:text-cyan-100 transition-colors" aria-label="Close notification">✕</button>
+        <span class="text-3xl">${icons[type]}</span>
+        <span class="flex-1 font-semibold">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-2xl hover:scale-110 transition-transform" aria-label="Close">×</button>
       `;
       
       container.appendChild(toast);
       
       setTimeout(() => {
-        toast.classList.add('hide');
+        toast.style.animation = 'fadeOut 0.3s ease-out';
         setTimeout(() => toast.remove(), 300);
       }, 5000);
     };
-    
-    // ==================== STATE MANAGEMENT ====================
-    
-    let currentTab = 'overview';
-    let appState = {
-      status: {},
-      todayHoliday: null,
-      upcomingHolidays: [],
-      scheduledItems:  [],
-      logs: [],
-    };
-    let allLogs = [];
-    
-    // ==================== COUNTDOWN TIMER ====================
+
+    // ==================== COUNTDOWN ====================
     
     const updateCountdown = () => {
       const now = new Date();
-      const tomorrow = new Date(now);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(0, 0, 0, 0);
+      const midnight = new Date(now);
+      midnight.setDate(midnight.getDate() + 1);
+      midnight.setHours(0, 0, 0, 0);
       
-      const diff = tomorrow - now;
+      const diff = midnight - now;
       const hours = Math.floor(diff / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       
-      const countdownText = document.getElementById('countdown-text');
-      if (countdownText) {
-        countdownText.textContent = `${hours}h ${minutes}m ${seconds}s`;
-      }
+      document.getElementById('countdown-text').textContent = 
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       
-      const progressFill = document.getElementById('progress-fill');
-      if (progressFill) {
-        const totalSeconds = 24 * 60 * 60;
-        const elapsedSeconds = totalSeconds - (diff / 1000);
-        const percentage = (elapsedSeconds / totalSeconds) * 100;
-        progressFill.style.width = `${percentage}%`;
-      }
+      const totalSeconds = 24 * 60 * 60;
+      const elapsedSeconds = totalSeconds - (diff / 1000);
+      const percentage = (elapsedSeconds / totalSeconds) * 100;
+      document.getElementById('progress-bar').style.width = `${percentage}%`;
     };
-    
+
     setInterval(updateCountdown, 1000);
     updateCountdown();
+
+    // ==================== UPTIME ====================
     
-    // ==================== TAB NAVIGATION ====================
+    const updateUptime = () => {
+      fetch('/api/health')
+        .then(res => res.json())
+        .then(data => {
+          if (data.uptime) {
+            const hours = Math. floor(data.uptime / 3600);
+            const minutes = Math.floor((data.uptime % 3600) / 60);
+            document.getElementById('uptime-text').textContent = `${hours}h ${minutes}m`;
+          }
+        })
+        .catch(() => {});
+    };
+
+    setInterval(updateUptime, 30000);
+    updateUptime();
+
+    // ==================== TAB SWITCHING ====================
     
-    const handleTabClick = (tabName, element) => {
-      if (currentTab === tabName) return;
-      
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-        tab.setAttribute('aria-selected', 'false');
-      });
-      
+    const switchTab = (tabName, element) => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       element.classList.add('active');
-      element.setAttribute('aria-selected', 'true');
       
-      document.querySelectorAll('.tab-panel').forEach(panel => {
-        panel.classList.add('hidden');
-      });
+      document.querySelectorAll('. panel').forEach(p => p.classList.add('hidden'));
+      document.getElementById(`${tabName}-panel`).classList.remove('hidden');
       
-      const panel = document.getElementById(`${tabName}-panel`);
-      if (panel) {
-        panel.classList.remove('hidden');
-      }
-      
-      currentTab = tabName;
-      
-      if (tabName === 'scheduled') {
-        loadScheduledItems();
-      } else if (tabName === 'logs') {
-        loadLogs();
-      }
-      
-      showToast(`Switched to ${tabName} view`, 'info');
+      if (tabName === 'scheduled') loadScheduledItems();
+      if (tabName === 'logs') loadLogs();
     };
+
+    // ==================== DATA LOADING ====================
     
-    const handleKeyDown = (event, callback) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        callback();
-      }
-    };
-    
-    // ==================== API CALLS ====================
-    
-    const fetchData = async (url) => {
+    let allLogs = [];
+
+    const loadDashboard = async () => {
       try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response. status}`);
-        return await response.json();
+        const [status, todayHoliday, upcomingHolidays] = await Promise.all([
+          fetch('/api/status').then(r => r.json()),
+          fetch('/api/holidays/today').then(r => r.json()),
+          fetch('/api/holidays/upcoming').then(r => r.json()),
+        ]);
+
+        // Update status
+        if (status) {
+          document.getElementById('status-text').textContent = status. running ? 'ACTIVE' : 'PAUSED';
+          document.getElementById('timezone-text').textContent = status. config?. timezone || 'N/A';
+          document.getElementById('holiday-count').textContent = status. totalHolidayAnnouncements || 0;
+          document.getElementById('custom-count').textContent = status. totalCustomAnnouncements || 0;
+          document.getElementById('last-run-date').textContent = status.state?.lastRunDate || '—';
+        }
+
+        // Update today's holiday
+        updateTodayHoliday(todayHoliday?. holiday);
+
+        // Update upcoming holidays
+        updateUpcomingHolidays(upcomingHolidays?. holidays);
+
       } catch (error) {
-        console.error(`Error fetching ${url}:`, error);
-        showToast(`Failed to fetch data from ${url}`, 'error');
-        return null;
+        showToast('Failed to load dashboard data', 'error');
       }
     };
-    
-    const loadOverview = async () => {
-      const [status, todayHoliday, upcomingHolidays] = await Promise.all([
-        fetchData('/api/status'),
-        fetchData('/api/holidays/today'),
-        fetchData('/api/holidays/upcoming'),
-      ]);
-      
-      if (status) {
-        appState.status = status;
-        updateStatusUI(status);
-      }
-      
-      if (todayHoliday) {
-        appState. todayHoliday = todayHoliday. holiday;
-        updateTodayHolidayUI(todayHoliday. holiday);
-      }
-      
-      if (upcomingHolidays && upcomingHolidays. holidays) {
-        appState.upcomingHolidays = upcomingHolidays.holidays;
-        updateUpcomingHolidaysUI(upcomingHolidays.holidays);
-      }
-    };
-    
-    const loadScheduledItems = async () => {
-      const data = await fetchData('/api/announcements/scheduled');
-      if (data && data.scheduled) {
-        appState.scheduledItems = data.scheduled;
-        updateScheduledUI(data.scheduled);
-      }
-    };
-    
-    const loadLogs = async () => {
-      const data = await fetchData('/api/logs');
-      if (data) {
-        appState.logs = data;
-        allLogs = data;
-        updateLogsUI(data);
-      }
-    };
-    
-    // ==================== UI UPDATES ====================
-    
-    const updateStatusUI = (status) => {
-      const statusText = document.getElementById('status-text');
-      if (statusText) {
-        statusText.textContent = status. running ? 'RUNNING' : 'PAUSED';
-      }
-      
-      const timezoneText = document.getElementById('timezone-text');
-      if (timezoneText && status.config) {
-        timezoneText. textContent = `TZ: ${status.config.timezone || 'N/A'}`;
-      }
-      
-      const holidayCount = document.getElementById('holiday-count');
-      if (holidayCount) {
-        holidayCount. textContent = status.totalHolidayAnnouncements || 0;
-      }
-      
-      const customCount = document.getElementById('custom-count');
-      if (customCount) {
-        customCount.textContent = status.totalCustomAnnouncements || 0;
-      }
-      
-      const lastRunDate = document.getElementById('last-run-date');
-      if (lastRunDate && status.state) {
-        lastRunDate.textContent = status.state.lastRunDate || '—';
-      }
-    };
-    
-    const updateTodayHolidayUI = (holiday) => {
+
+    const updateTodayHoliday = (holiday) => {
       const container = document.getElementById('today-holiday');
-      if (! container) return;
       
-      if (! holiday) {
+      if (!holiday) {
         container.innerHTML = `
-          <div class="empty-state py-8">
-            <div class="text-6xl mb-3">📅</div>
-            <p class="text-cyan-300/60 font-sans">No holiday today</p>
-            <p class="text-xs text-cyan-300/40 mt-2 font-sans">Check back tomorrow! </p>
+          <div class="empty-state py-12">
+            <div class="empty-icon">📅</div>
+            <h3 class="text-2xl font-bold mb-2">No Holiday Today</h3>
+            <p class="text-gray-400">Check back tomorrow for upcoming holidays! </p>
           </div>
         `;
         return;
       }
-      
+
       container.innerHTML = `
-        <div class="flex items-center justify-between p-6 bg-gradient-to-br from-cyber-cyan/10 to-cyber-cyan/5 rounded-lg border border-cyber-cyan/30 hover:border-cyber-cyan/50 transition-all">
-          <div class="flex-1">
-            <div class="text-2xl font-cyber font-bold glow-text mb-2">${holiday.name}</div>
-            <div class="text-sm text-cyan-300/80 font-sans">${holiday. description || holiday.type || ''}</div>
-          </div>
-          <div class="text-right ml-4">
-            <div class="text-cyber-magenta font-bold text-xl font-cyber mb-1">${holiday.date}</div>
-            <div class="badge bg-cyber-cyan/20">
-              <span class="w-2 h-2 bg-cyber-cyan rounded-full animate-pulse"></span>
-              Today
+        <div class="glass p-6 rounded-xl border-l-4 border-neon-blue hover:scale-[1.02] transition-transform">
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <h3 class="text-2xl font-black mb-2 glow">${holiday.name}</h3>
+              <p class="text-gray-400">${holiday.description || holiday.type || ''}</p>
+            </div>
+            <div class="text-right ml-6">
+              <div class="text-3xl font-black glow-pink mb-2">${holiday.date}</div>
+              <span class="badge">
+                <span class="w-2 h-2 bg-neon-pink rounded-full pulse"></span>
+                Today
+              </span>
             </div>
           </div>
         </div>
       `;
     };
-    
-    const updateUpcomingHolidaysUI = (holidays) => {
-      const container = document. getElementById('upcoming-holidays');
-      if (!container) return;
+
+    const updateUpcomingHolidays = (holidays) => {
+      const container = document.getElementById('upcoming-holidays');
       
       if (! holidays || holidays.length === 0) {
         container.innerHTML = `
-          <div class="empty-state py-8">
-            <div class="text-6xl mb-3">🔮</div>
-            <p class="text-cyan-300/60 font-sans">No upcoming holidays found</p>
-            <p class="text-xs text-cyan-300/40 mt-2 font-sans">in the next 30 days</p>
+          <div class="empty-state py-12">
+            <div class="empty-icon">🔮</div>
+            <h3 class="text-2xl font-bold mb-2">No Upcoming Holidays</h3>
+            <p class="text-gray-400">No holidays found in the next 30 days</p>
           </div>
         `;
         return;
       }
-      
+
       const today = new Date();
-      const next30Days = new Date(today. getTime() + 30 * 24 * 60 * 60 * 1000);
-      const filteredHolidays = holidays. filter(h => {
-        const holidayDate = new Date(h. date);
-        return holidayDate >= today && holidayDate <= next30Days;
-      });
-      
-      if (filteredHolidays. length === 0) {
+      const filtered = holidays
+        .filter(h => new Date(h.date) >= today && new Date(h.date) <= new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000))
+        .slice(0, 20);
+
+      if (filtered.length === 0) {
         container.innerHTML = `
-          <div class="empty-state py-8">
-            <div class="text-6xl mb-3">🔮</div>
-            <p class="text-cyan-300/60 font-sans">No holidays in the next 30 days</p>
+          <div class="empty-state py-12">
+            <div class="empty-icon">🔮</div>
+            <h3 class="text-2xl font-bold mb-2">No Holidays Soon</h3>
+            <p class="text-gray-400">No holidays in the next 30 days</p>
           </div>
         `;
         return;
       }
-      
-      container.innerHTML = filteredHolidays.map((holiday, index) => `
-        <div class="flex items-center justify-between p-4 bg-gradient-to-br from-cyber-cyan/5 to-transparent rounded-lg border border-cyber-cyan/20 hover:border-cyber-cyan/50 hover:scale-[1.02] transition-all cursor-pointer animate-slide-up" style="animation-delay: ${index * 0.05}s">
-          <div class="flex-1">
-            <div class="font-bold text-cyan-200 font-sans mb-1">${holiday.name}</div>
-            <div class="text-xs text-cyan-300/60 font-sans">${holiday. description || holiday.type || ''}</div>
+
+      container.innerHTML = filtered.map((h, i) => `
+        <div class="glass p-5 rounded-xl hover:scale-[1.02] transition-all cursor-pointer fade-in" style="animation-delay: ${i * 0.05}s">
+          <div class="flex items-center justify-between">
+            <div class="flex-1">
+              <h4 class="font-bold text-lg mb-1">${h.name}</h4>
+              <p class="text-sm text-gray-400">${h.description || h.type || ''}</p>
+            </div>
+            <div class="font-mono font-bold text-neon-purple ml-4">${h.date}</div>
           </div>
-          <div class="text-cyber-magenta font-bold text-sm ml-4 font-cyber">${holiday.date}</div>
         </div>
       `).join('');
     };
-    
-    const updateScheduledUI = (items) => {
-      const container = document.getElementById('scheduled-list');
-      if (!container) return;
-      
-      const scheduledCount = document.getElementById('scheduled-count');
-      if (scheduledCount) {
-        scheduledCount.textContent = items.length;
+
+    const loadScheduledItems = async () => {
+      try {
+        const data = await fetch('/api/announcements/scheduled').then(r => r.json());
+        const items = data.scheduled || [];
+        
+        document.getElementById('scheduled-count').textContent = items.length;
+        const container = document.getElementById('scheduled-list');
+
+        if (items.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state py-12">
+              <div class="empty-icon">📅</div>
+              <h3 class="text-2xl font-bold mb-2">No Scheduled Items</h3>
+              <p class="text-gray-400">Schedule announcements via the API</p>
+              <code class="inline-block mt-4 px-4 py-2 glass rounded-lg text-neon-blue font-mono text-sm">
+                POST /api/announcement/schedule
+              </code>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = items.map((item, i) => `
+          <div class="glass p-6 rounded-xl fade-in" style="animation-delay: ${i * 0.05}s">
+            <div class="flex items-center justify-between mb-4">
+              <h4 class="font-bold text-lg">ID: ${item.id}</h4>
+              <span class="badge ${
+                item.status === 'scheduled' ? 'bg-yellow-500/20 border-yellow-400' : 
+                item.status === 'sent' ? 'bg-green-500/20 border-green-400' :
+                'bg-red-500/20 border-red-400'
+              }">
+                ${item.status. toUpperCase()}
+              </span>
+            </div>
+            <p class="text-sm text-gray-400">
+              <span class="font-semibold">Scheduled:</span> ${new Date(item.scheduleTime).toLocaleString()}
+            </p>
+          </div>
+        `).join('');
+      } catch (error) {
+        showToast('Failed to load scheduled items', 'error');
       }
+    };
+
+    const loadLogs = async () => {
+      try {
+        const data = await fetch('/api/logs').then(r => r.json());
+        allLogs = data || [];
+        renderLogs(allLogs);
+      } catch (error) {
+        showToast('Failed to load logs', 'error');
+      }
+    };
+
+    const renderLogs = (logs) => {
+      const container = document.getElementById('logs-container');
       
-      if (! items || items.length === 0) {
+      if (! logs || logs.length === 0) {
         container.innerHTML = `
           <div class="empty-state py-8">
-            <div class="text-6xl mb-3">⏰</div>
-            <p class="text-cyan-300/60 font-sans">No scheduled items</p>
-            <p class="text-xs text-cyan-300/40 mt-2 font-sans">Schedule announcements via the API</p>
+            <div class="empty-icon">📋</div>
+            <p class="text-gray-400">No logs available</p>
           </div>
         `;
         return;
       }
+
+      container. innerHTML = logs.slice(0, 100).map(log => {
+        const typeColors = {
+          'ERROR': 'text-red-400',
+          'SUCCESS': 'text-green-400',
+          'WARNING': 'text-yellow-400',
+          'INFO': 'text-neon-blue',
+        };
+        const color = typeColors[log.type] || 'text-gray-400';
+
+        return `
+          <div class="mb-3 pb-3 border-b border-white/5">
+            <div class="flex items-center gap-3 mb-1">
+              <span class="text-xs text-gray-500">${new Date(log.timestamp).toLocaleString()}</span>
+              <span class="${color} font-bold text-xs">[${log.type}]</span>
+            </div>
+            <p class="text-gray-300">${log.message}</p>
+          </div>
+        `;
+      }).join('');
+    };
+
+    const filterLogs = (query) => {
+      if (!query) {
+        renderLogs(allLogs);
+        return;
+      }
+      const filtered = allLogs.filter(log => 
+        log.message.toLowerCase().includes(query.toLowerCase()) ||
+        log.type. toLowerCase().includes(query.toLowerCase())
+      );
+      renderLogs(filtered);
+    };
+
+    // ==================== ACTIONS ====================
+    
+    const triggerHolidayCheck = async (button) => {
+      button.disabled = true;
+      button.innerHTML = '<span class="text-2xl">⏳</span> Checking...';
       
-      container.innerHTML = items.map((item, index) => `
-        <div class="p-4 bg-gradient-to-br from-cyber-cyan/5 to-transparent rounded-lg border border-cyber-cyan/20 hover:border-cyber-cyan/40 transition-all animate-slide-up" style="animation-delay: ${index *
+      try {
+        const response = await fetch('/api/trigger/holiday', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('Holiday check completed successfully!', 'success');
+        } else {
+          showToast(data.message || 'Failed to trigger holiday check', 'error');
+        }
+        
+        loadDashboard();
+      } catch (error) {
+        showToast('Error:  ' + error.message, 'error');
+      } finally {
+        button.disabled = false;
+        button.innerHTML = '<span class="text-2xl">🚀</span> Trigger Check Now';
+      }
+    };
+
+    const testNewYear = async (button) => {
+      button.disabled = true;
+      button.innerHTML = '<span class="text-2xl">⏳</span> Sending... ';
+      
+      try {
+        const response = await fetch('/api/test/newyear', { method: 'POST' });
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('New Year test sent successfully!', 'success');
+        } else {
+          showToast('Failed to send test announcement', 'error');
+        }
+        
+        loadDashboard();
+      } catch (error) {
+        showToast('Error: ' + error.message, 'error');
+      } finally {
+        button.disabled = false;
+        button.innerHTML = '<span class="text-2xl">🎆</span> Test New Year';
+      }
+    };
+
+    const loadTodayHoliday = async () => {
+      const data = await fetch('/api/holidays/today').then(r => r.json());
+      updateTodayHoliday(data?.holiday);
+      showToast('Today\'s holiday refreshed', 'info');
+    };
+
+    const loadUpcomingHolidays = async () => {
+      const data = await fetch('/api/holidays/upcoming').then(r => r.json());
+      updateUpcomingHolidays(data?.holidays);
+      showToast('Upcoming holidays refreshed', 'info');
+    };
+
+    // ==================== INITIALIZATION ====================
+    
+    const init = () => {
+      createParticles();
+      loadDashboard();
+      setInterval(loadDashboard, 60000); // Refresh every minute
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>

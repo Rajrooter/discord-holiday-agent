@@ -27,8 +27,8 @@ const CONFIG = {
   },
   GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
   CALENDARIFIC_API_KEY: process.env.CALENDARIFIC_API_KEY || 'demo',
-  DISCORD_BOT_TOKEN: process. env.DISCORD_BOT_TOKEN,
-  DISCORD_GUILD_ID: process.env. DISCORD_GUILD_ID,
+  DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
+  DISCORD_GUILD_ID: process.env.DISCORD_GUILD_ID,
   TIMEZONE: process.env.TIMEZONE || 'Asia/Kolkata',
   SCHEDULE_TIME: process.env.SCHEDULE_TIME || '0 0 * * *', // daily at midnight
   DASHBOARD_PORT: process.env.DASHBOARD_PORT ?  Number(process.env.DASHBOARD_PORT) : 3000,
@@ -824,3 +824,4 @@ async function startAgent() {
 }
 
 startAgent();
+

@@ -1,6 +1,6 @@
 // ============================================
 // DISCORD HOLIDAY AI AGENT - RELIABLE MIDNIGHT TRIGGER
-// Using:  Nager. Date (free) + Calendarific (fallback) + Google Gemini (optional)
+// Using:  Nager.Date (free) + Calendarific (fallback) + Google Gemini (optional)
 // Improvements: persistent state, dual scheduling (cron + minute-guard), retry logic,
 // and re-tries-until-success behavior so the midnight check is never "missed". 
 // ============================================
@@ -22,7 +22,7 @@ const CONFIG = {
   WEBHOOKS: {
     ANNOUNCEMENTS: process.env.WEBHOOK_ANNOUNCEMENTS,
     UPDATES: process.env.WEBHOOK_UPDATES,
-    HOLIDAYS:  process.env.WEBHOOK_HOLIDAYS,
+    HOLIDAYS: process.env.WEBHOOK_HOLIDAYS,
     GENERAL: process.env.WEBHOOK_GENERAL
   },
   GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
@@ -31,9 +31,9 @@ const CONFIG = {
   DISCORD_GUILD_ID: process.env.DISCORD_GUILD_ID,
   TIMEZONE: process.env.TIMEZONE || 'Asia/Kolkata',
   SCHEDULE_TIME: process.env.SCHEDULE_TIME || '0 0 * * *', // daily at midnight
-  DASHBOARD_PORT: process.env.DASHBOARD_PORT ?  Number(process.env.DASHBOARD_PORT) : 3000,
+  DASHBOARD_PORT: process.env.DASHBOARD_PORT ? Number(process.env.DASHBOARD_PORT) : 3000,
   TEST_MODE: process.env.TEST_MODE === 'true' || false,
-  RETRY_ATTEMPTS: process.env. RETRY_ATTEMPTS ? Number(process.env.RETRY_ATTEMPTS) : 3,
+  RETRY_ATTEMPTS: process.env.RETRY_ATTEMPTS ? Number(process.env.RETRY_ATTEMPTS) : 3,
   STATE_FILE: path.join(__dirname, 'state.json')
 };
 
@@ -49,7 +49,9 @@ let botStatus = {
 };
 
 let state = {
-  lastRunDate: null // ISO date in configured timezone, e.g.  '2026-01-01'
+  lastRunDate: null,              // ISO date in configured timezone, e.g. '2026-01-01'
+  holidaysCache: {},              // { [year]: { holidays: [...], fetchedAt: ISO } }
+  lastSuccessfulHolidays: []      // fallback cache if providers fail
 };
 
 const HOLIDAY_IMAGES = {
@@ -74,7 +76,7 @@ const ROLES = {
 // ============================================
 
 process.on('unhandledRejection', (err) => {
-  try { log(`Unhandled Rejection: ${err?. stack || err}`, 'ERROR'); } catch (_) {}
+  try { log(`Unhandled Rejection: ${err?.stack || err}`, 'ERROR'); } catch (_) {}
   process.exit(1);
 });
 
@@ -105,22 +107,22 @@ function getHolidayImage(holidayName) {
       return image;
     }
   }
-  return HOLIDAY_IMAGES. default;
+  return HOLIDAY_IMAGES.default;
 }
 
 function getHolidayColor(holidayName) {
   const colorMap = {
-    'republic':  0xFF9933,
+    'republic': 0xFF9933,
     'independence': 0xFF9933,
     'diwali': 0xFFD700,
-    'holi':  0xFF6347,
+    'holi': 0xFF6347,
     'christmas': 0xFF0000,
     'eid': 0x00CED1,
     'new year': 0x00FF00,
     'default': 0x7B68EE
   };
   for (const [key, color] of Object.entries(colorMap)) {
-    if (holidayName. toLowerCase().includes(key)) return color;
+    if (holidayName.toLowerCase().includes(key)) return color;
   }
   return colorMap.default;
 }
@@ -135,12 +137,12 @@ function loadState() {
       const raw = fs.readFileSync(CONFIG.STATE_FILE, 'utf8');
       const parsed = JSON.parse(raw);
       state = { ...state, ...parsed };
-      log(`Loaded state:  ${JSON.stringify(parsed)}`, 'INFO');
+      log(`Loaded state: ${JSON.stringify(parsed)}`, 'INFO');
     } else {
       saveState(); // create file with defaults
     }
   } catch (err) {
-    log(`Failed to load state: ${err. message}`, 'WARNING');
+    log(`Failed to load state: ${err.message}`, 'WARNING');
   }
 }
 
@@ -149,7 +151,7 @@ function saveState() {
     fs.writeFileSync(CONFIG.STATE_FILE, JSON.stringify(state, null, 2), 'utf8');
     log(`State saved: ${JSON.stringify(state)}`, 'INFO');
   } catch (err) {
-    log(`Failed to save state: ${err. message}`, 'ERROR');
+    log(`Failed to save state: ${err.message}`, 'ERROR');
   }
 }
 
@@ -161,10 +163,10 @@ function getHardcodedHolidays2026() {
   return [
     { date: '2026-01-01', name: "New Year's Day", type: 'Public Holiday', description: 'New Year 2026' },
     { date: '2026-01-26', name: 'Republic Day', type: 'National Holiday', description: 'Republic Day of India' },
-    { date:  '2026-03-14', name: 'Holi', type: 'Festival', description: 'Festival of Colors' },
+    { date: '2026-03-14', name: 'Holi', type: 'Festival', description: 'Festival of Colors' },
     { date: '2026-04-02', name: 'Good Friday', type: 'Public Holiday', description: 'Good Friday' },
     { date: '2026-08-15', name: 'Independence Day', type: 'National Holiday', description: 'Independence Day of India' },
-    { date:  '2026-10-02', name: 'Gandhi Jayanti', type: 'National Holiday', description: 'Birth of Mahatma Gandhi' },
+    { date: '2026-10-02', name: 'Gandhi Jayanti', type: 'National Holiday', description: 'Birth of Mahatma Gandhi' },
     { date: '2026-10-24', name: 'Dussehra', type: 'Festival', description: 'Victory of Good over Evil' },
     { date: '2026-11-13', name: 'Diwali', type: 'Festival', description: 'Festival of Lights' },
     { date: '2026-12-25', name: 'Christmas', type: 'Public Holiday', description: 'Christmas Day' }
@@ -172,21 +174,26 @@ function getHardcodedHolidays2026() {
 }
 
 // ============================================
-// HOLIDAY FETCH:  Nager.Date -> Calendarific -> AbstractAPI -> Hardcoded
+// HOLIDAY FETCH: Nager.Date -> Calendarific -> AbstractAPI -> Hardcoded
 // ============================================
 
 async function fetchIndianHolidays(year) {
   // 1) Nager.Date (no key)
   try {
-    log(`Trying Nager.Date for ${year}... `);
+    log(`Trying Nager.Date for ${year}...`);
     const resp = await axios.get(`https://date.nager.at/api/v3/PublicHolidays/${year}/IN`, { timeout: 10000 });
     if (Array.isArray(resp.data) && resp.data.length > 0) {
-      const holidays = resp.data.map(h => ({ date: h.date, name: h.localName || h.name, type: h. types ?  h.types[0] : 'Holiday', description: h.name || h.localName }));
+      const holidays = resp.data.map(h => ({
+        date: h.date,
+        name: h.localName || h.name,
+        type: h.types ? h.types[0] : 'Holiday',
+        description: h.name || h.localName
+      }));
       log(`Nager.Date returned ${holidays.length} holidays`, 'SUCCESS');
       return holidays;
     }
   } catch (err) {
-    log(`Nager.Date failed: ${err. message}`, 'WARNING');
+    log(`Nager.Date failed: ${err.message}`, 'WARNING');
   }
 
   // 2) Calendarific (requires API key)
@@ -200,11 +207,18 @@ async function fetchIndianHolidays(year) {
       const holidays = response.data.response.holidays.map(h => {
         let isoDate = '';
         if (h.date) {
-          if (typeof h.date. iso === 'string') isoDate = h.date.iso. split('T')[0];
-          else if (typeof h.date === 'string') isoDate = h.date. split('T')[0];
-          else if (h.date && h.date.datetime) isoDate = `${h.date.datetime.year}-${String(h.date.datetime.month).padStart(2,'0')}-${String(h.date.datetime.day).padStart(2,'0')}`;
+          if (typeof h.date.iso === 'string') isoDate = h.date.iso.split('T')[0];
+          else if (typeof h.date === 'string') isoDate = h.date.split('T')[0];
+          else if (h.date && h.date.datetime) {
+            isoDate = `${h.date.datetime.year}-${String(h.date.datetime.month).padStart(2, '0')}-${String(h.date.datetime.day).padStart(2, '0')}`;
+          }
         }
-        return { date:  isoDate, name: h. name, type: Array.isArray(h.type) ? h.type[0] : (h.type || 'Holiday'), description: h.description || h. name };
+        return {
+          date: isoDate,
+          name: h.name,
+          type: Array.isArray(h.type) ? h.type[0] : (h.type || 'Holiday'),
+          description: h.description || h.name
+        };
       }).filter(h => h.date);
       log(`Calendarific returned ${holidays.length} holidays`, 'SUCCESS');
       return holidays;
@@ -216,10 +230,18 @@ async function fetchIndianHolidays(year) {
 
   // 3) AbstractAPI demo fallback
   try {
-    log('Trying AbstractAPI as fallback.. .');
-    const fallbackResponse = await axios.get(`https://holidays.abstractapi.com/v1/? api_key=demo&country=IN&year=${year}`, { timeout: 10000 });
-    if (Array.isArray(fallbackResponse. data) && fallbackResponse.data.length > 0) {
-      const holidays = fallbackResponse. data.map(h => ({ date: h.date, name: h.name, type: h.type || 'Holiday', description: h. description || h.name }));
+    log('Trying AbstractAPI as fallback...');
+    const fallbackResponse = await axios.get(
+      `https://holidays.abstractapi.com/v1/?api_key=demo&country=IN&year=${year}`,
+      { timeout: 10000 }
+    );
+    if (Array.isArray(fallbackResponse.data) && fallbackResponse.data.length > 0) {
+      const holidays = fallbackResponse.data.map(h => ({
+        date: h.date,
+        name: h.name,
+        type: h.type || 'Holiday',
+        description: h.description || h.name
+      }));
       log(`AbstractAPI returned ${holidays.length} holidays`, 'SUCCESS');
       return holidays;
     }
@@ -259,10 +281,10 @@ Enjoy the festivities! 🌟`;
   }
 
   try {
-    log(`Generating AI message for:  ${holidayName}`);
+    log(`Generating AI message for: ${holidayName}`);
     const prompt = `Generate a warm, festive announcement for ${holidayName} celebration in India. 
 
-${holidayDescription ?  `Context: ${holidayDescription}` : ''}
+${holidayDescription ? `Context: ${holidayDescription}` : ''}
 
 Requirements:
 - 80-140 words
@@ -275,12 +297,15 @@ Requirements:
 Return ONLY the message text. `;
 
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG. GOOGLE_AI_API_KEY}`,
-      { contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.9, maxOutputTokens: 250, topP: 0.95 } },
-      { headers: { 'Content-Type':  'application/json' }, timeout: 15000 }
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
+      {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.9, maxOutputTokens: 250, topP: 0.95 }
+      },
+      { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
     );
 
-    const messageText = response?. data?.candidates?.[0]?. content?.parts?.[0]?. text?.trim();
+    const messageText = response?.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
     if (!messageText) throw new Error('Empty AI response');
     log('AI message generated successfully', 'SUCCESS');
     return messageText;
@@ -305,8 +330,11 @@ Make it professional, add 2-3 emojis, improve clarity.  Keep it under 150 words.
 
 Return ONLY the enhanced message. `;
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG. GOOGLE_AI_API_KEY}`,
-      { contents: [{ parts: [{ text: prompt }] }], generationConfig:  { temperature: 0.7, maxOutputTokens: 250 } },
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
+      {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 250 }
+      },
       { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
     );
     return response?.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || messageContent;
@@ -346,7 +374,12 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl) {
       footer: { text: 'Digital Labour Bot', icon_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png' },
       timestamp: new Date().toISOString()
     };
-    const payload = { content: '@everyone', username: 'Holiday Bot', avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png', embeds: [embed] };
+    const payload = {
+      content: '@everyone',
+      username: 'Holiday Bot',
+      avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
+      embeds: [embed]
+    };
     const ok = await postWebhookWithRetry(webhookUrl, payload);
     if (!ok) {
       log('Holiday announcement failed after retries', 'ERROR');
@@ -364,7 +397,7 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl) {
 async function sendCustomAnnouncement(data) {
   try {
     const { title, message, roles, imageUrl, webhookChannel, useAI } = data;
-    const webhookUrl = CONFIG.WEBHOOKS[webhookChannel] || CONFIG.WEBHOOKS. ANNOUNCEMENTS;
+    const webhookUrl = CONFIG.WEBHOOKS[webhookChannel] || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
     if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
     let finalMessage = message;
     if (useAI) finalMessage = await enhanceCustomMessage(message);
@@ -377,7 +410,12 @@ async function sendCustomAnnouncement(data) {
       timestamp: new Date().toISOString()
     };
     if (imageUrl) embed.image = { url: imageUrl };
-    const payload = { content: roleMentions, username: 'Announcement Bot', avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png', embeds: [embed] };
+    const payload = {
+      content: roleMentions,
+      username: 'Announcement Bot',
+      avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
+      embeds: [embed]
+    };
     const ok = await postWebhookWithRetry(webhookUrl, payload);
     if (!ok) {
       log('Custom announcement failed after retries', 'ERROR');
@@ -388,19 +426,24 @@ async function sendCustomAnnouncement(data) {
     return { success: true };
   } catch (err) {
     log(`Custom announcement failed: ${err.message}`, 'ERROR');
-    return { success:  false, error: err.message };
+    return { success: false, error: err.message };
   }
 }
 
 // ============================================
-// SCHEDULING:  scheduleAnnouncement
+// SCHEDULING: scheduleAnnouncement
 // ============================================
 
 function scheduleAnnouncement(data) {
-  const { scheduleTime, ... announcementData } = data;
+  const { scheduleTime, ...announcementData } = data;
   const scheduleDate = new Date(scheduleTime);
   if (scheduleDate <= new Date()) return { success: false, error: 'Schedule time must be in the future' };
-  const scheduledItem = { id: Date.now().toString(), scheduleTime: scheduleDate. toISOString(), data: announcementData, status: 'scheduled' };
+  const scheduledItem = {
+    id: Date.now().toString(),
+    scheduleTime: scheduleDate.toISOString(),
+    data: announcementData,
+    status: 'scheduled'
+  };
   scheduledAnnouncements.push(scheduledItem);
   log(`Announcement scheduled for ${scheduleDate.toLocaleString()}`, 'SUCCESS');
   setTimeout(async () => {
@@ -411,7 +454,47 @@ function scheduleAnnouncement(data) {
 }
 
 // ============================================
-// MAIN EXECUTION:  executeHolidayCheck
+// CACHED HOLIDAY FETCH (no repeat for year, with fallback)
+// ============================================
+
+let holidayFetchLock = false;
+
+async function fetchIndianHolidaysCached(year) {
+  if (holidayFetchLock) await new Promise(r => setTimeout(r, 200));
+
+  if (state.holidaysCache[year]?.holidays?.length) {
+    log(`Using cached holidays for ${year}`, 'INFO');
+    return state.holidaysCache[year].holidays;
+  }
+
+  holidayFetchLock = true;
+  try {
+    const holidays = await fetchIndianHolidays(year);
+
+    if (holidays && holidays.length) {
+      state.holidaysCache[year] = { holidays, fetchedAt: new Date().toISOString() };
+      state.lastSuccessfulHolidays = holidays;
+      saveState();
+      return holidays;
+    }
+
+    if (state.lastSuccessfulHolidays?.length) {
+      log('Using last successful holidays as fallback cache', 'WARNING');
+      return state.lastSuccessfulHolidays;
+    }
+
+    const hardcoded = getHardcodedHolidays2026();
+    state.lastSuccessfulHolidays = hardcoded;
+    saveState();
+    return hardcoded;
+
+  } finally {
+    holidayFetchLock = false;
+  }
+}
+
+// ============================================
+// MAIN EXECUTION: executeHolidayCheck
 // ============================================
 
 async function executeHolidayCheck(manualTrigger = false) {
@@ -421,7 +504,7 @@ async function executeHolidayCheck(manualTrigger = false) {
   const today = todayDateString();
   botStatus.lastCheck = new Date().toISOString();
 
-  if (! manualTrigger && state.lastRunDate === today) {
+  if (!manualTrigger && state.lastRunDate === today) {
     log(`Already checked for ${today} in timezone ${CONFIG.TIMEZONE}.  Skipping.`, 'INFO');
     log('========================================');
     return { success: true, message: 'Already checked today' };
@@ -442,7 +525,7 @@ async function executeHolidayCheck(manualTrigger = false) {
       return { success: false, message: 'Holiday fetch failed' };
     }
 
-    if (! holiday) {
+    if (!holiday) {
       state.lastRunDate = today;
       saveState();
       log(`No holiday today (${today}). Marked as checked.`, 'INFO');
@@ -450,10 +533,10 @@ async function executeHolidayCheck(manualTrigger = false) {
       return { success: true, message: 'No holiday today' };
     }
 
-    log(`🎉 Holiday:  ${holiday.name}`, 'SUCCESS');
+    log(`🎉 Holiday: ${holiday.name}`, 'SUCCESS');
 
     const aiMessage = await generateHolidayMessage(holiday.name, holiday.description);
-    const imageUrl = getHolidayImage(holiday. name);
+    const imageUrl = getHolidayImage(holiday.name);
     const webhookUrl = CONFIG.WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
 
     const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl);
@@ -468,12 +551,12 @@ async function executeHolidayCheck(manualTrigger = false) {
     log(success ? '✅ Sent!' : '❌ Failed', success ? 'SUCCESS' : 'ERROR');
     log('========================================');
 
-    return { success, message: success ? `Sent:  ${holiday.name}` : 'Failed', holiday, aiMessage };
+    return { success, message: success ? `Sent: ${holiday.name}` : 'Failed', holiday, aiMessage };
 
   } catch (err) {
     log(`Error during holiday check: ${err.message}`, 'ERROR');
     log('========================================');
-    return { success: false, message: err. message };
+    return { success: false, message: err.message };
   }
 }
 
@@ -483,8 +566,8 @@ async function getTodaysHoliday() {
   const today = todayDateString();
   log(`Checking if ${today} is a holiday (timezone ${CONFIG.TIMEZONE})...`);
 
-  const holidays = await fetchIndianHolidays(year);
-  if (! holidays || ! Array.isArray(holidays) || holidays.length === 0) {
+  const holidays = await fetchIndianHolidaysCached(year);
+  if (!holidays || !Array.isArray(holidays) || holidays.length === 0) {
     log('Could not fetch holiday data (empty)', 'ERROR');
     return undefined;
   }
@@ -507,7 +590,7 @@ app.use(express.static('public'));
 
 app.get('/api/status', (req, res) => {
   res.json({
-    ... botStatus,
+    ...botStatus,
     state,
     config: { timezone: CONFIG.TIMEZONE, webhooksConfigured: Object.keys(CONFIG.WEBHOOKS).filter(k => CONFIG.WEBHOOKS[k]).length }
   });
@@ -517,7 +600,7 @@ app.get('/api/logs', (req, res) => res.json(activityLog));
 
 app.get('/api/holidays/upcoming', async (req, res) => {
   try {
-    const holidays = await (async () => { const now = nowInZone(); return await fetchIndianHolidays(now.year); })();
+    const holidays = await (async () => { const now = nowInZone(); return await fetchIndianHolidaysCached(now.year); })();
     res.json({ success: true, holidays });
   } catch (error) {
     res.json({ success: false, error: error.message });
@@ -544,19 +627,19 @@ app.post('/api/trigger/holiday', async (req, res) => {
 
 app.post('/api/announcement/send', async (req, res) => {
   try {
-    const result = await sendCustomAnnouncement(req. body);
+    const result = await sendCustomAnnouncement(req.body);
     res.json(result);
   } catch (error) {
-    res.json({ success: false, error: error. message });
+    res.json({ success: false, error: error.message });
   }
 });
 
 app.post('/api/announcement/schedule', async (req, res) => {
   try {
-    const result = scheduleAnnouncement(req. body);
+    const result = scheduleAnnouncement(req.body);
     res.json(result);
   } catch (error) {
-    res.json({ success: false, error: error. message });
+    res.json({ success: false, error: error.message });
   }
 });
 
@@ -576,18 +659,18 @@ app.get('/api/discord/channels', async (req, res) => {
   try {
     const DISCORD_BOT_TOKEN = CONFIG.DISCORD_BOT_TOKEN;
     const DISCORD_GUILD_ID = CONFIG.DISCORD_GUILD_ID;
-    
+
     if (!DISCORD_BOT_TOKEN || !DISCORD_GUILD_ID) {
       log('Discord bot credentials not configured', 'WARNING');
-      return res.json({ 
-        success: false, 
-        error: 'Discord bot not configured.  Add DISCORD_BOT_TOKEN and DISCORD_GUILD_ID to . env',
-        useDefault: true 
+      return res.json({
+        success: false,
+        error: 'Discord bot not configured.  Add DISCORD_BOT_TOKEN and DISCORD_GUILD_ID to .env',
+        useDefault: true
       });
     }
-    
-    log('Fetching Discord channels from server... ', 'INFO');
-    
+
+    log('Fetching Discord channels from server...', 'INFO');
+
     // Fetch guild info
     const guildResponse = await axios.get(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}`,
@@ -599,7 +682,7 @@ app.get('/api/discord/channels', async (req, res) => {
         timeout: 10000
       }
     );
-    
+
     // Fetch channels
     const channelsResponse = await axios.get(
       `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/channels`,
@@ -611,10 +694,10 @@ app.get('/api/discord/channels', async (req, res) => {
         timeout: 10000
       }
     );
-    
+
     // Filter only text channels (type 0) and announcement channels (type 5)
     const textChannels = channelsResponse.data
-      .filter(ch => ch. type === 0 || ch.type === 5) // 0 = TEXT, 5 = ANNOUNCEMENT
+      .filter(ch => ch.type === 0 || ch.type === 5) // 0 = TEXT, 5 = ANNOUNCEMENT
       .map(ch => ({
         id: ch.id,
         name: ch.name,
@@ -624,7 +707,7 @@ app.get('/api/discord/channels', async (req, res) => {
         nsfw: ch.nsfw || false
       }))
       .sort((a, b) => a.position - b.position);
-    
+
     // Get category names
     const categories = channelsResponse.data
       .filter(ch => ch.type === 4) // 4 = CATEGORY
@@ -632,58 +715,58 @@ app.get('/api/discord/channels', async (req, res) => {
         acc[cat.id] = cat.name;
         return acc;
       }, {});
-    
+
     // Add category names to channels
-    const channelsWithCategories = textChannels. map(ch => ({
+    const channelsWithCategories = textChannels.map(ch => ({
       ...ch,
-      categoryName: ch.category ?  categories[ch.category] : null
+      categoryName: ch.category ? categories[ch.category] : null
     }));
-    
+
     log(`Successfully fetched ${textChannels.length} channels from Discord`, 'SUCCESS');
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       channels: channelsWithCategories,
       serverName: guildResponse.data.name,
       serverIcon: guildResponse.data.icon,
       totalChannels: textChannels.length,
       botConnected: true
     });
-    
+
   } catch (error) {
-    log(`Failed to fetch Discord channels: ${error. message}`, 'ERROR');
-    
+    log(`Failed to fetch Discord channels: ${error.message}`, 'ERROR');
+
     if (error.response?.status === 401) {
       log('Invalid Discord bot token', 'ERROR');
-      return res.json({ 
-        success: false, 
-        error: 'Invalid bot token.  Please check DISCORD_BOT_TOKEN in . env',
-        useDefault: true 
+      return res.json({
+        success: false,
+        error: 'Invalid bot token. Please check DISCORD_BOT_TOKEN in .env',
+        useDefault: true
       });
     }
-    
+
     if (error.response?.status === 403) {
       log('Bot lacks permissions', 'ERROR');
-      return res.json({ 
-        success: false, 
-        error:  'Bot lacks permissions.  Ensure bot has "View Channels" permission',
-        useDefault: true 
+      return res.json({
+        success: false,
+        error: 'Bot lacks permissions. Ensure bot has "View Channels" permission',
+        useDefault: true
       });
     }
-    
+
     if (error.response?.status === 404) {
       log('Guild not found', 'ERROR');
-      return res.json({ 
-        success: false, 
-        error: 'Server not found. Check DISCORD_GUILD_ID in . env',
-        useDefault: true 
+      return res.json({
+        success: false,
+        error: 'Server not found. Check DISCORD_GUILD_ID in .env',
+        useDefault: true
       });
     }
-    
-    res.json({ 
-      success: false, 
+
+    res.json({
+      success: false,
       error: error.message,
-      useDefault: true 
+      useDefault: true
     });
   }
 });
@@ -695,32 +778,32 @@ app.get('/api/discord/channels', async (req, res) => {
 app.post('/api/generate-image', async (req, res) => {
   try {
     const { prompt, size } = req.body;
-    
+
     if (!prompt) {
       return res.json({ success: false, error: 'Prompt is required' });
     }
-    
-    log(`Image generation requested:  "${prompt. substring(0, 50)}..." (${size})`, 'INFO');
-    
+
+    log(`Image generation requested: "${prompt.substring(0, 50)}..." (${size})`, 'INFO');
+
     // Use Unsplash for keyword-based real images
     try {
       const keywords = prompt.split(' ').filter(w => w.length > 3).slice(0, 3).join(',');
       const [width, height] = (size || '1024x1024').split('x');
-      const unsplashUrl = `https://source.unsplash.com/${width}x${height}/? ${encodeURIComponent(keywords)}`;
-      
-      log(`Using Unsplash image for:  ${keywords}`, 'SUCCESS');
+      const unsplashUrl = `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(keywords)}`;
+
+      log(`Using Unsplash image for: ${keywords}`, 'SUCCESS');
       return res.json({ success: true, imageUrl: unsplashUrl });
     } catch (err) {
       log(`Unsplash failed: ${err.message}`, 'WARNING');
     }
-    
-    // Fallback:  Placeholder
+
+    // Fallback: Placeholder
     const [width, height] = (size || '1024x1024').split('x');
     const placeholderUrl = `https://placehold.co/${width}x${height}/1a1447/00d4ff?text=${encodeURIComponent('Generated+Image')}`;
-    
+
     log('Using placeholder fallback', 'INFO');
     res.json({ success: true, imageUrl: placeholderUrl });
-    
+
   } catch (error) {
     log(`Image generation failed: ${error.message}`, 'ERROR');
     res.json({ success: false, error: error.message });
@@ -730,9 +813,9 @@ app.post('/api/generate-image', async (req, res) => {
 app.post('/api/test/newyear', async (req, res) => {
   try {
     const holiday = { date: '2026-01-01', name: "New Year's Day", description: 'New Year 2026' };
-    const aiMessage = await generateHolidayMessage(holiday.name, holiday. description);
+    const aiMessage = await generateHolidayMessage(holiday.name, holiday.description);
     const imageUrl = getHolidayImage(holiday.name);
-    const webhookUrl = CONFIG. WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS. ANNOUNCEMENTS;
+    const webhookUrl = CONFIG.WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
     const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl);
     res.json({ success, message: success ? 'Sent!' : 'Failed' });
   } catch (error) {
@@ -747,8 +830,8 @@ app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'dashbo
 // ============================================
 
 function validateConfig() {
-  if (!CONFIG.WEBHOOKS.ANNOUNCEMENTS && !CONFIG.WEBHOOKS. HOLIDAYS) {
-    log('ERROR: No webhook configured! ', 'ERROR');
+  if (!CONFIG.WEBHOOKS.ANNOUNCEMENTS && !CONFIG.WEBHOOKS.HOLIDAYS) {
+    log('ERROR: No webhook configured!', 'ERROR');
     log('Add to .env: WEBHOOK_ANNOUNCEMENTS=your_webhook_url', 'INFO');
     return false;
   }
@@ -761,7 +844,7 @@ async function startAgent() {
   console.log(`
 ╔══════════════════════════════════════════╗
 ║   🤖 DISCORD HOLIDAY AI AGENT 🤖        ║
-║   Using:  Nager. Date + Calendarific + Google Gemini   ║
+║   Using: Nager.Date + Calendarific + Google Gemini   ║
 ╚══════════════════════════════════════════╝
   `);
 
@@ -770,8 +853,8 @@ async function startAgent() {
   loadState();
   log('✅ Config validated');
 
-  app.listen(CONFIG. DASHBOARD_PORT, () => {
-    log(`🌐 Dashboard:  http://localhost:${CONFIG.DASHBOARD_PORT}`, 'SUCCESS');
+  app.listen(CONFIG.DASHBOARD_PORT, () => {
+    log(`🌐 Dashboard: http://localhost:${CONFIG.DASHBOARD_PORT}`, 'SUCCESS');
   });
 
   botStatus.running = true;
@@ -780,19 +863,19 @@ async function startAgent() {
   try {
     const today = todayDateString();
     if (CONFIG.TEST_MODE) {
-      log('TEST_MODE enabled:  performing an immediate manual check');
+      log('TEST_MODE enabled: performing an immediate manual check');
       await executeHolidayCheck(true);
     } else if (state.lastRunDate !== today) {
-      log(`Startup check: lastRunDate=${state.lastRunDate}, today=${today}.  Performing immediate check. `);
+      log(`Startup check: lastRunDate=${state.lastRunDate}, today=${today}. Performing immediate check.`);
       await executeHolidayCheck(false);
     } else {
-      log(`Startup:  already checked for ${today} (state). No immediate check needed.`, 'INFO');
+      log(`Startup: already checked for ${today} (state). No immediate check needed.`, 'INFO');
     }
   } catch (err) {
     log(`Startup check failed: ${err.message}`, 'WARNING');
   }
 
-  log(`✅ Scheduling daily checks at "${CONFIG. SCHEDULE_TIME}" (${CONFIG. TIMEZONE})`);
+  log(`✅ Scheduling daily checks at "${CONFIG.SCHEDULE_TIME}" (${CONFIG.TIMEZONE})`);
   cron.schedule(CONFIG.SCHEDULE_TIME, async () => {
     try {
       await executeHolidayCheck(false);
@@ -824,4 +907,3 @@ async function startAgent() {
 }
 
 startAgent();
-

@@ -1,4 +1,4 @@
-<! DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -22,7 +22,7 @@
           },
           fontFamily: {
             'sans': ['Inter', 'system-ui', 'sans-serif'],
-            'mono': ['"Space Mono"', 'monospace'],
+            'mono':  ['"Space Mono"', 'monospace'],
           },
         },
       },
@@ -32,7 +32,7 @@
   <style>
     * {
       margin: 0;
-      padding: 0;
+      padding:  0;
       box-sizing: border-box;
     }
 
@@ -43,7 +43,6 @@
       overflow-x: hidden;
     }
 
-    /* Animated gradient background */
     .gradient-bg {
       position: fixed;
       inset: 0;
@@ -64,14 +63,13 @@
       50% { background-position: 100% 50%; }
     }
 
-    /* Floating particles */
     .particle {
       position: fixed;
       width: 4px;
       height: 4px;
       background: rgba(0, 212, 255, 0.6);
       border-radius: 50%;
-      pointer-events:  none;
+      pointer-events: none;
       animation: float 20s infinite;
     }
 
@@ -80,19 +78,14 @@
         transform: translateY(0) translateX(0);
         opacity: 0;
       }
-      10% {
-        opacity: 1;
-      }
-      90% {
-        opacity:  1;
-      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
       100% {
         transform: translateY(-100vh) translateX(50px);
         opacity: 0;
       }
     }
 
-    /* Glass panel */
     .glass {
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(20px);
@@ -102,7 +95,7 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    . glass-strong {
+    .glass-strong {
       background: rgba(255, 255, 255, 0.06);
       backdrop-filter: blur(24px);
       border: 1px solid rgba(255, 255, 255, 0.12);
@@ -111,19 +104,17 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
-    /* Content wrapper */
     .content {
       position: relative;
       z-index: 10;
     }
 
-    /* Glowing text */
     .glow {
       text-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
                    0 0 40px rgba(0, 212, 255, 0.3);
     }
 
-    . glow-purple {
+    .glow-purple {
       text-shadow: 0 0 20px rgba(181, 55, 255, 0.5),
                    0 0 40px rgba(181, 55, 255, 0.3);
     }
@@ -133,14 +124,13 @@
                    0 0 40px rgba(255, 61, 154, 0.3);
     }
 
-    /* Button hover effects */
     .btn {
       position: relative;
       overflow: hidden;
       transition: all 0.3s ease;
     }
 
-    .btn::before {
+    .btn:: before {
       content: '';
       position: absolute;
       top: 50%;
@@ -158,12 +148,11 @@
       height: 300px;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
+    . btn:hover {
+      transform:  translateY(-2px);
       box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
     }
 
-    /* Card hover lift */
     .card {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -173,35 +162,24 @@
       box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
     }
 
-    /* Pulse animation */
     .pulse {
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
     @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity:  0.5;
-      }
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
-    /* Bounce animation */
-    .bounce {
+    . bounce {
       animation: bounce 1s infinite;
     }
 
     @keyframes bounce {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
     }
 
-    /* Fade in animation */
     .fade-in {
       animation: fadeIn 0.6s ease-out;
     }
@@ -217,7 +195,6 @@
       }
     }
 
-    /* Scale in animation */
     .scale-in {
       animation: scaleIn 0.4s ease-out;
     }
@@ -233,13 +210,12 @@
       }
     }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
+    : :-webkit-scrollbar {
       width: 10px;
       height: 10px;
     }
 
-    : :-webkit-scrollbar-track {
+    ::-webkit-scrollbar-track {
       background: rgba(0, 212, 255, 0.05);
       border-radius: 10px;
     }
@@ -253,7 +229,6 @@
       background: rgba(0, 212, 255, 0.5);
     }
 
-    /* Robot mascot */
     .robot {
       animation: robotFloat 3s ease-in-out infinite;
     }
@@ -267,7 +242,6 @@
       }
     }
 
-    /* Status indicator */
     .status-dot {
       animation: statusPulse 2s ease-in-out infinite;
     }
@@ -281,36 +255,34 @@
       }
     }
 
-    /* Tab active state */
     .tab {
       position: relative;
       transition: all 0.3s ease;
     }
 
-    .tab::after {
+    .tab:: after {
       content: '';
       position: absolute;
       bottom:  -2px;
       left: 50%;
       width: 0;
-      height: 3px;
+      height:  3px;
       background: linear-gradient(90deg, #00d4ff, #b537ff);
       transform: translateX(-50%);
       transition: width 0.3s ease;
       border-radius: 10px;
     }
 
-    . tab. active::after,
+    . tab.active::after,
     .tab:hover::after {
       width: 80%;
     }
 
-    /* Toast notification */
     .toast {
       position: fixed;
-      top:  24px;
+      top: 24px;
       right: 24px;
-      z-index: 9999;
+      z-index:  9999;
       animation: slideDown 0.3s ease-out;
       max-width: 400px;
     }
@@ -322,11 +294,10 @@
       }
       to {
         opacity: 1;
-        transform:  translateY(0);
+        transform: translateY(0);
       }
     }
 
-    /* Tooltip */
     .tooltip {
       position: relative;
     }
@@ -341,8 +312,8 @@
       background: rgba(0, 212, 255, 0.95);
       color: #0a0e27;
       border-radius: 8px;
-      font-size:  13px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight:  600;
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;
@@ -355,7 +326,7 @@
       bottom: calc(100% + 2px);
       left: 50%;
       transform: translateX(-50%);
-      border: 6px solid transparent;
+      border:  6px solid transparent;
       border-top-color: rgba(0, 212, 255, 0.95);
       opacity: 0;
       pointer-events: none;
@@ -367,7 +338,6 @@
       opacity: 1;
     }
 
-    /* Empty state */
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -380,15 +350,10 @@
     }
 
     @keyframes floatSlow {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-20px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform:  translateY(-20px); }
     }
 
-    /* Loading skeleton */
     .skeleton {
       background: linear-gradient(
         90deg,
@@ -398,19 +363,14 @@
       );
       background-size:  200% 100%;
       animation: shimmer 1.5s ease-in-out infinite;
-      border-radius:  8px;
+      border-radius: 8px;
     }
 
     @keyframes shimmer {
-      0% {
-        background-position: -200% 0;
-      }
-      100% {
-        background-position: 200% 0;
-      }
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
     }
 
-    /* Badge */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -423,10 +383,41 @@
       border: 1px solid rgba(0, 212, 255, 0.3);
     }
 
-    /* Focus styles for accessibility */
     *:focus-visible {
       outline: 3px solid rgba(0, 212, 255, 0.6);
       outline-offset: 3px;
+    }
+
+    . hidden {
+      display: none !important;
+    }
+
+    input, textarea, select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 12px;
+      border-radius:  12px;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #00d4ff;
+      box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight:  600;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
     }
   </style>
 </head>
@@ -520,7 +511,7 @@
           </div>
           <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
             <span class="text-sm">⏰</span>
-            <span class="text-gray-300 font-semibold text-sm" id="uptime-text">Starting... </span>
+            <span class="text-gray-300 font-semibold text-sm" id="uptime-text">Starting...</span>
           </div>
         </div>
       </div>
@@ -546,7 +537,7 @@
         class="tab active flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
         data-tooltip="Dashboard overview"
-        onclick="switchTab('overview', this)"
+        onclick="switchTab('overview')"
       >
         📊 Overview
       </button>
@@ -554,15 +545,23 @@
         class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
         data-tooltip="Holiday management"
-        onclick="switchTab('holidays', this)"
+        onclick="switchTab('holidays')"
       >
         🎉 Holidays
       </button>
       <button 
         class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
+        data-tooltip="Custom announcements"
+        onclick="switchTab('custom')"
+      >
+        📢 Custom
+      </button>
+      <button 
+        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
+        role="tab"
         data-tooltip="Scheduled items"
-        onclick="switchTab('scheduled', this)"
+        onclick="switchTab('scheduled')"
       >
         📅 Scheduled
       </button>
@@ -570,7 +569,7 @@
         class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
         role="tab"
         data-tooltip="Activity logs"
-        onclick="switchTab('logs', this)"
+        onclick="switchTab('logs')"
       >
         📋 Logs
       </button>
@@ -591,9 +590,7 @@
                 Active
               </div>
             </div>
-            <div class="text-6xl font-black glow mb-3" id="holiday-count">
-              <div class="skeleton h-16 w-24"></div>
-            </div>
+            <div class="text-6xl font-black glow mb-3" id="holiday-count">0</div>
             <h3 class="text-lg font-bold text-gray-300">Holiday Announcements</h3>
             <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
           </div>
@@ -607,9 +604,7 @@
                 Ready
               </div>
             </div>
-            <div class="text-6xl font-black glow-purple mb-3" id="custom-count">
-              <div class="skeleton h-16 w-24"></div>
-            </div>
+            <div class="text-6xl font-black glow-purple mb-3" id="custom-count">0</div>
             <h3 class="text-lg font-bold text-gray-300">Custom Announcements</h3>
             <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
           </div>
@@ -623,9 +618,7 @@
                 Queue
               </div>
             </div>
-            <div class="text-6xl font-black glow-pink mb-3" id="scheduled-count">
-              <div class="skeleton h-16 w-24"></div>
-            </div>
+            <div class="text-6xl font-black glow-pink mb-3" id="scheduled-count">0</div>
             <h3 class="text-lg font-bold text-gray-300">Scheduled Items</h3>
             <p class="text-sm text-gray-400 mt-1">Pending in queue</p>
           </div>
@@ -689,7 +682,7 @@
           </div>
 
           <!-- Info cards -->
-          <div class="grid grid-cols-1 md: grid-cols-2 gap-6 mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="glass p-6 rounded-xl">
               <div class="flex items-center gap-3 mb-4">
                 <span class="text-3xl">⏰</span>
@@ -714,12 +707,13 @@
           </div>
 
           <!-- Action buttons -->
-          <div class="glass p-8 rounded-xl">
+          <div class="glass p-8 rounded-xl mb-8">
             <h3 class="font-bold text-xl mb-6 flex items-center gap-2">
               <span class="text-2xl">🎮</span> Quick Actions
             </h3>
             <div class="flex flex-wrap gap-4">
               <button 
+                id="trigger-btn"
                 class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105 tooltip"
                 data-tooltip="Manually trigger a holiday check right now"
                 onclick="triggerHolidayCheck(this)"
@@ -728,6 +722,7 @@
                 Trigger Check Now
               </button>
               <button 
+                id="test-btn"
                 class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105 tooltip"
                 data-tooltip="Send a test New Year announcement"
                 onclick="testNewYear(this)"
@@ -739,7 +734,7 @@
           </div>
 
           <!-- How it works -->
-          <div class="glass p-8 rounded-xl mt-8 bg-gradient-to-br from-neon-blue/5 to-neon-purple/5">
+          <div class="glass p-8 rounded-xl bg-gradient-to-br from-neon-blue/5 to-neon-purple/5">
             <h3 class="font-bold text-xl mb-4 flex items-center gap-2">
               <span class="text-2xl">💡</span> How It Works
             </h3>
@@ -760,6 +755,94 @@
                 <span class="text-neon-blue text-xl mt-1">→</span>
                 <p>State persistence ensures no checks are ever missed</p>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Announcements Panel -->
+      <div id="custom-panel" class="panel hidden">
+        <div class="glass-strong rounded-2xl p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <span class="text-6xl">📢</span>
+            <div>
+              <h2 class="text-3xl font-black glow mb-2">Custom Announcements</h2>
+              <p class="text-gray-400">Send custom messages to your Discord server</p>
+            </div>
+          </div>
+
+          <!-- Custom announcement form -->
+          <form id="custom-form" class="space-y-6">
+            <div>
+              <label for="custom-title">Announcement Title</label>
+              <input 
+                type="text" 
+                id="custom-title" 
+                placeholder="e.g., Important Update" 
+                required
+              />
+            </div>
+
+            <div>
+              <label for="custom-message">Message</label>
+              <textarea 
+                id="custom-message" 
+                rows="6" 
+                placeholder="Enter your announcement message here..."
+                required
+              ></textarea>
+            </div>
+
+            <div>
+              <label for="custom-webhook">Discord Channel</label>
+              <select id="custom-webhook" required>
+                <option value="ANNOUNCEMENTS">Announcements Channel</option>
+                <option value="HOLIDAYS">Holidays Channel</option>
+                <option value="UPDATES">Updates Channel</option>
+                <option value="GENERAL">General Channel</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="custom-image">Image URL (optional)</label>
+              <input 
+                type="url" 
+                id="custom-image" 
+                placeholder="https://example.com/image.png"
+              />
+            </div>
+
+            <div class="flex items-center gap-4">
+              <input type="checkbox" id="use-ai" class="w-5 h-5">
+              <label for="use-ai" class="! mb-0">Enhance message with AI</label>
+            </div>
+
+            <div class="flex gap-4">
+              <button 
+                type="submit"
+                class="btn glass-strong px-8 py-4 rounded-xl font-bold flex-1 hover:scale-105"
+              >
+                <span class="text-xl mr-2">🚀</span>
+                Send Now
+              </button>
+              <button 
+                type="button"
+                class="btn glass px-6 py-4 rounded-xl font-semibold hover:scale-105"
+                onclick="document.getElementById('custom-form').reset()"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+
+          <!-- Delivery status -->
+          <div id="delivery-status" class="mt-8 hidden">
+            <div class="glass p-6 rounded-xl border-l-4 border-green-400">
+              <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
+                <span class="text-2xl">✅</span>
+                Message Delivered Successfully! 
+              </h3>
+              <p class="text-sm text-gray-400" id="delivery-message">Your announcement has been sent to Discord. </p>
             </div>
           </div>
         </div>
@@ -808,7 +891,7 @@
                 id="log-search"
                 placeholder="Search logs..."
                 class="glass px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue/50 focus:outline-none w-64"
-                oninput="filterLogs(this. value)"
+                oninput="filterLogs(this.value)"
               />
               <button 
                 class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10 tooltip"
@@ -847,50 +930,50 @@
   <script>
     // ==================== UTILITIES ====================
     
-     const createParticles = () => {
-    const container = document.getElementById('particles');
-    for (let i = 0; i < 30; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      particle.style.left = `${Math.random() * 100}%`;
-      particle.style.animationDelay = `${Math.random() * 20}s`;
-      particle.style.animationDuration = `${15 + Math.random() * 10}s`;
-      container.appendChild(particle);
-    }
-  };
+    const createParticles = () => {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+        container.appendChild(particle);
+      }
+    };
 
-  const showToast = (message, type = 'info') => {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    
-    const colors = {
-      success: 'from-green-500/20 to-green-600/20 border-green-400',
-      error: 'from-red-500/20 to-red-600/20 border-red-400',
-      info: 'from-neon-blue/20 to-neon-blue/20 border-neon-blue',
-      warning: 'from-yellow-500/20 to-yellow-600/20 border-yellow-400',
+    const showToast = (message, type = 'info') => {
+      const container = document.getElementById('toast-container');
+      const toast = document. createElement('div');
+      
+      const colors = {
+        success: 'from-green-500/20 to-green-600/20 border-green-400',
+        error: 'from-red-500/20 to-red-600/20 border-red-400',
+        info: 'from-neon-blue/20 to-neon-blue/20 border-neon-blue',
+        warning: 'from-yellow-500/20 to-yellow-600/20 border-yellow-400',
+      };
+      
+      const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        warning: '⚠️',
+      };
+      
+      toast.className = `toast glass-strong rounded-2xl p-4 border ${colors[type]} flex items-center gap-4`;
+      toast.innerHTML = `
+        <span class="text-3xl">${icons[type]}</span>
+        <span class="flex-1 font-semibold">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-2xl hover:scale-110 transition-transform" aria-label="Close">×</button>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
     };
-    
-    const icons = {
-      success: '✅',
-      error: '❌',
-      info: 'ℹ️',
-      warning: '⚠️',
-    };
-    
-    toast.className = `toast glass-strong rounded-2xl p-4 border ${colors[type]} flex items-center gap-4`;
-    toast.innerHTML = `
-      <span class="text-3xl">${icons[type]}</span>
-      <span class="flex-1 font-semibold">${message}</span>
-      <button onclick="this.parentElement.remove()" class="text-2xl hover:scale-110 transition-transform" aria-label="Close">×</button>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.style.animation = 'fadeOut 0.3s ease-out';
-      setTimeout(() => toast.remove(), 300);
-    }, 5000);
-  };
 
     // ==================== COUNTDOWN ====================
     
@@ -905,13 +988,18 @@
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
       
-      document.getElementById('countdown-text').textContent = 
-        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      const countdownEl = document.getElementById('countdown-text');
+      if (countdownEl) {
+        countdownEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      }
       
-      const totalSeconds = 24 * 60 * 60;
-      const elapsedSeconds = totalSeconds - (diff / 1000);
-      const percentage = (elapsedSeconds / totalSeconds) * 100;
-      document.getElementById('progress-bar').style.width = `${percentage}%`;
+      const progressEl = document.getElementById('progress-bar');
+      if (progressEl) {
+        const totalSeconds = 24 * 60 * 60;
+        const elapsedSeconds = totalSeconds - (diff / 1000);
+        const percentage = (elapsedSeconds / totalSeconds) * 100;
+        progressEl.style.width = `${percentage}%`;
+      }
     };
 
     setInterval(updateCountdown, 1000);
@@ -924,9 +1012,12 @@
         .then(res => res.json())
         .then(data => {
           if (data.uptime) {
-            const hours = Math. floor(data.uptime / 3600);
+            const hours = Math.floor(data.uptime / 3600);
             const minutes = Math.floor((data.uptime % 3600) / 60);
-            document.getElementById('uptime-text').textContent = `${hours}h ${minutes}m`;
+            const uptimeEl = document.getElementById('uptime-text');
+            if (uptimeEl) {
+              uptimeEl.textContent = `${hours}h ${minutes}m`;
+            }
           }
         })
         .catch(() => {});
@@ -937,15 +1028,40 @@
 
     // ==================== TAB SWITCHING ====================
     
-    const switchTab = (tabName, element) => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      element.classList.add('active');
+    const switchTab = (tabName) => {
+      console.log('Switching to:', tabName);
       
-      document.querySelectorAll('. panel').forEach(p => p.classList.add('hidden'));
-      document.getElementById(`${tabName}-panel`).classList.remove('hidden');
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach((t, i) => {
+        t.classList.remove('active');
+        if ((i === 0 && tabName === 'overview') ||
+            (i === 1 && tabName === 'holidays') ||
+            (i === 2 && tabName === 'custom') ||
+            (i === 3 && tabName === 'scheduled') ||
+            (i === 4 && tabName === 'logs')) {
+          t.classList.add('active');
+        }
+      });
       
-      if (tabName === 'scheduled') loadScheduledItems();
-      if (tabName === 'logs') loadLogs();
+      // Hide all panels
+      document.querySelectorAll('.panel').forEach(p => {
+        p.classList. add('hidden');
+      });
+      
+      // Show selected panel
+      const targetPanel = document.getElementById(`${tabName}-panel`);
+      if (targetPanel) {
+        targetPanel.classList.remove('hidden');
+      }
+      
+      // Load data for specific tabs
+      if (tabName === 'scheduled') {
+        loadScheduledItems();
+      } else if (tabName === 'logs') {
+        loadLogs();
+      }
+      
+      showToast(`Switched to ${tabName}`, 'info');
     };
 
     // ==================== DATA LOADING ====================
@@ -955,35 +1071,46 @@
     const loadDashboard = async () => {
       try {
         const [status, todayHoliday, upcomingHolidays] = await Promise.all([
-          fetch('/api/status').then(r => r.json()),
-          fetch('/api/holidays/today').then(r => r.json()),
-          fetch('/api/holidays/upcoming').then(r => r.json()),
+          fetch('/api/status').then(r => r.json()).catch(() => null),
+          fetch('/api/holidays/today').then(r => r.json()).catch(() => null),
+          fetch('/api/holidays/upcoming').then(r => r.json()).catch(() => null),
         ]);
 
         // Update status
         if (status) {
-          document.getElementById('status-text').textContent = status. running ? 'ACTIVE' : 'PAUSED';
-          document.getElementById('timezone-text').textContent = status. config?. timezone || 'N/A';
-          document.getElementById('holiday-count').textContent = status. totalHolidayAnnouncements || 0;
-          document.getElementById('custom-count').textContent = status. totalCustomAnnouncements || 0;
-          document.getElementById('last-run-date').textContent = status.state?.lastRunDate || '—';
+          const statusEl = document.getElementById('status-text');
+          if (statusEl) statusEl.textContent = status. running ? 'ACTIVE' : 'PAUSED';
+          
+          const timezoneEl = document.getElementById('timezone-text');
+          if (timezoneEl) timezoneEl.textContent = status.config?. timezone || 'N/A';
+          
+          const holidayCountEl = document.getElementById('holiday-count');
+          if (holidayCountEl) holidayCountEl.textContent = status.totalHolidayAnnouncements || 0;
+          
+          const customCountEl = document.getElementById('custom-count');
+          if (customCountEl) customCountEl.textContent = status.totalCustomAnnouncements || 0;
+          
+          const lastRunEl = document.getElementById('last-run-date');
+          if (lastRunEl) lastRunEl.textContent = status.state?. lastRunDate || '—';
         }
 
         // Update today's holiday
         updateTodayHoliday(todayHoliday?. holiday);
 
         // Update upcoming holidays
-        updateUpcomingHolidays(upcomingHolidays?. holidays);
+        updateUpcomingHolidays(upcomingHolidays?.holidays);
 
       } catch (error) {
+        console.error('Error loading dashboard:', error);
         showToast('Failed to load dashboard data', 'error');
       }
     };
 
     const updateTodayHoliday = (holiday) => {
       const container = document.getElementById('today-holiday');
+      if (!container) return;
       
-      if (!holiday) {
+      if (! holiday) {
         container.innerHTML = `
           <div class="empty-state py-12">
             <div class="empty-icon">📅</div>
@@ -1015,6 +1142,7 @@
 
     const updateUpcomingHolidays = (holidays) => {
       const container = document.getElementById('upcoming-holidays');
+      if (!container) return;
       
       if (! holidays || holidays.length === 0) {
         container.innerHTML = `
@@ -1029,7 +1157,10 @@
 
       const today = new Date();
       const filtered = holidays
-        .filter(h => new Date(h.date) >= today && new Date(h.date) <= new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000))
+        .filter(h => {
+          const hDate = new Date(h.date);
+          return hDate >= today && hDate <= new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
+        })
         .slice(0, 20);
 
       if (filtered.length === 0) {
@@ -1047,7 +1178,7 @@
         <div class="glass p-5 rounded-xl hover:scale-[1.02] transition-all cursor-pointer fade-in" style="animation-delay: ${i * 0.05}s">
           <div class="flex items-center justify-between">
             <div class="flex-1">
-              <h4 class="font-bold text-lg mb-1">${h.name}</h4>
+              <h4 class="font-bold text-lg mb-1">${h. name}</h4>
               <p class="text-sm text-gray-400">${h.description || h.type || ''}</p>
             </div>
             <div class="font-mono font-bold text-neon-purple ml-4">${h.date}</div>
@@ -1061,8 +1192,11 @@
         const data = await fetch('/api/announcements/scheduled').then(r => r.json());
         const items = data.scheduled || [];
         
-        document.getElementById('scheduled-count').textContent = items.length;
+        const countEl = document.getElementById('scheduled-count');
+        if (countEl) countEl.textContent = items. length;
+        
         const container = document.getElementById('scheduled-list');
+        if (!container) return;
 
         if (items.length === 0) {
           container.innerHTML = `
@@ -1078,24 +1212,28 @@
           return;
         }
 
-        container.innerHTML = items.map((item, i) => `
-          <div class="glass p-6 rounded-xl fade-in" style="animation-delay: ${i * 0.05}s">
-            <div class="flex items-center justify-between mb-4">
-              <h4 class="font-bold text-lg">ID: ${item.id}</h4>
-              <span class="badge ${
-                item.status === 'scheduled' ? 'bg-yellow-500/20 border-yellow-400' : 
-                item.status === 'sent' ? 'bg-green-500/20 border-green-400' :
-                'bg-red-500/20 border-red-400'
-              }">
-                ${item.status. toUpperCase()}
-              </span>
+        container.innerHTML = items.map((item, i) => {
+          const statusClass = 
+            item.status === 'scheduled' ? 'bg-yellow-500/20 border-yellow-400' :  
+            item.status === 'sent' ? 'bg-green-500/20 border-green-400' : 
+            'bg-red-500/20 border-red-400';
+          
+          return `
+            <div class="glass p-6 rounded-xl fade-in" style="animation-delay: ${i * 0.05}s">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="font-bold text-lg">ID: ${item.id}</h4>
+                <span class="badge ${statusClass}">
+                  ${item.status. toUpperCase()}
+                </span>
+              </div>
+              <p class="text-sm text-gray-400">
+                <span class="font-semibold">Scheduled: </span> ${new Date(item. scheduleTime).toLocaleString()}
+              </p>
             </div>
-            <p class="text-sm text-gray-400">
-              <span class="font-semibold">Scheduled:</span> ${new Date(item.scheduleTime).toLocaleString()}
-            </p>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (error) {
+        console.error('Error loading scheduled items:', error);
         showToast('Failed to load scheduled items', 'error');
       }
     };
@@ -1106,12 +1244,14 @@
         allLogs = data || [];
         renderLogs(allLogs);
       } catch (error) {
+        console.error('Error loading logs:', error);
         showToast('Failed to load logs', 'error');
       }
     };
 
     const renderLogs = (logs) => {
-      const container = document.getElementById('logs-container');
+      const container = document. getElementById('logs-container');
+      if (!container) return;
       
       if (! logs || logs.length === 0) {
         container.innerHTML = `
@@ -1123,13 +1263,14 @@
         return;
       }
 
-      container. innerHTML = logs.slice(0, 100).map(log => {
-        const typeColors = {
-          'ERROR': 'text-red-400',
-          'SUCCESS': 'text-green-400',
-          'WARNING': 'text-yellow-400',
-          'INFO': 'text-neon-blue',
-        };
+      const typeColors = {
+        'ERROR': 'text-red-400',
+        'SUCCESS': 'text-green-400',
+        'WARNING': 'text-yellow-400',
+        'INFO': 'text-neon-blue',
+      };
+
+      container.innerHTML = logs.slice(0, 100).map(log => {
         const color = typeColors[log.type] || 'text-gray-400';
 
         return `
@@ -1160,68 +1301,134 @@
     
     const triggerHolidayCheck = async (button) => {
       button.disabled = true;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Checking...';
+      const originalHTML = button.innerHTML;
+      button.innerHTML = '<span class="text-2xl">⏳</span> Checking... ';
       
       try {
         const response = await fetch('/api/trigger/holiday', { method: 'POST' });
         const data = await response.json();
         
         if (data.success) {
-          showToast('Holiday check completed successfully!', 'success');
+          showToast('✅ Holiday check completed successfully! ', 'success');
         } else {
           showToast(data.message || 'Failed to trigger holiday check', 'error');
         }
         
-        loadDashboard();
+        await loadDashboard();
       } catch (error) {
+        console.error('Error triggering holiday check:', error);
         showToast('Error:  ' + error.message, 'error');
       } finally {
         button.disabled = false;
-        button.innerHTML = '<span class="text-2xl">🚀</span> Trigger Check Now';
+        button.innerHTML = originalHTML;
       }
     };
 
     const testNewYear = async (button) => {
       button.disabled = true;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Sending... ';
+      const originalHTML = button.innerHTML;
+      button.innerHTML = '<span class="text-2xl">⏳</span> Sending...';
       
       try {
         const response = await fetch('/api/test/newyear', { method: 'POST' });
         const data = await response.json();
         
         if (data.success) {
-          showToast('New Year test sent successfully!', 'success');
+          showToast('✅ New Year test sent successfully!', 'success');
         } else {
           showToast('Failed to send test announcement', 'error');
         }
         
-        loadDashboard();
+        await loadDashboard();
       } catch (error) {
-        showToast('Error: ' + error.message, 'error');
+        console.error('Error testing New Year:', error);
+        showToast('Error: ' + error. message, 'error');
       } finally {
         button.disabled = false;
-        button.innerHTML = '<span class="text-2xl">🎆</span> Test New Year';
+        button.innerHTML = originalHTML;
       }
     };
 
     const loadTodayHoliday = async () => {
-      const data = await fetch('/api/holidays/today').then(r => r.json());
-      updateTodayHoliday(data?.holiday);
-      showToast('Today\'s holiday refreshed', 'info');
+      try {
+        const data = await fetch('/api/holidays/today').then(r => r.json());
+        updateTodayHoliday(data?.holiday);
+        showToast('Today\'s holiday refreshed', 'info');
+      } catch (error) {
+        showToast('Failed to refresh', 'error');
+      }
     };
 
     const loadUpcomingHolidays = async () => {
-      const data = await fetch('/api/holidays/upcoming').then(r => r.json());
-      updateUpcomingHolidays(data?.holidays);
-      showToast('Upcoming holidays refreshed', 'info');
+      try {
+        const data = await fetch('/api/holidays/upcoming').then(r => r.json());
+        updateUpcomingHolidays(data?.holidays);
+        showToast('Upcoming holidays refreshed', 'info');
+      } catch (error) {
+        showToast('Failed to refresh', 'error');
+      }
     };
+
+    // ==================== CUSTOM ANNOUNCEMENT FORM ====================
+    
+    document.getElementById('custom-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('custom-title').value;
+      const message = document.getElementById('custom-message').value;
+      const webhookChannel = document.getElementById('custom-webhook').value;
+      const imageUrl = document.getElementById('custom-image').value;
+      const useAI = document.getElementById('use-ai').checked;
+      
+      const deliveryStatus = document.getElementById('delivery-status');
+      deliveryStatus.classList.add('hidden');
+      
+      try {
+        const response = await fetch('/api/announcement/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title,
+            message,
+            webhookChannel,
+            imageUrl,
+            useAI,
+            roles: []
+          })
+        });
+        
+        const data = await response. json();
+        
+        if (data.success) {
+          showToast('✅ Announcement sent successfully!', 'success');
+          deliveryStatus.classList.remove('hidden');
+          document.getElementById('delivery-message').textContent = 
+            `Your announcement "${title}" has been delivered to Discord ${webhookChannel} channel.`;
+          document.getElementById('custom-form').reset();
+          
+          // Update stats
+          await loadDashboard();
+        } else {
+          showToast('❌ Failed to send announcement:  ' + (data.error || 'Unknown error'), 'error');
+        }
+      } catch (error) {
+        console.error('Error sending announcement:', error);
+        showToast('❌ Error:  ' + error.message, 'error');
+      }
+    });
 
     // ==================== INITIALIZATION ====================
     
     const init = () => {
+      console.log('Initializing dashboard.. .');
+      
       createParticles();
       loadDashboard();
-      setInterval(loadDashboard, 60000); // Refresh every minute
+      
+      // Auto-refresh every minute
+      setInterval(loadDashboard, 60000);
+      
+      console.log('Dashboard initialized');
     };
 
     if (document.readyState === 'loading') {
@@ -1232,4 +1439,3 @@
   </script>
 </body>
 </html>
-

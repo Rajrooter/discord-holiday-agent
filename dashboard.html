@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+<! DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital Labour • Cyberpunk Terminal</title>
+  <title>Digital Labour • AI Agent Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron: wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <script>
     tailwind.config = {
@@ -22,18 +22,26 @@
           },
           fontFamily: {
             'terminal': ['"Share Tech Mono"', 'monospace'],
-            'cyber':  ['Orbitron', 'sans-serif'],
+            'cyber': ['Orbitron', 'sans-serif'],
+            'sans': ['Poppins', 'sans-serif'],
           },
           animation: {
-            'blink': 'blink 1.4s infinite',
+            'blink': 'blink 1. 4s infinite',
             'glow': 'glow 2s ease-in-out infinite',
             'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             'scanline': 'scanline 8s linear infinite',
+            'float': 'float 3s ease-in-out infinite',
+            'bounce-slow': 'bounce 2s infinite',
+            'slide-up': 'slideUp 0.3s ease-out',
+            'slide-down': 'slideDown 0.3s ease-out',
+            'fade-in': 'fadeIn 0.4s ease-out',
+            'scale-in': 'scaleIn 0.3s ease-out',
+            'wiggle': 'wiggle 1s ease-in-out infinite',
           },
           keyframes: {
             blink: {
               '0%, 49%': { opacity: '1' },
-              '50%, 100%': { opacity: '0. 3' },
+              '50%, 100%': { opacity: '0.3' },
             },
             glow: {
               '0%, 100%': { 
@@ -45,7 +53,31 @@
             },
             scanline: {
               '0%': { transform: 'translateY(-100%)' },
-              '100%': { transform: 'translateY(100%)' },
+              '100%':  { transform: 'translateY(100%)' },
+            },
+            float: {
+              '0%, 100%': { transform:  'translateY(0px)' },
+              '50%': { transform: 'translateY(-20px)' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            slideDown: {
+              '0%': { transform: 'translateY(-20px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            scaleIn: {
+              '0%': { transform: 'scale(0.9)', opacity: '0' },
+              '100%': { transform:  'scale(1)', opacity: '1' },
+            },
+            wiggle: {
+              '0%, 100%': { transform: 'rotate(-3deg)' },
+              '50%': { transform: 'rotate(3deg)' },
             },
           },
         },
@@ -61,8 +93,8 @@
     }
 
     body {
-      font-family: 'Share Tech Mono', monospace;
-      background: #0a0a0f;
+      font-family: 'Poppins', sans-serif;
+      background:  #0a0a0f;
       color: #00f0ff;
       overflow-x: hidden;
       position: relative;
@@ -70,7 +102,7 @@
 
     /* Space background canvas */
     #space-canvas {
-      position:  fixed;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
@@ -84,11 +116,11 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height:  100%;
-      z-index: 1;
+      width:  100%;
+      height: 100%;
+      z-index:  1;
       pointer-events: none;
-      opacity: 0.15;
+      opacity: 0.08;
     }
 
     /* Scanline effect */
@@ -96,7 +128,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      width:  100%;
+      width: 100%;
       height: 100%;
       background: repeating-linear-gradient(
         0deg,
@@ -109,11 +141,11 @@
       z-index:  2;
     }
 
-    . scanline::before {
+    . scanline:: before {
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
+      left:  0;
       width: 100%;
       height: 20px;
       background: linear-gradient(
@@ -140,10 +172,16 @@
                    0 0 30px rgba(0, 240, 255, 0.2);
     }
 
-    . glow-text-magenta {
+    .glow-text-magenta {
       text-shadow:  0 0 10px rgba(255, 0, 208, 0.8),
                    0 0 20px rgba(255, 0, 208, 0.4),
                    0 0 30px rgba(255, 0, 208, 0.2);
+    }
+
+    .glow-text-yellow {
+      text-shadow: 0 0 10px rgba(255, 209, 102, 0.8),
+                   0 0 20px rgba(255, 209, 102, 0.4),
+                   0 0 30px rgba(255, 209, 102, 0.2);
     }
 
     /* Neon border */
@@ -157,20 +195,20 @@
       inset: -2px;
       background: linear-gradient(45deg, #00f0ff, #ff00d0, #ffd166, #00f0ff);
       border-radius: inherit;
-      opacity: 0.5;
+      opacity: 0.3;
       z-index: -1;
       filter: blur(8px);
       animation: glow 2s ease-in-out infinite;
     }
 
     /* Custom scrollbar */
-    : :-webkit-scrollbar {
+    ::-webkit-scrollbar {
       width: 8px;
       height: 8px;
     }
 
     ::-webkit-scrollbar-track {
-      background:  rgba(0, 240, 255, 0.05);
+      background: rgba(0, 240, 255, 0.05);
     }
 
     ::-webkit-scrollbar-thumb {
@@ -207,9 +245,13 @@
       height: 300px;
     }
 
-    .cyber-button:hover {
+    . cyber-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+    }
+
+    .cyber-button:active {
+      transform: translateY(0);
     }
 
     /* Tab animation */
@@ -249,7 +291,7 @@
       border: 3px solid rgba(0, 240, 255, 0.1);
       border-top: 3px solid #00f0ff;
       border-radius: 50%;
-      width: 24px;
+      width:  24px;
       height: 24px;
       animation: spin 1s linear infinite;
     }
@@ -260,7 +302,7 @@
     }
 
     /* Responsive container */
-    .content-wrapper {
+    . content-wrapper {
       position: relative;
       z-index: 10;
     }
@@ -270,15 +312,181 @@
       animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
-    @keyframes pulse-slow {
-      0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      50% {
-        opacity: 0.7;
-        transform: scale(1.1);
-      }
+    /* Card hover lift */
+    .stat-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 240, 255, 0.3);
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      top:  20px;
+      right:  20px;
+      z-index: 9999;
+      animation: slide-down 0.3s ease-out;
+    }
+
+    . toast.hide {
+      animation: slide-up 0.3s ease-out;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+    }
+
+    .tooltip::before {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      padding: 8px 12px;
+      background: rgba(0, 240, 255, 0.9);
+      color: #0a0a0f;
+      border-radius: 8px;
+      font-size: 12px;
+      white-space:  nowrap;
+      opacity: 0;
+      pointer-events:  none;
+      transition: opacity 0.3s, transform 0.3s;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+    }
+
+    .tooltip:: after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border:  6px solid transparent;
+      border-top-color: rgba(0, 240, 255, 0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .tooltip:hover::before,
+    .tooltip:hover::after {
+      opacity:  1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: rgba(0, 240, 255, 0.4);
+    }
+
+    .empty-state-icon {
+      font-size:  80px;
+      margin-bottom:  20px;
+      opacity: 0.3;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* Skeleton loading */
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        rgba(0, 240, 255, 0.05) 25%,
+        rgba(0, 240, 255, 0.1) 50%,
+        rgba(0, 240, 255, 0.05) 75%
+      );
+      background-size: 200% 100%;
+      animation: skeleton-loading 1.5s ease-in-out infinite;
+    }
+
+    @keyframes skeleton-loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Focus visible for accessibility */
+    *:focus-visible {
+      outline: 2px solid #00f0ff;
+      outline-offset: 4px;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius:  999px;
+      font-size:  12px;
+      font-weight: 600;
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(0, 240, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00f0ff, #ff00d0);
+      border-radius: 999px;
+      transition: width 0.3s ease;
+    }
+
+    /* Floating action button */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius:  50%;
+      background: linear-gradient(135deg, #00f0ff, #ff00d0);
+      color: #0a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow:  0 8px 30px rgba(0, 240, 255, 0.4);
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(90deg);
+      box-shadow: 0 12px 40px rgba(0, 240, 255, 0.6);
+    }
+
+    /* Cute robot mascot */
+    .robot-mascot {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      z-index: 999;
+      animation: float 3s ease-in-out infinite;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .robot-mascot:hover {
+      animation: wiggle 1s ease-in-out infinite;
     }
   </style>
 </head>
@@ -292,189 +500,328 @@
   <!-- Scanline overlay -->
   <div class="scanline"></div>
 
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <!-- Cute robot mascot -->
+  <div class="robot-mascot hidden md:block" onclick="handleRobotClick()" data-tooltip="Click me for help!">
+    <svg width="80" height="80" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="30" fill="url(#gradient1)" opacity="0.8"/>
+      <circle cx="42" cy="45" r="4" fill="#0a0a0f"/>
+      <circle cx="58" cy="45" r="4" fill="#0a0a0f"/>
+      <path d="M 40 58 Q 50 63 60 58" stroke="#0a0a0f" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <rect x="44" y="25" width="4" height="10" fill="#00f0ff" opacity="0.6"/>
+      <rect x="52" y="25" width="4" height="10" fill="#ff00d0" opacity="0.6"/>
+      <defs>
+        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#00f0ff;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#ff00d0;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <!-- Floating action button -->
+  <button 
+    class="fab tooltip"
+    data-tooltip="Quick Actions"
+    onclick="handleFabClick()"
+    onkeydown="handleKeyDown(event, handleFabClick)"
+    tabindex="0"
+    aria-label="Quick actions menu"
+  >
+    ⚡
+  </button>
+
   <!-- Main content -->
   <div class="content-wrapper min-h-screen p-4 md:p-8">
     <!-- Header -->
-    <header class="glass-panel rounded-2xl p-6 md:p-8 mb-6 neon-border">
+    <header class="glass-panel rounded-2xl p-6 md:p-8 mb-6 neon-border animate-fade-in">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-cyber-cyan to-cyber-magenta rounded-xl flex items-center justify-center text-2xl md:text-3xl font-cyber font-black text-cyber-darker shadow-lg">
+          <div class="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-cyber-cyan to-cyber-magenta rounded-xl flex items-center justify-center text-2xl md:text-3xl font-cyber font-black text-cyber-darker shadow-lg animate-pulse-slow">
             DL
           </div>
           <div>
             <h1 class="text-2xl md:text-4xl font-cyber font-black glow-text animate-blink">
               DIGITAL LABOUR AI AGENT
             </h1>
-            <p class="text-sm md:text-base text-cyan-300 font-terminal mt-1">
-              >> Automated Holiday & Announcement System_<span class="terminal-cursor"></span>
+            <p class="text-sm md:text-base text-cyan-300 font-sans mt-1 font-light">
+              Automated Holiday & Announcement System 🤖
             </p>
           </div>
         </div>
         
         <div class="flex items-center gap-3">
-          <div class="flex items-center gap-2 glass-panel px-4 py-2 rounded-full border border-cyber-cyan/30">
+          <div class="flex items-center gap-2 glass-panel px-4 py-2 rounded-full border border-cyber-cyan/30 tooltip" data-tooltip="System Status">
             <div class="w-3 h-3 bg-cyber-cyan rounded-full status-dot"></div>
-            <span class="text-cyber-cyan font-terminal text-sm" id="status-text">RUNNING</span>
+            <span class="text-cyber-cyan font-sans text-sm font-semibold" id="status-text">RUNNING</span>
           </div>
-          <div class="glass-panel px-4 py-2 rounded-full border border-cyber-magenta/30">
-            <span class="text-cyber-magenta font-terminal text-sm" id="timezone-text">TZ:  LOADING... </span>
+          <div class="glass-panel px-4 py-2 rounded-full border border-cyber-magenta/30 tooltip" data-tooltip="Current Timezone">
+            <span class="text-cyber-magenta font-sans text-sm font-semibold" id="timezone-text">TZ:  Loading...</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Next check countdown -->
+      <div class="mt-4 pt-4 border-t border-cyber-cyan/20">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-cyan-300/60 font-sans">Next midnight check in:</span>
+          <span class="font-cyber text-cyber-cyan font-bold" id="countdown-text">Calculating...</span>
+        </div>
+        <div class="progress-bar mt-2">
+          <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
         </div>
       </div>
     </header>
 
     <!-- Navigation Tabs -->
-    <nav class="glass-panel rounded-xl p-2 mb-6 flex flex-wrap gap-2" role="tablist">
+    <nav class="glass-panel rounded-xl p-2 mb-6 flex flex-wrap gap-2 animate-slide-up" role="tablist">
       <button 
-        class="tab active flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+        class="tab active flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
         role="tab"
         aria-selected="true"
         aria-controls="overview-panel"
         tabindex="0"
+        data-tooltip="View system overview"
         onclick="handleTabClick('overview', this)"
         onkeydown="handleKeyDown(event, () => handleTabClick('overview', this))"
       >
-        <span class="glow-text">📊 OVERVIEW</span>
+        <span class="glow-text">📊 Overview</span>
       </button>
       <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
         role="tab"
         aria-selected="false"
         aria-controls="holidays-panel"
         tabindex="0"
+        data-tooltip="Manage holidays"
         onclick="handleTabClick('holidays', this)"
         onkeydown="handleKeyDown(event, () => handleTabClick('holidays', this))"
       >
-        🎉 HOLIDAYS
+        🎉 Holidays
       </button>
       <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover: bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus: ring-cyber-cyan"
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus: outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
         role="tab"
         aria-selected="false"
         aria-controls="custom-panel"
         tabindex="0"
+        data-tooltip="Custom announcements"
         onclick="handleTabClick('custom', this)"
         onkeydown="handleKeyDown(event, () => handleTabClick('custom', this))"
       >
-        📢 CUSTOM
+        📢 Custom
       </button>
       <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus: ring-2 focus:ring-cyber-cyan"
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
         role="tab"
         aria-selected="false"
         aria-controls="scheduled-panel"
         tabindex="0"
+        data-tooltip="View scheduled items"
         onclick="handleTabClick('scheduled', this)"
         onkeydown="handleKeyDown(event, () => handleTabClick('scheduled', this))"
       >
-        ⏰ SCHEDULED
+        ⏰ Scheduled
       </button>
       <button 
-        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-terminal text-sm md:text-base hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+        class="tab flex-1 min-w-[120px] px-4 py-3 rounded-lg font-sans text-sm md:text-base font-semibold hover:bg-cyber-cyan/10 transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan tooltip"
         role="tab"
         aria-selected="false"
         aria-controls="logs-panel"
         tabindex="0"
+        data-tooltip="View activity logs"
         onclick="handleTabClick('logs', this)"
         onkeydown="handleKeyDown(event, () => handleTabClick('logs', this))"
       >
-        📋 LOGS
+        📋 Logs
       </button>
     </nav>
 
     <!-- Tab Panels -->
     <div class="space-y-6">
       <!-- Overview Panel -->
-      <div id="overview-panel" class="tab-panel" role="tabpanel" aria-labelledby="overview-tab">
+      <div id="overview-panel" class="tab-panel animate-scale-in" role="tabpanel" aria-labelledby="overview-tab">
         <!-- Stats Grid -->
         <div class="grid grid-cols-1 md: grid-cols-3 gap-4 mb-6">
           <!-- Holiday Announcements -->
-          <div class="glass-panel rounded-xl p-6 neon-border hover:scale-105 transition-transform">
+          <div class="stat-card glass-panel rounded-xl p-6 neon-border cursor-pointer" onclick="handleStatClick('holidays')">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-cyber-cyan font-terminal text-sm">HOLIDAY_ANNOUNCEMENTS</span>
-              <span class="text-2xl">🎊</span>
+              <span class="text-cyber-cyan font-sans text-sm font-semibold">Holiday Announcements</span>
+              <span class="text-3xl animate-bounce-slow">🎊</span>
             </div>
-            <div class="text-5xl font-cyber font-black glow-text mb-2" id="holiday-count">0</div>
-            <div class="text-xs text-cyan-300/60 font-terminal">TOTAL_SENT</div>
+            <div class="text-5xl font-cyber font-black glow-text mb-2" id="holiday-count">
+              <div class="skeleton h-14 w-20 rounded"></div>
+            </div>
+            <div class="text-xs text-cyan-300/60 font-sans">Total sent successfully</div>
           </div>
 
           <!-- Custom Announcements -->
-          <div class="glass-panel rounded-xl p-6 neon-border hover:scale-105 transition-transform">
+          <div class="stat-card glass-panel rounded-xl p-6 neon-border cursor-pointer" onclick="handleStatClick('custom')">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-cyber-magenta font-terminal text-sm">CUSTOM_ANNOUNCEMENTS</span>
-              <span class="text-2xl">📣</span>
+              <span class="text-cyber-magenta font-sans text-sm font-semibold">Custom Announcements</span>
+              <span class="text-3xl animate-bounce-slow" style="animation-delay: 0.2s">📣</span>
             </div>
-            <div class="text-5xl font-cyber font-black glow-text-magenta mb-2" id="custom-count">0</div>
-            <div class="text-xs text-magenta-300/60 font-terminal">TOTAL_SENT</div>
+            <div class="text-5xl font-cyber font-black glow-text-magenta mb-2" id="custom-count">
+              <div class="skeleton h-14 w-20 rounded"></div>
+            </div>
+            <div class="text-xs text-magenta-300/60 font-sans">Total sent successfully</div>
           </div>
 
           <!-- Scheduled Items -->
-          <div class="glass-panel rounded-xl p-6 neon-border hover:scale-105 transition-transform">
+          <div class="stat-card glass-panel rounded-xl p-6 neon-border cursor-pointer" onclick="handleStatClick('scheduled')">
             <div class="flex items-center justify-between mb-4">
-              <span class="text-cyber-yellow font-terminal text-sm">SCHEDULED_ITEMS</span>
-              <span class="text-2xl">⏱️</span>
+              <span class="text-cyber-yellow font-sans text-sm font-semibold">Scheduled Items</span>
+              <span class="text-3xl animate-bounce-slow" style="animation-delay: 0.4s">⏱️</span>
             </div>
-            <div class="text-5xl font-cyber font-black text-cyber-yellow mb-2" id="scheduled-count">0</div>
-            <div class="text-xs text-yellow-300/60 font-terminal">IN_QUEUE</div>
+            <div class="text-5xl font-cyber font-black glow-text-yellow mb-2" id="scheduled-count">
+              <div class="skeleton h-14 w-20 rounded"></div>
+            </div>
+            <div class="text-xs text-yellow-300/60 font-sans">Pending in queue</div>
           </div>
         </div>
 
         <!-- Today's Holiday -->
-        <div class="glass-panel rounded-xl p-6 mb-6">
-          <h2 class="text-xl font-cyber font-bold glow-text mb-4 flex items-center gap-2">
-            <span class="animate-pulse">📅</span> TODAY'S HOLIDAY
-          </h2>
-          <div id="today-holiday" class="font-terminal">
-            <div class="animate-pulse">LOADING...</div>
+        <div class="glass-panel rounded-xl p-6 mb-6 animate-slide-up">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-cyber font-bold glow-text flex items-center gap-2">
+              <span class="animate-pulse">📅</span> Today's Holiday
+            </h2>
+            <button 
+              class="cyber-button glass-panel px-3 py-1 rounded-lg border border-cyber-cyan/30 hover:border-cyber-cyan font-sans text-xs font-semibold transition-all tooltip"
+              data-tooltip="Refresh today's holiday"
+              onclick="handleRefreshToday()"
+              onkeydown="handleKeyDown(event, handleRefreshToday)"
+              tabindex="0"
+            >
+              🔄 Refresh
+            </button>
+          </div>
+          <div id="today-holiday" class="font-sans">
+            <div class="skeleton h-24 w-full rounded-lg"></div>
           </div>
         </div>
 
         <!-- Upcoming Holidays -->
-        <div class="glass-panel rounded-xl p-6">
-          <h2 class="text-xl font-cyber font-bold glow-text mb-4 flex items-center gap-2">
-            <span class="animate-bounce">🔮</span> UPCOMING HOLIDAYS
-          </h2>
-          <div id="upcoming-holidays" class="space-y-3 max-h-96 overflow-y-auto font-terminal">
-            <div class="animate-pulse">LOADING...</div>
+        <div class="glass-panel rounded-xl p-6 animate-slide-up" style="animation-delay: 0.1s">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-cyber font-bold glow-text flex items-center gap-2">
+              <span class="animate-float">🔮</span> Upcoming Holidays
+            </h2>
+            <div class="flex items-center gap-2">
+              <span class="badge">
+                <span class="w-2 h-2 bg-cyber-cyan rounded-full animate-pulse"></span>
+                Next 30 days
+              </span>
+              <button 
+                class="cyber-button glass-panel px-3 py-1 rounded-lg border border-cyber-cyan/30 hover:border-cyber-cyan font-sans text-xs font-semibold transition-all tooltip"
+                data-tooltip="Refresh upcoming holidays"
+                onclick="handleRefreshUpcoming()"
+                onkeydown="handleKeyDown(event, handleRefreshUpcoming)"
+                tabindex="0"
+              >
+                🔄 Refresh
+              </button>
+            </div>
+          </div>
+          <div id="upcoming-holidays" class="space-y-3 max-h-96 overflow-y-auto font-sans">
+            <div class="skeleton h-20 w-full rounded-lg mb-3"></div>
+            <div class="skeleton h-20 w-full rounded-lg mb-3"></div>
+            <div class="skeleton h-20 w-full rounded-lg"></div>
           </div>
         </div>
       </div>
 
       <!-- Holidays Panel -->
       <div id="holidays-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="holidays-tab">
-        <div class="glass-panel rounded-xl p-6">
-          <h2 class="text-2xl font-cyber font-bold glow-text mb-6">HOLIDAY AUTOMATION</h2>
+        <div class="glass-panel rounded-xl p-6 animate-scale-in">
+          <h2 class="text-2xl font-cyber font-bold glow-text mb-6 flex items-center gap-3">
+            <span class="text-4xl">🎉</span> Holiday Automation
+          </h2>
+          
           <div class="space-y-4">
-            <div class="p-4 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/20">
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-terminal text-cyber-cyan">NEXT_CHECK</span>
-                <span class="font-terminal text-sm" id="next-check-time">Daily at 00:00 IST</span>
+            <!-- Status cards -->
+            <div class="grid grid-cols-1 md: grid-cols-2 gap-4">
+              <div class="p-4 bg-gradient-to-br from-cyber-cyan/10 to-cyber-cyan/5 rounded-lg border border-cyber-cyan/20">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-sans text-cyber-cyan font-semibold flex items-center gap-2">
+                    <span class="text-xl">⏰</span> Next Check
+                  </span>
+                  <span class="badge bg-cyber-cyan/20">
+                    <span class="w-2 h-2 bg-cyber-cyan rounded-full animate-pulse"></span>
+                    Scheduled
+                  </span>
+                </div>
+                <div class="font-terminal text-sm mt-2" id="next-check-time">Daily at 00:00 IST</div>
               </div>
-              <div class="flex items-center justify-between">
-                <span class="font-terminal text-cyber-cyan">LAST_RUN</span>
-                <span class="font-terminal text-sm" id="last-run-date">—</span>
+
+              <div class="p-4 bg-gradient-to-br from-cyber-magenta/10 to-cyber-magenta/5 rounded-lg border border-cyber-magenta/20">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="font-sans text-cyber-magenta font-semibold flex items-center gap-2">
+                    <span class="text-xl">📊</span> Last Run
+                  </span>
+                  <span class="badge bg-cyber-magenta/20">
+                    <span class="w-2 h-2 bg-cyber-magenta rounded-full"></span>
+                    Completed
+                  </span>
+                </div>
+                <div class="font-terminal text-sm mt-2" id="last-run-date">—</div>
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-3">
-              <button 
-                class="cyber-button glass-panel px-6 py-3 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-terminal transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
-                onclick="handleTriggerHoliday(this)"
-                onkeydown="handleKeyDown(event, () => handleTriggerHoliday(this))"
-                tabindex="0"
-                aria-label="Trigger holiday check manually"
-              >
-                🚀 TRIGGER_NOW
-              </button>
-              <button 
-                class="cyber-button glass-panel px-6 py-3 rounded-lg border border-cyber-magenta/50 hover:border-cyber-magenta font-terminal transition-all focus:outline-none focus:ring-2 focus:ring-cyber-magenta"
-                onclick="handleTestNewYear(this)"
-                onkeydown="handleKeyDown(event, () => handleTestNewYear(this))"
-                tabindex="0"
-                aria-label="Test New Year announcement"
-              >
-                🎉 TEST_NEW_YEAR
-              </button>
+            <!-- Action buttons -->
+            <div class="p-6 bg-gradient-to-br from-cyber-cyan/5 to-transparent rounded-lg border border-cyber-cyan/10">
+              <h3 class="font-cyber font-bold text-cyber-cyan mb-4 flex items-center gap-2">
+                <span class="text-xl">🎮</span> Quick Actions
+              </h3>
+              <div class="flex flex-wrap gap-3">
+                <button 
+                  class="cyber-button glass-panel px-6 py-3 rounded-lg border-2 border-cyber-cyan/50 hover:border-cyber-cyan font-sans font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan flex items-center gap-2 tooltip"
+                  data-tooltip="Manually trigger holiday check now"
+                  onclick="handleTriggerHoliday(this)"
+                  onkeydown="handleKeyDown(event, () => handleTriggerHoliday(this))"
+                  tabindex="0"
+                  aria-label="Trigger holiday check manually"
+                >
+                  <span class="text-xl">🚀</span> Trigger Check Now
+                </button>
+                <button 
+                  class="cyber-button glass-panel px-6 py-3 rounded-lg border-2 border-cyber-magenta/50 hover:border-cyber-magenta font-sans font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-cyber-magenta flex items-center gap-2 tooltip"
+                  data-tooltip="Send test New Year announcement"
+                  onclick="handleTestNewYear(this)"
+                  onkeydown="handleKeyDown(event, () => handleTestNewYear(this))"
+                  tabindex="0"
+                  aria-label="Test New Year announcement"
+                >
+                  <span class="text-xl">🎆</span> Test New Year
+                </button>
+              </div>
+            </div>
+
+            <!-- Info cards -->
+            <div class="p-6 bg-gradient-to-br from-cyber-yellow/5 to-transparent rounded-lg border border-cyber-yellow/10">
+              <h3 class="font-cyber font-bold text-cyber-yellow mb-3 flex items-center gap-2">
+                <span class="text-xl">💡</span> How It Works
+              </h3>
+              <div class="space-y-2 text-sm font-sans text-cyan-300/80">
+                <div class="flex items-start gap-2">
+                  <span class="text-cyber-cyan mt-1">•</span>
+                  <span>The bot checks for holidays every day at midnight (00:00) in your configured timezone</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-cyber-cyan mt-1">•</span>
+                  <span>Uses triple redundancy:  cron scheduler + minute-guard + external trigger for 100% reliability</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-cyber-cyan mt-1">•</span>
+                  <span>AI-powered messages via Google Gemini with smart fallback templates</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-cyber-cyan mt-1">•</span>
+                  <span>State persistence ensures no checks are ever missed</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -482,58 +829,101 @@
 
       <!-- Custom Panel -->
       <div id="custom-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="custom-tab">
-        <div class="glass-panel rounded-xl p-6">
-          <h2 class="text-2xl font-cyber font-bold glow-text mb-6">CUSTOM ANNOUNCEMENTS</h2>
-          <p class="font-terminal text-cyan-300/60">Custom announcement functionality available via API at <code class="text-cyber-cyan">/api/announcement/send</code></p>
+        <div class="glass-panel rounded-xl p-6 animate-scale-in">
+          <h2 class="text-2xl font-cyber font-bold glow-text mb-6 flex items-center gap-3">
+            <span class="text-4xl">📢</span> Custom Announcements
+          </h2>
+          <div class="empty-state">
+            <div class="empty-state-icon">📣</div>
+            <h3 class="text-xl font-cyber font-bold mb-2 text-cyan-300">Custom Announcements</h3>
+            <p class="font-sans text-cyan-300/60 max-w-md mx-auto mb-4">
+              Send custom announcements via the API endpoint
+            </p>
+            <code class="inline-block px-4 py-2 bg-cyber-darker rounded-lg border border-cyber-cyan/20 text-cyber-cyan font-terminal text-sm">
+              POST /api/announcement/send
+            </code>
+            <p class="mt-4 text-xs text-cyan-300/40 font-sans">Check the API documentation for payload structure</p>
+          </div>
         </div>
       </div>
 
       <!-- Scheduled Panel -->
       <div id="scheduled-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="scheduled-tab">
-        <div class="glass-panel rounded-xl p-6">
-          <h2 class="text-2xl font-cyber font-bold glow-text mb-6">SCHEDULED ITEMS</h2>
-          <div id="scheduled-list" class="space-y-3 font-terminal">
-            <div class="animate-pulse">LOADING... </div>
+        <div class="glass-panel rounded-xl p-6 animate-scale-in">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-cyber font-bold glow-text flex items-center gap-3">
+              <span class="text-4xl">⏰</span> Scheduled Items
+            </h2>
+            <button 
+              class="cyber-button glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-sans text-sm font-semibold transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan flex items-center gap-2 tooltip"
+              data-tooltip="Refresh scheduled items"
+              onclick="handleRefreshScheduled()"
+              onkeydown="handleKeyDown(event, handleRefreshScheduled)"
+              tabindex="0"
+              aria-label="Refresh scheduled items"
+            >
+              🔄 Refresh
+            </button>
+          </div>
+          <div id="scheduled-list" class="space-y-3 font-sans">
+            <div class="skeleton h-24 w-full rounded-lg mb-3"></div>
+            <div class="skeleton h-24 w-full rounded-lg mb-3"></div>
           </div>
         </div>
       </div>
 
       <!-- Logs Panel -->
       <div id="logs-panel" class="tab-panel hidden" role="tabpanel" aria-labelledby="logs-tab">
-        <div class="glass-panel rounded-xl p-6">
+        <div class="glass-panel rounded-xl p-6 animate-scale-in">
           <div class="flex items-center justify-between mb-4">
-            <h2 class="text-2xl font-cyber font-bold glow-text">ACTIVITY LOGS</h2>
-            <button 
-              class="cyber-button glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-terminal text-sm transition-all focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
-              onclick="handleRefreshLogs()"
-              onkeydown="handleKeyDown(event, handleRefreshLogs)"
-              tabindex="0"
-              aria-label="Refresh activity logs"
-            >
-              🔄 REFRESH
-            </button>
+            <h2 class="text-2xl font-cyber font-bold glow-text flex items-center gap-3">
+              <span class="text-4xl">📋</span> Activity Logs
+            </h2>
+            <div class="flex items-center gap-2">
+              <input 
+                type="text" 
+                id="log-search"
+                placeholder="Search logs..."
+                class="glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/30 focus:border-cyber-cyan font-sans text-sm bg-transparent text-cyan-200 placeholder-cyan-300/40 focus:outline-none focus:ring-2 focus:ring-cyber-cyan"
+                oninput="handleLogSearch(this. value)"
+              />
+              <button 
+                class="cyber-button glass-panel px-4 py-2 rounded-lg border border-cyber-cyan/50 hover:border-cyber-cyan font-sans text-sm font-semibold transition-all focus:outline-none focus: ring-2 focus:ring-cyber-cyan flex items-center gap-2 tooltip"
+                data-tooltip="Refresh activity logs"
+                onclick="handleRefreshLogs()"
+                onkeydown="handleKeyDown(event, handleRefreshLogs)"
+                tabindex="0"
+                aria-label="Refresh activity logs"
+              >
+                🔄 Refresh
+              </button>
+            </div>
           </div>
           <div id="logs-container" class="bg-cyber-darker/50 rounded-lg p-4 max-h-[600px] overflow-y-auto border border-cyber-cyan/20 font-terminal text-sm">
-            <div class="animate-pulse text-cyber-cyan">LOADING LOGS...</div>
+            <div class="skeleton h-8 w-full rounded mb-2"></div>
+            <div class="skeleton h-8 w-full rounded mb-2"></div>
+            <div class="skeleton h-8 w-full rounded mb-2"></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Footer -->
-    <footer class="mt-8 text-center font-terminal text-xs text-cyan-300/40">
-      <p>DIGITAL_LABOUR © 2026 • POWERED_BY_NODE. JS + EXPRESS + GEMINI_AI</p>
-      <p class="mt-1">TRIPLE_REDUNDANCY:  CRON + MINUTE_GUARD + EXTERNAL_TRIGGER</p>
+    <footer class="mt-8 text-center font-sans text-xs text-cyan-300/40 animate-fade-in" style="animation-delay: 0.5s">
+      <p>Digital Labour © 2026 • Powered by Node.js + Express + Gemini AI</p>
+      <p class="mt-1">Triple Redundancy:  Cron + Minute-Guard + External Trigger ✨</p>
+      <p class="mt-1 flex items-center justify-center gap-2">
+        Made with <span class="text-red-400 animate-pulse">❤️</span> by the Digital Labour Team
+      </p>
     </footer>
   </div>
 
   <script>
     // ==================== CANVAS ANIMATIONS ====================
     
-    // Space background with stars
     const initSpaceCanvas = () => {
       const canvas = document.getElementById('space-canvas');
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas. getContext('2d');
       
       const resizeCanvas = () => {
         canvas.width = window.innerWidth;
@@ -560,9 +950,8 @@
       const animateStars = () => {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Nebula gradient
         const gradient = ctx.createRadialGradient(
-          canvas.width / 2, canvas. height / 2, 0,
+          canvas.width / 2, canvas.height / 2, 0,
           canvas.width / 2, canvas.height / 2, canvas.width / 2
         );
         gradient.addColorStop(0, 'rgba(0, 240, 255, 0.03)');
@@ -571,21 +960,18 @@
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas. height);
         
-        // Draw stars
-        stars.forEach(star => {
+        stars. forEach(star => {
           ctx.beginPath();
-          ctx.arc(star.x, star.y, star.radius, 0, Math. PI * 2);
+          ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(0, 240, 255, ${star.opacity})`;
           ctx.fill();
           
-          // Move stars
           star.y += star.speed;
           if (star.y > canvas.height) {
             star.y = 0;
             star.x = Math.random() * canvas.width;
           }
           
-          // Twinkle effect
           star.opacity += star.opacityDirection * 0.02;
           if (star.opacity >= 1 || star.opacity <= 0.2) {
             star.opacityDirection *= -1;
@@ -598,13 +984,12 @@
       animateStars();
     };
     
-    // Matrix rain effect
     const initMatrixCanvas = () => {
       const canvas = document.getElementById('matrix-canvas');
-      const ctx = canvas. getContext('2d');
+      const ctx = canvas.getContext('2d');
       
       const resizeCanvas = () => {
-        canvas.width = window.innerWidth;
+        canvas. width = window.innerWidth;
         canvas.height = window.innerHeight;
       };
       
@@ -641,6 +1026,41 @@
       setInterval(animateMatrix, 50);
     };
     
+    // ==================== TOAST NOTIFICATIONS ====================
+    
+    const showToast = (message, type = 'info') => {
+      const container = document.getElementById('toast-container');
+      const toast = document. createElement('div');
+      
+      const colors = {
+        success: 'from-green-500/20 to-green-600/20 border-green-400',
+        error: 'from-red-500/20 to-red-600/20 border-red-400',
+        info:  'from-cyber-cyan/20 to-cyber-cyan/20 border-cyber-cyan',
+        warning: 'from-yellow-500/20 to-yellow-600/20 border-yellow-400',
+      };
+      
+      const icons = {
+        success: '✅',
+        error: '❌',
+        info: 'ℹ️',
+        warning: '⚠️',
+      };
+      
+      toast.className = `toast glass-panel rounded-lg p-4 border ${colors[type]} mb-4 flex items-center gap-3 min-w-[300px] max-w-[500px]`;
+      toast.innerHTML = `
+        <span class="text-2xl">${icons[type]}</span>
+        <span class="flex-1 font-sans text-sm text-cyan-200">${message}</span>
+        <button onclick="this.parentElement.remove()" class="text-cyan-300 hover:text-cyan-100 transition-colors" aria-label="Close notification">✕</button>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
+    };
+    
     // ==================== STATE MANAGEMENT ====================
     
     let currentTab = 'overview';
@@ -648,16 +1068,46 @@
       status: {},
       todayHoliday: null,
       upcomingHolidays: [],
-      scheduledItems: [],
-      logs:  [],
+      scheduledItems:  [],
+      logs: [],
     };
+    let allLogs = [];
+    
+    // ==================== COUNTDOWN TIMER ====================
+    
+    const updateCountdown = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
+      const diff = tomorrow - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      const countdownText = document.getElementById('countdown-text');
+      if (countdownText) {
+        countdownText.textContent = `${hours}h ${minutes}m ${seconds}s`;
+      }
+      
+      const progressFill = document.getElementById('progress-fill');
+      if (progressFill) {
+        const totalSeconds = 24 * 60 * 60;
+        const elapsedSeconds = totalSeconds - (diff / 1000);
+        const percentage = (elapsedSeconds / totalSeconds) * 100;
+        progressFill.style.width = `${percentage}%`;
+      }
+    };
+    
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
     
     // ==================== TAB NAVIGATION ====================
     
     const handleTabClick = (tabName, element) => {
       if (currentTab === tabName) return;
       
-      // Update ARIA attributes
       document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active');
         tab.setAttribute('aria-selected', 'false');
@@ -666,12 +1116,10 @@
       element.classList.add('active');
       element.setAttribute('aria-selected', 'true');
       
-      // Hide all panels
       document.querySelectorAll('.tab-panel').forEach(panel => {
-        panel. classList.add('hidden');
+        panel.classList.add('hidden');
       });
       
-      // Show selected panel
       const panel = document.getElementById(`${tabName}-panel`);
       if (panel) {
         panel.classList.remove('hidden');
@@ -679,12 +1127,13 @@
       
       currentTab = tabName;
       
-      // Load data for specific tabs
       if (tabName === 'scheduled') {
         loadScheduledItems();
       } else if (tabName === 'logs') {
         loadLogs();
       }
+      
+      showToast(`Switched to ${tabName} view`, 'info');
     };
     
     const handleKeyDown = (event, callback) => {
@@ -703,6 +1152,7 @@
         return await response.json();
       } catch (error) {
         console.error(`Error fetching ${url}:`, error);
+        showToast(`Failed to fetch data from ${url}`, 'error');
         return null;
       }
     };
@@ -720,7 +1170,7 @@
       }
       
       if (todayHoliday) {
-        appState.todayHoliday = todayHoliday. holiday;
+        appState. todayHoliday = todayHoliday. holiday;
         updateTodayHolidayUI(todayHoliday. holiday);
       }
       
@@ -742,6 +1192,7 @@
       const data = await fetchData('/api/logs');
       if (data) {
         appState.logs = data;
+        allLogs = data;
         updateLogsUI(data);
       }
     };
@@ -749,22 +1200,19 @@
     // ==================== UI UPDATES ====================
     
     const updateStatusUI = (status) => {
-      // Status text
       const statusText = document.getElementById('status-text');
       if (statusText) {
-        statusText. textContent = status.running ? 'RUNNING' : 'PAUSED';
+        statusText.textContent = status. running ? 'RUNNING' : 'PAUSED';
       }
       
-      // Timezone
       const timezoneText = document.getElementById('timezone-text');
       if (timezoneText && status.config) {
         timezoneText. textContent = `TZ: ${status.config.timezone || 'N/A'}`;
       }
       
-      // Stats
       const holidayCount = document.getElementById('holiday-count');
       if (holidayCount) {
-        holidayCount.textContent = status.totalHolidayAnnouncements || 0;
+        holidayCount. textContent = status.totalHolidayAnnouncements || 0;
       }
       
       const customCount = document.getElementById('custom-count');
@@ -772,10 +1220,9 @@
         customCount.textContent = status.totalCustomAnnouncements || 0;
       }
       
-      // Last run date
       const lastRunDate = document.getElementById('last-run-date');
       if (lastRunDate && status.state) {
-        lastRunDate. textContent = status.state.lastRunDate || '—';
+        lastRunDate.textContent = status.state.lastRunDate || '—';
       }
     };
     
@@ -784,31 +1231,48 @@
       if (! container) return;
       
       if (! holiday) {
-        container.innerHTML = '<div class="text-cyan-300/60">NO_HOLIDAY_TODAY</div>';
+        container.innerHTML = `
+          <div class="empty-state py-8">
+            <div class="text-6xl mb-3">📅</div>
+            <p class="text-cyan-300/60 font-sans">No holiday today</p>
+            <p class="text-xs text-cyan-300/40 mt-2 font-sans">Check back tomorrow! </p>
+          </div>
+        `;
         return;
       }
       
       container.innerHTML = `
-        <div class="flex items-center justify-between p-4 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/30">
-          <div>
-            <div class="text-xl font-cyber font-bold glow-text mb-1">${holiday.name}</div>
-            <div class="text-sm text-cyan-300/60">${holiday.description || holiday.type || ''}</div>
+        <div class="flex items-center justify-between p-6 bg-gradient-to-br from-cyber-cyan/10 to-cyber-cyan/5 rounded-lg border border-cyber-cyan/30 hover:border-cyber-cyan/50 transition-all">
+          <div class="flex-1">
+            <div class="text-2xl font-cyber font-bold glow-text mb-2">${holiday.name}</div>
+            <div class="text-sm text-cyan-300/80 font-sans">${holiday. description || holiday.type || ''}</div>
           </div>
-          <div class="text-cyber-magenta font-bold text-lg">${holiday.date}</div>
+          <div class="text-right ml-4">
+            <div class="text-cyber-magenta font-bold text-xl font-cyber mb-1">${holiday.date}</div>
+            <div class="badge bg-cyber-cyan/20">
+              <span class="w-2 h-2 bg-cyber-cyan rounded-full animate-pulse"></span>
+              Today
+            </div>
+          </div>
         </div>
       `;
     };
     
     const updateUpcomingHolidaysUI = (holidays) => {
-      const container = document.getElementById('upcoming-holidays');
+      const container = document. getElementById('upcoming-holidays');
       if (!container) return;
       
       if (! holidays || holidays.length === 0) {
-        container.innerHTML = '<div class="text-cyan-300/60">NO_UPCOMING_HOLIDAYS</div>';
+        container.innerHTML = `
+          <div class="empty-state py-8">
+            <div class="text-6xl mb-3">🔮</div>
+            <p class="text-cyan-300/60 font-sans">No upcoming holidays found</p>
+            <p class="text-xs text-cyan-300/40 mt-2 font-sans">in the next 30 days</p>
+          </div>
+        `;
         return;
       }
       
-      // Show next 30 days only
       const today = new Date();
       const next30Days = new Date(today. getTime() + 30 * 24 * 60 * 60 * 1000);
       const filteredHolidays = holidays. filter(h => {
@@ -816,13 +1280,23 @@
         return holidayDate >= today && holidayDate <= next30Days;
       });
       
-      container.innerHTML = filteredHolidays.map(holiday => `
-        <div class="flex items-center justify-between p-3 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/20 hover:border-cyber-cyan/50 transition-all">
-          <div class="flex-1">
-            <div class="font-bold text-cyan-200">${holiday.name}</div>
-            <div class="text-xs text-cyan-300/60 mt-1">${holiday.description || holiday.type || ''}</div>
+      if (filteredHolidays. length === 0) {
+        container.innerHTML = `
+          <div class="empty-state py-8">
+            <div class="text-6xl mb-3">🔮</div>
+            <p class="text-cyan-300/60 font-sans">No holidays in the next 30 days</p>
           </div>
-          <div class="text-cyber-magenta font-bold text-sm ml-4">${holiday.date}</div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = filteredHolidays.map((holiday, index) => `
+        <div class="flex items-center justify-between p-4 bg-gradient-to-br from-cyber-cyan/5 to-transparent rounded-lg border border-cyber-cyan/20 hover:border-cyber-cyan/50 hover:scale-[1.02] transition-all cursor-pointer animate-slide-up" style="animation-delay: ${index * 0.05}s">
+          <div class="flex-1">
+            <div class="font-bold text-cyan-200 font-sans mb-1">${holiday.name}</div>
+            <div class="text-xs text-cyan-300/60 font-sans">${holiday. description || holiday.type || ''}</div>
+          </div>
+          <div class="text-cyber-magenta font-bold text-sm ml-4 font-cyber">${holiday.date}</div>
         </div>
       `).join('');
     };
@@ -837,131 +1311,15 @@
       }
       
       if (! items || items.length === 0) {
-        container.innerHTML = '<div class="text-cyan-300/60">NO_SCHEDULED_ITEMS</div>';
-        return;
-      }
-      
-      container.innerHTML = items.map(item => `
-        <div class="p-4 bg-cyber-cyan/5 rounded-lg border border-cyber-cyan/20">
-          <div class="flex items-center justify-between mb-2">
-            <span class="font-bold text-cyan-200">ID: ${item.id}</span>
-            <span class="px-2 py-1 rounded text-xs ${
-              item.status === 'scheduled' ? 'bg-cyber-yellow/20 text-cyber-yellow' :
-              item.status === 'sent' ? 'bg-green-500/20 text-green-400' :
-              'bg-red-500/20 text-red-400'
-            }">${item.status. toUpperCase()}</span>
-          </div>
-          <div class="text-sm text-cyan-300/60">
-            Scheduled: ${new Date(item.scheduleTime).toLocaleString()}
-          </div>
-        </div>
-      `).join('');
-    };
-    
-    const updateLogsUI = (logs) => {
-      const container = document.getElementById('logs-container');
-      if (!container) return;
-      
-      if (!logs || logs.length === 0) {
-        container.innerHTML = '<div class="text-cyan-300/60">NO_LOGS_AVAILABLE</div>';
-        return;
-      }
-      
-      container.innerHTML = logs.slice(0, 100).map(log => {
-        const typeColor = 
-          log.type === 'ERROR' ? 'text-red-400' :
-          log. type === 'SUCCESS' ? 'text-green-400' :
-          log.type === 'WARNING' ?  'text-yellow-400' :
-          'text-cyber-cyan';
-        
-        return `
-          <div class="mb-2 pb-2 border-b border-cyber-cyan/10">
-            <span class="text-cyan-300/60 text-xs">[${new Date(log.timestamp).toLocaleString()}]</span>
-            <span class="${typeColor} font-bold text-xs ml-2">[${log.type}]</span>
-            <div class="mt-1 text-cyan-200">${log.message}</div>
+        container.innerHTML = `
+          <div class="empty-state py-8">
+            <div class="text-6xl mb-3">⏰</div>
+            <p class="text-cyan-300/60 font-sans">No scheduled items</p>
+            <p class="text-xs text-cyan-300/40 mt-2 font-sans">Schedule announcements via the API</p>
           </div>
         `;
-      }).join('');
-    };
-    
-    // ==================== ACTION HANDLERS ====================
-    
-    const handleTriggerHoliday = async (button) => {
-      if (button.disabled) return;
-      
-      button.disabled = true;
-      const originalText = button.innerHTML;
-      button.innerHTML = '<div class="loading-spinner inline-block"></div> TRIGGERING...';
-      
-      try {
-        const response = await fetch('/api/trigger/holiday', { method: 'POST' });
-        const data = await response.json();
-        
-        if (data.success) {
-          alert('✅ Holiday check triggered successfully!\n\n' + (data.message || ''));
-        } else {
-          alert('❌ Failed to trigger holiday check:\n\n' + (data.message || data.error || 'Unknown error'));
-        }
-        
-        await loadOverview();
-      } catch (error) {
-        alert('❌ Error:  ' + error.message);
-      } finally {
-        button.disabled = false;
-        button.innerHTML = originalText;
+        return;
       }
-    };
-    
-    const handleTestNewYear = async (button) => {
-      if (button.disabled) return;
       
-      button.disabled = true;
-      const originalText = button. innerHTML;
-      button.innerHTML = '<div class="loading-spinner inline-block"></div> SENDING...';
-      
-      try {
-        const response = await fetch('/api/test/newyear', { method: 'POST' });
-        const data = await response.json();
-        
-        if (data.success) {
-          alert('✅ New Year test announcement sent successfully! ');
-        } else {
-          alert('❌ Failed to send test announcement:\n\n' + (data.error || 'Unknown error'));
-        }
-        
-        await loadOverview();
-      } catch (error) {
-        alert('❌ Error: ' + error.message);
-      } finally {
-        button.disabled = false;
-        button.innerHTML = originalText;
-      }
-    };
-    
-    const handleRefreshLogs = async () => {
-      await loadLogs();
-    };
-    
-    // ==================== INITIALIZATION ====================
-    
-    const init = () => {
-      // Initialize canvas animations
-      initSpaceCanvas();
-      initMatrixCanvas();
-      
-      // Load initial data
-      loadOverview();
-      
-      // Auto-refresh every 60 seconds
-      setInterval(loadOverview, 60000);
-    };
-    
-    // Start when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
-  </script>
-</body>
-</html>
+      container.innerHTML = items.map((item, index) => `
+        <div class="p-4 bg-gradient-to-br from-cyber-cyan/5 to-transparent rounded-lg border border-cyber-cyan/20 hover:border-cyber-cyan/40 transition-all animate-slide-up" style="animation-delay: ${index *

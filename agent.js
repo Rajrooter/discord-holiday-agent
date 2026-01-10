@@ -22,11 +22,13 @@ const CONFIG = {
   WEBHOOKS: {
     ANNOUNCEMENTS: process.env.WEBHOOK_ANNOUNCEMENTS,
     UPDATES: process.env.WEBHOOK_UPDATES,
-    HOLIDAYS: process.env.WEBHOOK_HOLIDAYS,
+    HOLIDAYS:  process.env.WEBHOOK_HOLIDAYS,
     GENERAL: process.env.WEBHOOK_GENERAL
   },
   GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
   CALENDARIFIC_API_KEY: process.env.CALENDARIFIC_API_KEY || 'demo',
+  DISCORD_BOT_TOKEN: process. env.DISCORD_BOT_TOKEN,
+  DISCORD_GUILD_ID: process.env. DISCORD_GUILD_ID,
   TIMEZONE: process.env.TIMEZONE || 'Asia/Kolkata',
   SCHEDULE_TIME: process.env.SCHEDULE_TIME || '0 0 * * *', // daily at midnight
   DASHBOARD_PORT: process.env.DASHBOARD_PORT ?  Number(process.env.DASHBOARD_PORT) : 3000,
@@ -63,7 +65,7 @@ const HOLIDAY_IMAGES = {
 const ROLES = {
   'everyone': '@everyone',
   'Server Manager': '<@&1427577155537207336>',
-  'Omnipotent':  '<@&1384205587373494282>',
+  'Omnipotent': '<@&1384205587373494282>',
   'Labour': '<@&1431013492810321940>'
 };
 
@@ -138,7 +140,7 @@ function loadState() {
       saveState(); // create file with defaults
     }
   } catch (err) {
-    log(`Failed to load state: ${err.message}`, 'WARNING');
+    log(`Failed to load state: ${err. message}`, 'WARNING');
   }
 }
 
@@ -184,14 +186,14 @@ async function fetchIndianHolidays(year) {
       return holidays;
     }
   } catch (err) {
-    log(`Nager.Date failed: ${err.message}`, 'WARNING');
+    log(`Nager.Date failed: ${err. message}`, 'WARNING');
   }
 
   // 2) Calendarific (requires API key)
   try {
     log(`Fetching holidays for ${year} from Calendarific...`);
     const response = await axios.get(
-      `https://calendarific.com/api/v2/holidays? api_key=${CONFIG.CALENDARIFIC_API_KEY}&country=IN&year=${year}`,
+      `https://calendarific.com/api/v2/holidays?api_key=${CONFIG.CALENDARIFIC_API_KEY}&country=IN&year=${year}`,
       { timeout: 10000 }
     );
     if (response.data && response.data.response && response.data.response.holidays) {
@@ -231,7 +233,7 @@ async function fetchIndianHolidays(year) {
 }
 
 // ============================================
-// HELPERS:  today's date in configured timezone
+// HELPERS: today's date in configured timezone
 // ============================================
 
 function nowInZone() {
@@ -251,7 +253,7 @@ async function generateHolidayMessage(holidayName, holidayDescription = '') {
     log('No AI API key configured, using template message', 'WARNING');
     return `Happy ${holidayName}! 🎉
 
-Wishing the entire Digital Labour community a joyful and memorable celebration.  May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of this occasion and celebrate together! 
+Wishing the entire Digital Labour community a joyful and memorable celebration.  May this special day bring happiness, peace, and prosperity to you and your loved ones.  Let us take a moment to appreciate the significance of this occasion and celebrate together! 
 
 Enjoy the festivities! 🌟`;
   }
@@ -278,7 +280,7 @@ Return ONLY the message text. `;
       { headers: { 'Content-Type':  'application/json' }, timeout: 15000 }
     );
 
-    const messageText = response?. data?.candidates?.[0]?. content?.parts?.[0]?. text?. trim();
+    const messageText = response?. data?.candidates?.[0]?. content?.parts?.[0]?. text?.trim();
     if (!messageText) throw new Error('Empty AI response');
     log('AI message generated successfully', 'SUCCESS');
     return messageText;
@@ -346,7 +348,7 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl) {
     };
     const payload = { content: '@everyone', username: 'Holiday Bot', avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png', embeds: [embed] };
     const ok = await postWebhookWithRetry(webhookUrl, payload);
-    if (! ok) {
+    if (!ok) {
       log('Holiday announcement failed after retries', 'ERROR');
       return false;
     }
@@ -366,7 +368,7 @@ async function sendCustomAnnouncement(data) {
     if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
     let finalMessage = message;
     if (useAI) finalMessage = await enhanceCustomMessage(message);
-    const roleMentions = roles && roles.length > 0 ?  roles.map(role => ROLES[role] || role).join(' ') : null;
+    const roleMentions = roles && roles.length > 0 ? roles.map(role => ROLES[role] || role).join(' ') : null;
     const embed = {
       title: title || '📢 Alert — Important Update',
       description: `${finalMessage}\n\n— *The Digital Labour Team*`,
@@ -450,9 +452,9 @@ async function executeHolidayCheck(manualTrigger = false) {
 
     log(`🎉 Holiday:  ${holiday.name}`, 'SUCCESS');
 
-    const aiMessage = await generateHolidayMessage(holiday.name, holiday. description);
-    const imageUrl = getHolidayImage(holiday.name);
-    const webhookUrl = CONFIG.WEBHOOKS. HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
+    const aiMessage = await generateHolidayMessage(holiday.name, holiday.description);
+    const imageUrl = getHolidayImage(holiday. name);
+    const webhookUrl = CONFIG.WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
 
     const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl);
 
@@ -460,7 +462,7 @@ async function executeHolidayCheck(manualTrigger = false) {
       state.lastRunDate = today;
       saveState();
     } else {
-      log(`Failed to send announcement for ${today}; state not updated to allow retries. `, 'WARNING');
+      log(`Failed to send announcement for ${today}; state not updated to allow retries.`, 'WARNING');
     }
 
     log(success ? '✅ Sent!' : '❌ Failed', success ? 'SUCCESS' : 'ERROR');
@@ -536,7 +538,7 @@ app.post('/api/trigger/holiday', async (req, res) => {
     const result = await executeHolidayCheck(true);
     res.json(result);
   } catch (error) {
-    res.json({ success: false, error: error. message });
+    res.json({ success: false, error: error.message });
   }
 });
 
@@ -563,10 +565,133 @@ app.get('/api/announcements/scheduled', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, uptime: process.uptime(), state, zoneNow: nowInZone().toISO() });
+  res.json({ success: true, uptime: process.uptime(), state, zoneNow: nowInZone().toISO(), timestamp: new Date().toISOString() });
 });
 
-// Image generation endpoint using Gemini-compatible approach
+// ============================================
+// DISCORD BOT INTEGRATION - Fetch Channels
+// ============================================
+
+app.get('/api/discord/channels', async (req, res) => {
+  try {
+    const DISCORD_BOT_TOKEN = CONFIG.DISCORD_BOT_TOKEN;
+    const DISCORD_GUILD_ID = CONFIG.DISCORD_GUILD_ID;
+    
+    if (!DISCORD_BOT_TOKEN || !DISCORD_GUILD_ID) {
+      log('Discord bot credentials not configured', 'WARNING');
+      return res.json({ 
+        success: false, 
+        error: 'Discord bot not configured.  Add DISCORD_BOT_TOKEN and DISCORD_GUILD_ID to . env',
+        useDefault: true 
+      });
+    }
+    
+    log('Fetching Discord channels from server... ', 'INFO');
+    
+    // Fetch guild info
+    const guildResponse = await axios.get(
+      `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}`,
+      {
+        headers: {
+          'Authorization': `Bot ${DISCORD_BOT_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+    
+    // Fetch channels
+    const channelsResponse = await axios.get(
+      `https://discord.com/api/v10/guilds/${DISCORD_GUILD_ID}/channels`,
+      {
+        headers: {
+          'Authorization': `Bot ${DISCORD_BOT_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+    
+    // Filter only text channels (type 0) and announcement channels (type 5)
+    const textChannels = channelsResponse.data
+      .filter(ch => ch. type === 0 || ch.type === 5) // 0 = TEXT, 5 = ANNOUNCEMENT
+      .map(ch => ({
+        id: ch.id,
+        name: ch.name,
+        type: ch.type === 5 ? 'announcement' : 'text',
+        position: ch.position,
+        category: ch.parent_id,
+        nsfw: ch.nsfw || false
+      }))
+      .sort((a, b) => a.position - b.position);
+    
+    // Get category names
+    const categories = channelsResponse.data
+      .filter(ch => ch.type === 4) // 4 = CATEGORY
+      .reduce((acc, cat) => {
+        acc[cat.id] = cat.name;
+        return acc;
+      }, {});
+    
+    // Add category names to channels
+    const channelsWithCategories = textChannels. map(ch => ({
+      ...ch,
+      categoryName: ch.category ?  categories[ch.category] : null
+    }));
+    
+    log(`Successfully fetched ${textChannels.length} channels from Discord`, 'SUCCESS');
+    
+    res.json({ 
+      success: true, 
+      channels: channelsWithCategories,
+      serverName: guildResponse.data.name,
+      serverIcon: guildResponse.data.icon,
+      totalChannels: textChannels.length,
+      botConnected: true
+    });
+    
+  } catch (error) {
+    log(`Failed to fetch Discord channels: ${error. message}`, 'ERROR');
+    
+    if (error.response?.status === 401) {
+      log('Invalid Discord bot token', 'ERROR');
+      return res.json({ 
+        success: false, 
+        error: 'Invalid bot token.  Please check DISCORD_BOT_TOKEN in . env',
+        useDefault: true 
+      });
+    }
+    
+    if (error.response?.status === 403) {
+      log('Bot lacks permissions', 'ERROR');
+      return res.json({ 
+        success: false, 
+        error:  'Bot lacks permissions.  Ensure bot has "View Channels" permission',
+        useDefault: true 
+      });
+    }
+    
+    if (error.response?.status === 404) {
+      log('Guild not found', 'ERROR');
+      return res.json({ 
+        success: false, 
+        error: 'Server not found. Check DISCORD_GUILD_ID in . env',
+        useDefault: true 
+      });
+    }
+    
+    res.json({ 
+      success: false, 
+      error: error.message,
+      useDefault: true 
+    });
+  }
+});
+
+// ============================================
+// IMAGE GENERATION ENDPOINT (Using Unsplash)
+// ============================================
+
 app.post('/api/generate-image', async (req, res) => {
   try {
     const { prompt, size } = req.body;
@@ -622,9 +747,9 @@ app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'dashbo
 // ============================================
 
 function validateConfig() {
-  if (!CONFIG.WEBHOOKS. ANNOUNCEMENTS && !CONFIG.WEBHOOKS. HOLIDAYS) {
+  if (!CONFIG.WEBHOOKS.ANNOUNCEMENTS && !CONFIG.WEBHOOKS. HOLIDAYS) {
     log('ERROR: No webhook configured! ', 'ERROR');
-    log('Add to . env:  WEBHOOK_ANNOUNCEMENTS=your_webhook_url', 'INFO');
+    log('Add to .env: WEBHOOK_ANNOUNCEMENTS=your_webhook_url', 'INFO');
     return false;
   }
   return true;
@@ -658,7 +783,7 @@ async function startAgent() {
       log('TEST_MODE enabled:  performing an immediate manual check');
       await executeHolidayCheck(true);
     } else if (state.lastRunDate !== today) {
-      log(`Startup check:  lastRunDate=${state.lastRunDate}, today=${today}.  Performing immediate check.`);
+      log(`Startup check: lastRunDate=${state.lastRunDate}, today=${today}.  Performing immediate check. `);
       await executeHolidayCheck(false);
     } else {
       log(`Startup:  already checked for ${today} (state). No immediate check needed.`, 'INFO');
@@ -667,7 +792,7 @@ async function startAgent() {
     log(`Startup check failed: ${err.message}`, 'WARNING');
   }
 
-  log(`✅ Scheduling daily checks at "${CONFIG.SCHEDULE_TIME}" (${CONFIG.TIMEZONE})`);
+  log(`✅ Scheduling daily checks at "${CONFIG. SCHEDULE_TIME}" (${CONFIG. TIMEZONE})`);
   cron.schedule(CONFIG.SCHEDULE_TIME, async () => {
     try {
       await executeHolidayCheck(false);
@@ -684,7 +809,7 @@ async function startAgent() {
       if (hhmm === '00:00' && minuteKey !== lastMinuteGuardKey) {
         lastMinuteGuardKey = minuteKey;
         if (state.lastRunDate !== znow.toISODate()) {
-          log(`Minute-guard detected midnight (${minuteKey}) and state indicates not yet checked.  Triggering check.`, 'INFO');
+          log(`Minute-guard detected midnight (${minuteKey}) and state indicates not yet checked. Triggering check.`, 'INFO');
           await executeHolidayCheck(false);
         } else {
           log(`Minute-guard: already checked for ${znow.toISODate()}`, 'INFO');

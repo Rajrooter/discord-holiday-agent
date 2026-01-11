@@ -38,12 +38,12 @@
 
     body {
       font-family: 'Inter', sans-serif;
-      background:  #0a0e27;
+      background: #0a0e27;
       color: #fff;
       overflow-x: hidden;
     }
 
-    . gradient-bg {
+    .gradient-bg {
       position: fixed;
       inset: 0;
       background: linear-gradient(135deg, 
@@ -55,12 +55,12 @@
       );
       background-size: 400% 400%;
       animation: gradientShift 15s ease infinite;
-      z-index:  0;
+      z-index: 0;
     }
 
     @keyframes gradientShift {
       0%, 100% { background-position:  0% 50%; }
-      50% { background-position:  100% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .particle {
@@ -104,253 +104,96 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
-    .content {
-      position: relative;
-      z-index: 10;
-    }
+    .content { position: relative; z-index: 10; }
+    .glow { text-shadow: 0 0 20px rgba(0, 212, 255, 0.5), 0 0 40px rgba(0, 212, 255, 0.3); }
+    .glow-purple { text-shadow: 0 0 20px rgba(181, 55, 255, 0.5), 0 0 40px rgba(181, 55, 255, 0.3); }
+    .glow-pink { text-shadow: 0 0 20px rgba(255, 61, 154, 0.5), 0 0 40px rgba(255, 61, 154, 0.3); }
 
-    .glow {
-      text-shadow: 0 0 20px rgba(0, 212, 255, 0.5),
-                   0 0 40px rgba(0, 212, 255, 0.3);
-    }
-
-    .glow-purple {
-      text-shadow: 0 0 20px rgba(181, 55, 255, 0.5),
-                   0 0 40px rgba(181, 55, 255, 0.3);
-    }
-
-    .glow-pink {
-      text-shadow: 0 0 20px rgba(255, 61, 154, 0.5),
-                   0 0 40px rgba(255, 61, 154, 0.3);
-    }
-
-    .btn {
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .btn:: before {
+    .btn { position: relative; overflow: hidden; transition: all 0.3s ease; }
+    .btn::before {
       content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
+      top: 50%; left: 50%;
+      width: 0; height: 0;
       border-radius: 50%;
-      background:  rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.2);
       transform: translate(-50%, -50%);
       transition: width 0.5s, height 0.5s;
     }
+    .btn:hover::before { width: 300px; height: 300px; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4); }
 
-    .btn:hover:: before {
-      width: 300px;
-      height: 300px;
-    }
+    .card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2); }
 
-    . btn:hover {
-      transform:  translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
-    }
+    .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-    .card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
+    .bounce { animation: bounce 1s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-    .card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
-    }
+    .fade-in { animation: fadeIn 0.6s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    .pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
+    .scale-in { animation: scaleIn 0.4s ease-out; }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 212, 255, 0.05); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 212, 255, 0.5); }
 
-    . bounce {
-      animation: bounce 1s infinite;
-    }
+    .robot { animation: robotFloat 3s ease-in-out infinite; }
+    @keyframes robotFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(5deg); } }
 
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+    .status-dot { animation: statusPulse 2s ease-in-out infinite; }
+    @keyframes statusPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 163, 0.7); } 50% { box-shadow: 0 0 0 10px rgba(0, 255, 163, 0); } }
 
-    .fade-in {
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .scale-in {
-      animation: scaleIn 0.4s ease-out;
-    }
-
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform:  scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    : :-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background:  rgba(0, 212, 255, 0.05);
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: rgba(0, 212, 255, 0.3);
-      border-radius: 10px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 212, 255, 0.5);
-    }
-
-    .robot {
-      animation: robotFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes robotFloat {
-      0%, 100% {
-        transform: translateY(0) rotate(0deg);
-      }
-      50% {
-        transform: translateY(-15px) rotate(5deg);
-      }
-    }
-
-    .status-dot {
-      animation: statusPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes statusPulse {
-      0%, 100% {
-        box-shadow: 0 0 0 0 rgba(0, 255, 163, 0.7);
-      }
-      50% {
-        box-shadow: 0 0 0 10px rgba(0, 255, 163, 0);
-      }
-    }
-
-    .tab {
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
+    .tab { position: relative; transition: all 0.3s ease; }
     .tab::after {
       content: '';
       position: absolute;
-      bottom:  -2px;
-      left: 50%;
-      width: 0;
-      height:  3px;
+      bottom: -2px; left: 50%;
+      width: 0; height: 3px;
       background: linear-gradient(90deg, #00d4ff, #b537ff);
       transform: translateX(-50%);
       transition: width 0.3s ease;
       border-radius: 10px;
     }
+    .tab.active::after, .tab:hover::after { width: 80%; }
 
-    . tab. active::after,
-    .tab:hover::after {
-      width: 80%;
-    }
+    .toast { position: fixed; top: 24px; right: 24px; z-index: 9999; animation: slideDown 0.3s ease-out; max-width: 400px; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-    .toast {
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      z-index:  9999;
-      animation: slideDown 0.3s ease-out;
-      max-width: 400px;
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform:  translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform:  translateY(0);
-      }
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      opacity: 0.6;
-    }
-
-    .empty-icon {
-      font-size: 80px;
-      animation: floatSlow 4s ease-in-out infinite;
-    }
-
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
+    .empty-state { text-align: center; padding: 60px 20px; opacity: 0.6; }
+    .empty-icon { font-size: 80px; animation: floatSlow 4s ease-in-out infinite; }
+    @keyframes floatSlow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
     .skeleton {
-      background: linear-gradient(
-        90deg,
+      background: linear-gradient(90deg,
         rgba(255, 255, 255, 0.03) 25%,
         rgba(255, 255, 255, 0.08) 50%,
-        rgba(255, 255, 255, 0.03) 75%
-      );
-      background-size:  200% 100%;
-      animation: shimmer 1. 5s ease-in-out infinite;
+        rgba(255, 255, 255, 0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease-in-out infinite;
       border-radius: 8px;
     }
-
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       padding: 6px 14px;
-      border-radius:  999px;
-      font-size:  13px;
-      font-weight:  600;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
       background: rgba(0, 212, 255, 0.15);
       border: 1px solid rgba(0, 212, 255, 0.3);
     }
 
-    *:focus-visible {
-      outline: 3px solid rgba(0, 212, 255, 0.6);
-      outline-offset: 3px;
-    }
-
-    . hidden {
-      display: none !important;
-    }
+    *:focus-visible { outline: 3px solid rgba(0, 212, 255, 0.6); outline-offset: 3px; }
+    .hidden { display: none !important; }
 
     input, textarea, select {
       background: rgba(255, 255, 255, 0.05);
@@ -361,24 +204,13 @@
       width: 100%;
       font-family: 'Inter', sans-serif;
     }
-
     input:focus, textarea:focus, select:focus {
       outline: none;
       border-color: #00d4ff;
       box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
     }
-
-    input::placeholder, textarea::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      font-size: 14px;
-      color: rgba(255, 255, 255, 0.9);
-    }
+    input::placeholder, textarea::placeholder { color: rgba(255, 255, 255, 0.4); }
+    label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; color: rgba(255, 255, 255, 0.9); }
 
     select {
       background: rgba(10, 14, 39, 0.95) !important;
@@ -388,55 +220,17 @@
       padding-right: 40px !important;
       font-size: 15px !important;
       font-weight: 600 !important;
-      cursor: pointer ! important;
+      cursor: pointer !important;
       transition: all 0.3s ease !important;
     }
+    select:hover { border-color: rgba(0, 212, 255, 0.6) !important; box-shadow: 0 0 20px rgba(0, 212, 255, 0.2) !important; }
+    select:focus { border-color: rgba(0, 212, 255, 1) !important; box-shadow: 0 0 30px rgba(0, 212, 255, 0.4) !important; }
+    select option { background: #0a0e27 !important; color: white !important; padding: 16px !important; font-weight: 600 !important; }
+    select optgroup { background: #05080f !important; color: #00d4ff !important; font-weight: 700 !important; padding: 12px !important; font-style: normal !important; }
 
-    select:hover {
-      border-color: rgba(0, 212, 255, 0.6) !important;
-      box-shadow: 0 0 20px rgba(0, 212, 255, 0.2) !important;
-    }
-
-    select:focus {
-      border-color: rgba(0, 212, 255, 1) !important;
-      box-shadow: 0 0 30px rgba(0, 212, 255, 0.4) !important;
-    }
-
-    select option {
-      background: #0a0e27 !important;
-      color: white !important;
-      padding: 16px ! important;
-      font-weight: 600 !important;
-    }
-
-    select optgroup {
-      background: #05080f !important;
-      color: #00d4ff !important;
-      font-weight: 700 !important;
-      padding: 12px !important;
-      font-style: normal !important;
-    }
-        /* PIPELINE STYLES */
-    .pipeline {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      flex-wrap: nowrap;
-      justify-content: center;
-      padding: 40px 24px;
-      position: relative;
-      overflow: visible;
-    }
-
-    .pipeline-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      position: relative;
-      z-index: 2;
-    }
-
+    /* PIPELINE STYLES */
+    .pipeline { display: flex; align-items: center; gap: 0; flex-wrap: nowrap; justify-content: center; padding: 40px 24px; position: relative; overflow: visible; }
+    .pipeline-step { display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; z-index: 2; }
     .pipeline-box {
       background: rgba(255, 255, 255, 0.05);
       border: 2px solid rgba(0, 212, 255, 0.4);
@@ -446,22 +240,13 @@
       transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       min-width: 160px;
       position: relative;
-      box-shadow: 
-        0 0 20px rgba(0, 212, 255, 0.1),
-        inset 0 0 20px rgba(0, 212, 255, 0.05);
+      box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.05);
     }
-
-    .pipeline-box:: before {
+    .pipeline-box::before {
       content: '';
       position: absolute;
       inset: -2px;
-      background: linear-gradient(45deg, 
-        transparent,
-        rgba(0, 212, 255, 0.3),
-        transparent,
-        rgba(181, 55, 255, 0.3),
-        transparent
-      );
+      background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.3), transparent, rgba(181, 55, 255, 0.3), transparent);
       background-size: 200% 200%;
       border-radius: 20px;
       opacity: 0;
@@ -469,440 +254,92 @@
       animation: borderGlow 3s ease-in-out infinite;
       filter: blur(4px);
     }
-
-    @keyframes borderGlow {
-      0%, 100% {
-        background-position: 0% 50%;
-        opacity: 0.3;
-      }
-      50% {
-        background-position:  100% 50%;
-        opacity: 0.6;
-      }
-    }
-
-    . pipeline-box. active {
-      transform: translateY(-8px) scale(1.05);
-      border-color: rgba(0, 212, 255, 1);
-      box-shadow: 
-        0 0 40px rgba(0, 212, 255, 0.6),
-        0 20px 60px rgba(0, 212, 255, 0.3),
-        inset 0 0 30px rgba(0, 212, 255, 0.2);
-    }
-
-    .pipeline-box: hover {
-      transform: translateY(-8px) scale(1.05);
-      border-color: rgba(0, 212, 255, 0.9);
-      box-shadow: 
-        0 0 30px rgba(0, 212, 255, 0.5),
-        0 15px 50px rgba(0, 212, 255, 0.3);
-    }
-
-    .pipeline-icon {
-      font-size: 40px;
-      margin-bottom:  12px;
-      filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
-      animation: iconFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes iconFloat {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-8px);
-      }
-    }
-
-    .pipeline-label {
-      font-size: 14px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.95);
-      text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
-    }
-
-    .pipeline-connection {
-      position: relative;
-      width: 120px;
-      height: 4px;
-      margin: 0 20px;
-      background: rgba(0, 212, 255, 0.2);
-      border-radius: 10px;
-      overflow: visible;
-    }
-
+    @keyframes borderGlow { 0%, 100% { background-position: 0% 50%; opacity: 0.3; } 50% { background-position: 100% 50%; opacity: 0.6; } }
+    .pipeline-box.active { transform: translateY(-8px) scale(1.05); border-color: rgba(0, 212, 255, 1); box-shadow: 0 0 40px rgba(0, 212, 255, 0.6), 0 20px 60px rgba(0, 212, 255, 0.3), inset 0 0 30px rgba(0, 212, 255, 0.2); }
+    .pipeline-box:hover { transform: translateY(-8px) scale(1.05); border-color: rgba(0, 212, 255, 0.9); box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), 0 15px 50px rgba(0, 212, 255, 0.3); }
+    .pipeline-icon { font-size: 40px; margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5)); animation: iconFloat 3s ease-in-out infinite; }
+    @keyframes iconFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .pipeline-label { font-size: 14px; font-weight: 700; color: rgba(255, 255, 255, 0.95); text-shadow: 0 0 10px rgba(0, 212, 255, 0.3); }
+    .pipeline-connection { position: relative; width: 120px; height: 4px; margin: 0 20px; background: rgba(0, 212, 255, 0.2); border-radius: 10px; overflow: visible; }
     .pipeline-connection::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(90deg,
-        transparent,
-        rgba(0, 212, 255, 0.8) 30%,
-        rgba(255, 255, 255, 1) 50%,
-        rgba(0, 212, 255, 0.8) 70%,
-        transparent
-      );
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.8) 30%, rgba(255, 255, 255, 1) 50%, rgba(0, 212, 255, 0.8) 70%, transparent);
       border-radius: 10px;
       animation: electricFlow 2s ease-in-out infinite;
-      box-shadow: 
-        0 0 10px rgba(0, 212, 255, 0.8),
-        0 0 20px rgba(0, 212, 255, 0.4);
+      box-shadow: 0 0 10px rgba(0, 212, 255, 0.8), 0 0 20px rgba(0, 212, 255, 0.4);
     }
-
-    @keyframes electricFlow {
-      0% {
-        transform: translateX(-100%);
-        opacity: 0;
-      }
-      50% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(200%);
-        opacity: 0;
-      }
-    }
-
-    .pipeline-connection:: after {
+    @keyframes electricFlow { 0% { transform: translateX(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(200%); opacity: 0; } }
+    .pipeline-connection::after {
       content: '';
       position: absolute;
-      width: 8px;
-      height: 8px;
+      width: 8px; height: 8px;
       background: #00d4ff;
       border-radius: 50%;
-      left: 0;
-      top: 50%;
+      left: 0; top: 50%;
       transform: translate(-50%, -50%);
-      box-shadow: 
-        0 0 15px rgba(0, 212, 255, 1),
-        0 0 30px rgba(0, 212, 255, 0.6);
+      box-shadow: 0 0 15px rgba(0, 212, 255, 1), 0 0 30px rgba(0, 212, 255, 0.6);
       animation: particleFlow 2s ease-in-out infinite;
     }
-
-    @keyframes particleFlow {
-      0% {
-        left: 0;
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(0.5);
-      }
-      10% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-      }
-      90% {
-        opacity: 1;
-      }
-      100% {
-        left: 100%;
-        opacity: 0;
-        transform:  translate(-50%, -50%) scale(0.5);
-      }
+    @keyframes particleFlow { 0% { left: 0; opacity: 0; transform: translate(-50%, -50%) scale(0.5); } 10% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 90% { opacity: 1; } 100% { left: 100%; opacity: 0; transform: translate(-50%, -50%) scale(0.5); } }
+    .pipeline-connection.purple::before {
+      background: linear-gradient(90deg, transparent, rgba(181, 55, 255, 0.8) 30%, rgba(255, 255, 255, 1) 50%, rgba(181, 55, 255, 0.8) 70%, transparent);
+      box-shadow: 0 0 10px rgba(181, 55, 255, 0.8), 0 0 20px rgba(181, 55, 255, 0.4);
     }
-
-    .pipeline-connection.purple:: before {
-      background: linear-gradient(90deg,
-        transparent,
-        rgba(181, 55, 255, 0.8) 30%,
-        rgba(255, 255, 255, 1) 50%,
-        rgba(181, 55, 255, 0.8) 70%,
-        transparent
-      );
-      box-shadow: 
-        0 0 10px rgba(181, 55, 255, 0.8),
-        0 0 20px rgba(181, 55, 255, 0.4);
-    }
-
-    .pipeline-connection.purple::after {
-      background: #b537ff;
-      box-shadow: 
-        0 0 15px rgba(181, 55, 255, 1),
-        0 0 30px rgba(181, 55, 255, 0.6);
-    }
-
-    .pipeline-box.purple {
-      border-color: rgba(181, 55, 255, 0.4);
-      box-shadow: 
-        0 0 20px rgba(181, 55, 255, 0.1),
-        inset 0 0 20px rgba(181, 55, 255, 0.05);
-    }
-
-    .pipeline-box.purple:hover {
-      border-color:  rgba(181, 55, 255, 0.9);
-      box-shadow: 
-        0 0 30px rgba(181, 55, 255, 0.5),
-        0 15px 50px rgba(181, 55, 255, 0.3);
-    }
-
-    .button-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+    .pipeline-connection.purple::after { background: #b537ff; box-shadow: 0 0 15px rgba(181, 55, 255, 1), 0 0 30px rgba(181, 55, 255, 0.6); }
+    .pipeline-box.purple { border-color: rgba(181, 55, 255, 0.4); box-shadow: 0 0 20px rgba(181, 55, 255, 0.1), inset 0 0 20px rgba(181, 55, 255, 0.05); }
+    .pipeline-box.purple:hover { border-color: rgba(181, 55, 255, 0.9); box-shadow: 0 0 30px rgba(181, 55, 255, 0.5), 0 15px 50px rgba(181, 55, 255, 0.3); }
+    .button-group { display: flex; gap: 12px; flex-wrap: wrap; }
 
     /* IMAGE OPTIONS */
-    .image-options {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 24px;
-      margin-top: 12px;
-    }
-
-    .image-mode-selector {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-    }
-
-    .image-mode-btn {
-      flex: 1;
-      min-width: 140px;
-      padding: 16px;
-      border: 2px solid rgba(0, 212, 255, 0.2);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.02);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-
-    .image-mode-btn:hover {
-      border-color: rgba(0, 212, 255, 0.5);
-      background: rgba(0, 212, 255, 0.05);
-      transform: translateY(-2px);
-    }
-
-    .image-mode-btn.active {
-      border-color: rgba(0, 212, 255, 0.8);
-      background: rgba(0, 212, 255, 0.1);
-      box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
-    }
-
-    .image-mode-btn . icon {
-      font-size:  32px;
-      margin-bottom:  8px;
-    }
-
-    .image-mode-btn . label {
-      font-size:  13px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .image-mode-content {
-      display: none;
-    }
-
-    .image-mode-content.active {
-      display: block;
-      animation: fadeIn 0.4s ease-out;
-    }
-
-    . upload-area {
-      border: 2px dashed rgba(0, 212, 255, 0.3);
-      border-radius: 16px;
-      padding: 40px;
-      text-align:  center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .upload-area:hover {
-      border-color:  rgba(0, 212, 255, 0.6);
-      background: rgba(0, 212, 255, 0.05);
-    }
-
-    .upload-area.dragover {
-      border-color:  rgba(0, 212, 255, 1);
-      background: rgba(0, 212, 255, 0.1);
-    }
-
-    .image-preview-container {
-      margin-top: 20px;
-      border-radius: 16px;
-      overflow: hidden;
-      background: rgba(0, 0, 0, 0.3);
-      max-width: 100%;
-    }
-
-    .image-preview {
-      max-width: 100%;
-      max-height: 400px;
-      display: block;
-      margin: 0 auto;
-    }
-
-    .size-selector {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    . size-option {
-      padding: 12px;
-      border: 2px solid rgba(0, 212, 255, 0.2);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.02);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-align: center;
-      font-size: 13px;
-      font-weight:  600;
-    }
-
-    .size-option:hover {
-      border-color: rgba(0, 212, 255, 0.5);
-      background: rgba(0, 212, 255, 0.05);
-    }
-
-    .size-option. active {
-      border-color:  rgba(0, 212, 255, 0.8);
-      background: rgba(0, 212, 255, 0.1);
-    }
-
-    .generating-indicator {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      padding: 20px;
-      background: rgba(0, 212, 255, 0.05);
-      border-radius: 12px;
-      margin-top: 16px;
-    }
-
-    .spinner {
-      width: 24px;
-      height: 24px;
-      border: 3px solid rgba(0, 212, 255, 0.2);
-      border-top-color: #00d4ff;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .file-info {
-      margin-top: 12px;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      font-size: 13px;
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    input[type="file"] {
-      display: none;
-    }
-
-    .prompt-input {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-      padding: 16px;
-      border-radius:  12px;
-      width: 100%;
-      font-family: 'Inter', sans-serif;
-      margin-top: 12px;
-      min-height: 80px;
-      resize: vertical;
-    }
-
-    .discord-rules {
-      background: rgba(255, 165, 0, 0.1);
-      border: 1px solid rgba(255, 165, 0, 0.3);
-      border-radius: 12px;
-      padding: 16px;
-      margin-top: 12px;
-      font-size: 13px;
-    }
-
-    .discord-rules-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 700;
-      color: #ffa500;
-      margin-bottom: 8px;
-    }
-
-    .discord-rules-list {
-      list-style: none;
-      padding: 0;
-      margin:  0;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .discord-rules-list li {
-      padding: 6px 0;
-      display: flex;
-      align-items: start;
-      gap: 8px;
-    }
-
-    .discord-rules-list li::before {
-      content: "→";
-      color: #ffa500;
-      font-weight: bold;
-    }
+    .image-options { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 24px; margin-top: 12px; }
+    .image-mode-selector { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .image-mode-btn { flex: 1; min-width: 140px; padding: 16px; border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.02); cursor: pointer; transition: all 0.3s ease; text-align: center; }
+    .image-mode-btn:hover { border-color: rgba(0, 212, 255, 0.5); background: rgba(0, 212, 255, 0.05); transform: translateY(-2px); }
+    .image-mode-btn.active { border-color: rgba(0, 212, 255, 0.8); background: rgba(0, 212, 255, 0.1); box-shadow: 0 0 20px rgba(0, 212, 255, 0.2); }
+    .image-mode-btn .icon { font-size: 32px; margin-bottom: 8px; }
+    .image-mode-btn .label { font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.8); }
+    .image-mode-content { display: none; }
+    .image-mode-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+    .upload-area { border: 2px dashed rgba(0, 212, 255, 0.3); border-radius: 16px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s ease; background: rgba(255, 255, 255, 0.02); }
+    .upload-area:hover { border-color: rgba(0, 212, 255, 0.6); background: rgba(0, 212, 255, 0.05); }
+    .upload-area.dragover { border-color: rgba(0, 212, 255, 1); background: rgba(0, 212, 255, 0.1); }
+    .image-preview-container { margin-top: 20px; border-radius: 16px; overflow: hidden; background: rgba(0, 0, 0, 0.3); max-width: 100%; }
+    .image-preview { max-width: 100%; max-height: 400px; display: block; margin: 0 auto; }
+    .size-selector { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 16px; }
+    .size-option { padding: 12px; border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 12px; background: rgba(255, 255, 255, 0.02); cursor: pointer; transition: all 0.3s ease; text-align: center; font-size: 13px; font-weight: 600; }
+    .size-option:hover { border-color: rgba(0, 212, 255, 0.5); background: rgba(0, 212, 255, 0.05); }
+    .size-option.active { border-color: rgba(0, 212, 255, 0.8); background: rgba(0, 212, 255, 0.1); }
+    .generating-indicator { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 20px; background: rgba(0, 212, 255, 0.05); border-radius: 12px; margin-top: 16px; }
+    .spinner { width: 24px; height: 24px; border: 3px solid rgba(0, 212, 255, 0.2); border-top-color: #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .file-info { margin-top: 12px; padding: 12px; background: rgba(255, 255, 255, 0.03); border-radius: 8px; font-size: 13px; color: rgba(255, 255, 255, 0.7); }
+    input[type="file"] { display: none; }
+    .prompt-input { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 16px; border-radius: 12px; width: 100%; font-family: 'Inter', sans-serif; margin-top: 12px; min-height: 80px; resize: vertical; }
+    .discord-rules { background: rgba(255, 165, 0, 0.1); border: 1px solid rgba(255, 165, 0, 0.3); border-radius: 12px; padding: 16px; margin-top: 12px; font-size: 13px; }
+    .discord-rules-title { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #ffa500; margin-bottom: 8px; }
+    .discord-rules-list { list-style: none; padding: 0; margin: 0; color: rgba(255, 255, 255, 0.8); }
+    .discord-rules-list li { padding: 6px 0; display: flex; align-items: start; gap: 8px; }
+    .discord-rules-list li::before { content: "→"; color: #ffa500; font-weight: bold; }
 
     /* CHANNEL & BOT STATUS */
-    #bot-status {
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    #bot-status.connected {
-      background: rgba(34, 197, 94, 0.2);
-      color: #22c55e;
-    }
-
-    #bot-status.connected .w-2 {
-      background: #22c55e;
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-
-    #bot-status.error {
-      background: rgba(239, 68, 68, 0.2);
-      color: #ef4444;
-    }
-
-    #bot-status.error .w-2 {
-      background: #ef4444;
-    }
-
-    #channel-preview {
-      animation: slideDown 0.3s ease-out;
-    }
+    #bot-status { animation: fadeIn 0.3s ease-out; }
+    #bot-status.connected { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+    #bot-status.connected .w-2 { background: #22c55e; animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    #bot-status.error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    #bot-status.error .w-2 { background: #ef4444; }
+    #channel-preview { animation: slideDown 0.3s ease-out; }
 
     /* RESPONSIVE */
     @media (max-width: 1200px) {
-      .pipeline {
-        flex-wrap: wrap;
-        gap: 40px;
-      }
-      
-      .pipeline-connection {
-        display: none;
-      }
+      .pipeline { flex-wrap: wrap; gap: 40px; }
+      .pipeline-connection { display: none; }
     }
-
     @media (max-width: 768px) {
-      .button-group {
-        flex-direction: column;
-      }
-      
-      .button-group button {
-        width: 100%;
-      }
-
-      .image-mode-selector {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .button-group { flex-direction: column; }
+      .button-group button { width: 100%; }
+      .image-mode-selector { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -1031,9 +468,10 @@
         📋 Logs
       </button>
     </nav>
-        <div>
+
+    <div>
       <div id="overview-panel" class="panel">
-        <div class="grid grid-cols-1 md: grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div class="card glass-strong rounded-2xl p-8 scale-in">
             <div class="flex items-center justify-between mb-6">
               <span class="text-6xl bounce">🎊</span>
@@ -1252,7 +690,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md: grid-cols-2 gap-6 mb-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div class="glass p-6 rounded-xl">
               <div class="flex items-center gap-3 mb-4">
                 <span class="text-3xl">⏰</span>
@@ -1281,7 +719,6 @@
               <span class="text-2xl">🎮</span> Quick Actions
             </h3>
             
-            <!-- ROLE SELECTOR FOR HOLIDAYS -->
             <div class="mb-6">
               <label for="holiday-roles">
                 <span class="flex items-center gap-2">
@@ -1296,7 +733,6 @@
                 💡 Hold Ctrl (Windows) or Cmd (Mac) to select multiple roles
               </p>
             </div>
-            <!-- END ROLE SELECTOR -->
             
             <div class="flex flex-wrap gap-4">
               <button 
@@ -1326,7 +762,7 @@
             </h3>
             <div class="space-y-3 text-gray-300">
               <div class="flex items-start gap-3">
-                <span class="text-neon-blue text-xl mt-1">→</span>
+                <span class="text-neon-blue text-xl mt-1">���</span>
                 <p>Checks for holidays automatically at midnight (00:00) in your timezone</p>
               </div>
               <div class="flex items-start gap-3">
@@ -1345,7 +781,8 @@
           </div>
         </div>
       </div>
-            <div id="custom-panel" class="panel hidden">
+
+      <div id="custom-panel" class="panel hidden">
         <div class="glass-strong rounded-2xl p-8">
           <div class="flex items-center gap-4 mb-8">
             <span class="text-6xl">📢</span>
@@ -1388,7 +825,7 @@
               </label>
               
               <div class="relative">
-                <select id="custom-webhook" required onchange="updateChannelPreview(this. value)">
+                <select id="custom-webhook" required onchange="updateChannelPreview(this.value)">
                   <option value="" disabled selected>🔄 Loading channels from Discord...</option>
                 </select>
                 
@@ -1453,11 +890,10 @@
               </div>
             </div>
 
-            <!-- ROLE SELECTOR FOR CUSTOM ANNOUNCEMENTS -->
             <div>
               <label for="custom-roles">
                 <span class="flex items-center gap-2">
-                  <span>👥 Mention Roles</span>
+                  <span>��� Mention Roles</span>
                   <span class="text-xs text-gray-400">(optional)</span>
                 </span>
               </label>
@@ -1468,7 +904,6 @@
                 💡 Hold Ctrl/Cmd to select multiple roles.  Leave unselected to mention no one.
               </p>
             </div>
-            <!-- END ROLE SELECTOR -->
 
             <div>
               <label>Image Options (Optional)</label>
@@ -1728,7 +1163,8 @@
       </p>
     </footer>
   </div>
-    <script>
+
+  <script>
     // ==================== UTILITIES ====================
     
     const createParticles = () => {
@@ -1745,7 +1181,7 @@
 
     const showToast = (message, type = 'info') => {
       const container = document.getElementById('toast-container');
-      const toast = document. createElement('div');
+      const toast = document.createElement('div');
       
       const colors = {
         success: 'from-green-500/20 to-green-600/20 border-green-400',
@@ -1852,15 +1288,10 @@
       });
       
       const targetPanel = document.getElementById(`${tabName}-panel`);
-      if (targetPanel) {
-        targetPanel.classList.remove('hidden');
-      }
+      if (targetPanel) targetPanel.classList.remove('hidden');
       
-      if (tabName === 'scheduled') {
-        loadScheduledItems();
-      } else if (tabName === 'logs') {
-        loadLogs();
-      }
+      if (tabName === 'scheduled') loadScheduledItems();
+      else if (tabName === 'logs') loadLogs();
       
       showToast(`Switched to ${tabName}`, 'info');
     };
@@ -1877,14 +1308,10 @@
       
       document.querySelectorAll('.image-mode-btn').forEach(btn => {
         btn.classList.remove('active');
-        if (btn.dataset.mode === mode) {
-          btn.classList.add('active');
-        }
+        if (btn.dataset.mode === mode) btn.classList.add('active');
       });
       
-      document.querySelectorAll('.image-mode-content').forEach(content => {
-        content.classList.remove('active');
-      });
+      document.querySelectorAll('.image-mode-content').forEach(content => content.classList.remove('active'));
       document.getElementById(`mode-${mode}`).classList.add('active');
       
       clearImage();
@@ -1892,23 +1319,18 @@
 
     const selectSize = (element, size) => {
       selectedImageSize = size;
-      document.querySelectorAll('.size-option').forEach(opt => {
-        opt.classList.remove('active');
-      });
+      document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('active'));
       element.classList.add('active');
     };
 
     const handleFileUpload = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
-      
       document.getElementById('upload-info').classList.add('hidden');
-      
       try {
         const infoDiv = document.getElementById('upload-info');
         const sizeMB = (file.size / 1024 / 1024).toFixed(2);
         const sizeStatus = file.size < 5 * 1024 * 1024 ? '✓ Optimal' : '⚠ Large';
-        
         infoDiv.innerHTML = `
           <div class="flex items-center justify-between">
             <div>
@@ -1919,15 +1341,13 @@
           </div>
         `;
         infoDiv.classList.remove('hidden');
-        
         const reader = new FileReader();
         reader.onload = (e) => {
-          currentImageData = e. target.result;
+          currentImageData = e.target.result;
           showImagePreview(currentImageData);
           showToast('✅ Image uploaded successfully', 'success');
         };
         reader.readAsDataURL(file);
-        
       } catch (error) {
         console.error('Error uploading file:', error);
         showToast('Failed to upload image', 'error');
@@ -1936,31 +1356,19 @@
 
     const setupDragAndDrop = () => {
       const uploadArea = document.getElementById('upload-area');
-      
-      if (! uploadArea) return;
-      
-      uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-      });
-      
-      uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('dragover');
-      });
-      
+      if (!uploadArea) return;
+      uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+      uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
       uploadArea.addEventListener('drop', (e) => {
         e.preventDefault();
         uploadArea.classList.remove('dragover');
-        
         const file = e.dataTransfer.files[0];
         if (file) {
           const input = document.getElementById('file-upload');
           const dataTransfer = new DataTransfer();
-          dataTransfer.items. add(file);
+          dataTransfer.items.add(file);
           input.files = dataTransfer.files;
-          
-          const event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
+          input.dispatchEvent(new Event('change', { bubbles: true }));
         }
       });
     };
@@ -1968,67 +1376,30 @@
     const generateAutoImage = async () => {
       const title = document.getElementById('custom-title').value;
       const message = document.getElementById('custom-message').value;
-      
-      if (!title && !message) {
-        showToast('Please enter a title or message first', 'warning');
-        return;
-      }
-      
+      if (!title && !message) { showToast('Please enter a title or message first', 'warning'); return; }
       showGenerationStatus('Analyzing your announcement and generating image...', 'loading');
-      
       try {
-        const autoPrompt = `Create a professional, modern announcement image for:  "${title}".  ${message. substring(0, 200)}. Style: clean, corporate, inspiring, with vibrant colors. `;
-        
-        lastGenerationParams = {
-          prompt: autoPrompt,
-          size: selectedImageSize
-        };
-        
+        const autoPrompt = `Create a professional, modern announcement image for: "${title}". ${message.substring(0, 200)}. Style: clean, corporate, inspiring, with vibrant colors. `;
+        lastGenerationParams = { prompt: autoPrompt, size: selectedImageSize };
         const imageUrl = await callImageGenerationAPI(autoPrompt, selectedImageSize);
-        
-        if (imageUrl) {
-          currentImageData = imageUrl;
-          showImagePreview(imageUrl);
-          showGenerationStatus('Image generated successfully!', 'success');
-          setTimeout(() => hideGenerationStatus(), 3000);
-        } else {
-          throw new Error('Failed to generate image');
-        }
-        
+        if (imageUrl) { currentImageData = imageUrl; showImagePreview(imageUrl); showGenerationStatus('Image generated successfully!', 'success'); setTimeout(() => hideGenerationStatus(), 3000); }
+        else throw new Error('Failed to generate image');
       } catch (error) {
         console.error('Error generating image:', error);
-        showGenerationStatus('Failed to generate image.  Please try again.', 'error');
+        showGenerationStatus('Failed to generate image. Please try again.', 'error');
         setTimeout(() => hideGenerationStatus(), 5000);
       }
     };
 
     const generateCustomImage = async () => {
       const prompt = document.getElementById('ai-prompt-input').value.trim();
-      
-      if (! prompt) {
-        showToast('Please enter a prompt', 'warning');
-        return;
-      }
-      
+      if (!prompt) { showToast('Please enter a prompt', 'warning'); return; }
       showGenerationStatus('Generating your custom image...', 'loading');
-      
       try {
-        lastGenerationParams = {
-          prompt: prompt,
-          size: selectedImageSize
-        };
-        
+        lastGenerationParams = { prompt, size: selectedImageSize };
         const imageUrl = await callImageGenerationAPI(prompt, selectedImageSize);
-        
-        if (imageUrl) {
-          currentImageData = imageUrl;
-          showImagePreview(imageUrl);
-          showGenerationStatus('Image generated successfully!', 'success');
-          setTimeout(() => hideGenerationStatus(), 3000);
-        } else {
-          throw new Error('Failed to generate image');
-        }
-        
+        if (imageUrl) { currentImageData = imageUrl; showImagePreview(imageUrl); showGenerationStatus('Image generated successfully!', 'success'); setTimeout(() => hideGenerationStatus(), 3000); }
+        else throw new Error('Failed to generate image');
       } catch (error) {
         console.error('Error generating image:', error);
         showGenerationStatus('Failed to generate image. Please try again.', 'error');
@@ -2039,52 +1410,28 @@
     const callImageGenerationAPI = async (prompt, size) => {
       try {
         const response = await fetch('/api/generate-image', {
-          method:  'POST',
-          headers:  { 'Content-Type': 'application/json' },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ prompt, size })
         });
-        
-        if (!response.ok) {
-          throw new Error('Image generation failed');
-        }
-        
+        if (!response.ok) throw new Error('Image generation failed');
         const data = await response.json();
-        
-        if (data.success && data.imageUrl) {
-          return data. imageUrl;
-        } else {
-          throw new Error(data. error || 'Failed to generate image');
-        }
-        
+        if (data.success && data.imageUrl) return data.imageUrl;
+        throw new Error(data.error || 'Failed to generate image');
       } catch (error) {
         console.error('Image generation error:', error);
         showToast('⚠️ Using placeholder image', 'warning');
-        
         const [width, height] = size.split('x');
-        return `https://placehold.co/${width}x${height}/1a1447/00d4ff? text=${encodeURIComponent('Generated+Image')}`;
+        return `https://placehold.co/${width}x${height}/1a1447/00d4ff?text=${encodeURIComponent('Generated+Image')}`;
       }
     };
 
     const regenerateImage = async () => {
-      if (!lastGenerationParams) {
-        showToast('No image to regenerate', 'warning');
-        return;
-      }
-      
+      if (!lastGenerationParams) { showToast('No image to regenerate', 'warning'); return; }
       showGenerationStatus('Regenerating image...', 'loading');
-      
       try {
-        const imageUrl = await callImageGenerationAPI(
-          lastGenerationParams.prompt,
-          lastGenerationParams.size
-        );
-        
-        if (imageUrl) {
-          currentImageData = imageUrl;
-          showImagePreview(imageUrl);
-          showGenerationStatus('Image regenerated successfully!', 'success');
-          setTimeout(() => hideGenerationStatus(), 3000);
-        }
+        const imageUrl = await callImageGenerationAPI(lastGenerationParams.prompt, lastGenerationParams.size);
+        if (imageUrl) { currentImageData = imageUrl; showImagePreview(imageUrl); showGenerationStatus('Image regenerated successfully!', 'success'); setTimeout(() => hideGenerationStatus(), 3000); }
       } catch (error) {
         console.error('Error regenerating image:', error);
         showGenerationStatus('Failed to regenerate image', 'error');
@@ -2095,7 +1442,6 @@
     const showImagePreview = (imageData) => {
       const container = document.getElementById('image-preview-container');
       const preview = document.getElementById('image-preview');
-      
       preview.src = imageData;
       container.classList.remove('hidden');
     };
@@ -2103,45 +1449,25 @@
     const clearImage = () => {
       currentImageData = null;
       lastGenerationParams = null;
-      
       const container = document.getElementById('image-preview-container');
       const preview = document.getElementById('image-preview');
-      
       preview.src = '';
-      container. classList.add('hidden');
-      
+      container.classList.add('hidden');
       document.getElementById('file-upload').value = '';
       document.getElementById('image-url-input').value = '';
       document.getElementById('ai-prompt-input').value = '';
-      
       document.getElementById('upload-info').classList.add('hidden');
-      
       hideGenerationStatus();
     };
 
     const showGenerationStatus = (message, type) => {
       const statusDiv = document.getElementById('generation-status');
-      
       let icon = '';
       let className = '';
-      
-      if (type === 'loading') {
-        icon = '<div class="spinner"></div>';
-        className = 'generating-indicator';
-      } else if (type === 'success') {
-        icon = '<span class="text-2xl">✅</span>';
-        className = 'success-message';
-      } else if (type === 'error') {
-        icon = '<span class="text-2xl">❌</span>';
-        className = 'error-message';
-      }
-      
-      statusDiv.innerHTML = `
-        <div class="${className}">
-          ${icon}
-          <span>${message}</span>
-        </div>
-      `;
+      if (type === 'loading') { icon = '<div class="spinner"></div>'; className = 'generating-indicator'; }
+      else if (type === 'success') { icon = '<span class="text-2xl">✅</span>'; className = 'success-message'; }
+      else if (type === 'error') { icon = '<span class="text-2xl">❌</span>'; className = 'error-message'; }
+      statusDiv.innerHTML = `<div class="${className}">${icon}<span>${message}</span></div>`;
       statusDiv.classList.remove('hidden');
     };
 
@@ -2151,15 +1477,10 @@
       statusDiv.innerHTML = '';
     };
 
-    const getFinalImageUrl = () => {
-      if (currentImageMode === 'url') {
-        return document.getElementById('image-url-input').value;
-      }
-      return currentImageData;
-    };
+    const getFinalImageUrl = () => currentImageMode === 'url' ? document.getElementById('image-url-input').value : currentImageData;
 
     const resetForm = () => {
-      document. getElementById('custom-form').reset();
+      document.getElementById('custom-form').reset();
       clearImage();
       switchImageMode('url');
       selectedImageSize = '1024x1024';
@@ -2177,127 +1498,92 @@
       const loadingIndicator = document.getElementById('channel-loading');
       const botStatus = document.getElementById('bot-status');
       const errorDiv = document.getElementById('channel-error');
-      
       loadingIndicator.classList.remove('hidden');
       botStatus.classList.remove('hidden');
       botStatus.className = 'text-xs px-3 py-1 rounded-full';
       botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1 bg-yellow-400 animate-pulse"></span><span>Connecting to Discord...</span>';
-      
       try {
         const response = await fetch('/api/discord/channels');
         const data = await response.json();
-        
         loadingIndicator.classList.add('hidden');
-        
         if (data.success && data.channels && data.channels.length > 0) {
-          window.discordChannels = data. channels;
+          window.discordChannels = data.channels;
           window.discordServerData = data;
-          
           const channelsByCategory = {};
           const uncategorized = [];
-          
-          data. channels.forEach(ch => {
-            if (ch. categoryName) {
-              if (!channelsByCategory[ch. categoryName]) {
-                channelsByCategory[ch.categoryName] = [];
-              }
+          data.channels.forEach(ch => {
+            if (ch.categoryName) {
+              if (!channelsByCategory[ch.categoryName]) channelsByCategory[ch.categoryName] = [];
               channelsByCategory[ch.categoryName].push(ch);
             } else {
-              uncategorized. push(ch);
+              uncategorized.push(ch);
             }
           });
-          
           let optionsHTML = '';
-          
           if (uncategorized.length > 0) {
             uncategorized.forEach(ch => {
               const icon = ch.type === 'announcement' ? '📢' : '#';
               optionsHTML += `<option value="${ch.id}">${icon} ${ch.name}</option>`;
             });
           }
-          
           Object.entries(channelsByCategory).forEach(([category, channels]) => {
-            optionsHTML += `<optgroup label="── ${category. toUpperCase()} ──">`;
+            optionsHTML += `<optgroup label="── ${category.toUpperCase()} ──">`;
             channels.forEach(ch => {
-              const icon = ch.type === 'announcement' ? '📢' :  '#';
+              const icon = ch.type === 'announcement' ? '📢' : '#';
               optionsHTML += `<option value="${ch.id}">${icon} ${ch.name}</option>`;
             });
             optionsHTML += `</optgroup>`;
           });
-          
           select.innerHTML = optionsHTML;
-          
           document.getElementById('server-name').textContent = data.serverName || 'Digital Labour';
           document.getElementById('channel-count').textContent = data.totalChannels;
-          
-          if (data. serverIcon) {
+          if (data.serverIcon) {
             const iconEl = document.getElementById('server-icon');
             iconEl.innerHTML = `<img src="https://cdn.discordapp.com/icons/${data.serverName}/${data.serverIcon}.png" class="w-full h-full rounded-full object-cover" />`;
           }
-          
           botStatus.classList.add('connected');
           botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1"></span><span id="bot-status-text">Bot Connected</span>';
-          
           if (data.channels.length > 0) {
             select.value = data.channels[0].id;
-            updateChannelPreview(data.channels[0]. id);
+            updateChannelPreview(data.channels[0].id);
           }
-          
           errorDiv.classList.add('hidden');
-          
           showToast(`✓ Connected!  Found ${data.totalChannels} channels in ${data.serverName}`, 'success');
-          
         } else {
           throw new Error(data.error || 'No channels found');
         }
-        
       } catch (error) {
         console.error('Error loading Discord channels:', error);
         loadingIndicator.classList.add('hidden');
-        
         botStatus.classList.add('error');
         botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1"></span><span>Connection Failed</span>';
-        
         errorDiv.classList.remove('hidden');
         document.getElementById('error-message').textContent = error.message || 'Could not connect to Discord bot';
-        
         select.innerHTML = `
           <option value="ANNOUNCEMENTS">📢 Announcements Channel</option>
           <option value="HOLIDAYS">🎉 Holidays Channel</option>
           <option value="UPDATES">📰 Updates Channel</option>
           <option value="GENERAL">💬 General Channel</option>
         `;
-        
         document.getElementById('server-name').textContent = 'Digital Labour (Fallback)';
         document.getElementById('channel-count').textContent = '4';
-        
-        showToast('Using fallback channels.  Check bot token in . env', 'warning');
+        showToast('Using fallback channels.  Check bot token in .env', 'warning');
       }
     };
 
     const updateChannelPreview = (channelId) => {
-      const channel = window.discordChannels. find(ch => ch.id === channelId);
-      
-      if (! channel) {
-        document.getElementById('channel-preview').classList.add('hidden');
-        return;
-      }
-      
-      const emoji = channel.type === 'announcement' ? '📢' : 
-                   channel.nsfw ? '🔞' :  '💬';
-      
-      document. getElementById('preview-emoji').textContent = emoji;
-      document.getElementById('preview-type').textContent = channel.type. toUpperCase();
+      const channel = window.discordChannels.find(ch => ch.id === channelId);
+      if (!channel) { document.getElementById('channel-preview').classList.add('hidden'); return; }
+      const emoji = channel.type === 'announcement' ? '📢' : channel.nsfw ? '🔞' : '💬';
+      document.getElementById('preview-emoji').textContent = emoji;
+      document.getElementById('preview-type').textContent = channel.type.toUpperCase();
       document.getElementById('preview-name').textContent = `#${channel.name}`;
-      document.getElementById('preview-category').textContent = channel.categoryName ?  `in ${channel.categoryName}` : 'No category';
-      document.getElementById('preview-description').textContent = 
-        channel.type === 'announcement' 
-          ? 'Announcement channel - followers can see messages' 
-          : 'Text channel for conversations';
-      
+      document.getElementById('preview-category').textContent = channel.categoryName ? `in ${channel.categoryName}` : 'No category';
+      document.getElementById('preview-description').textContent = channel.type === 'announcement' ? 'Announcement channel - followers can see messages' : 'Text channel for conversations';
       document.getElementById('channel-preview').classList.remove('hidden');
     };
-        // ==================== DISCORD ROLES LOADING ====================
+
+    // ==================== DISCORD ROLES LOADING ====================
     
     window.discordRoles = [];
 
@@ -2305,48 +1591,29 @@
       try {
         const response = await fetch('/api/discord/roles');
         const data = await response.json();
-        
         if (data.success && data.roles && data.roles.length > 0) {
           window.discordRoles = data.roles;
-          
           const holidaySelect = document.getElementById('holiday-roles');
           const customSelect = document.getElementById('custom-roles');
-          
-          // Build options HTML
           let optionsHTML = '';
           data.roles.forEach(role => {
-            const color = role.color !== 0 ? 
-              `#${role.color.toString(16).padStart(6, '0')}` : 
-              '#99aab5';
-            
-            optionsHTML += `<option value="${role.id}" style="color: ${color}">
-              ${role.name}
-            </option>`;
+            const color = role.color !== 0 ? `#${role.color.toString(16).padStart(6, '0')}` : '#99aab5';
+            optionsHTML += `<option value="${role.id}" style="color: ${color}">${role.name}</option>`;
           });
-          
-          // Add to holiday select (keep @everyone selected by default)
           if (holidaySelect) {
             const everyoneOption = holidaySelect.querySelector('option[value="everyone"]');
             holidaySelect.innerHTML = '';
-            if (everyoneOption) {
-              holidaySelect. appendChild(everyoneOption);
-              everyoneOption.selected = true;
-            }
+            if (everyoneOption) { holidaySelect.appendChild(everyoneOption); everyoneOption.selected = true; }
             holidaySelect.innerHTML += optionsHTML;
           }
-          
-          // Add to custom select (no default selection)
           if (customSelect) {
             customSelect.innerHTML = '<option value="everyone">@everyone</option>' + optionsHTML;
           }
-          
           log(`Loaded ${data.roles.length} roles from Discord`, 'SUCCESS');
-          showToast(`✅ Loaded ${data.roles. length} roles from server`, 'success');
-          
+          showToast(`✅ Loaded ${data.roles.length} roles from server`, 'success');
         } else {
           throw new Error(data.error || 'No roles found');
         }
-        
       } catch (error) {
         console.error('Error loading Discord roles:', error);
         log(`Failed to load roles: ${error.message}`, 'WARNING');
@@ -2365,27 +1632,20 @@
           fetch('/api/holidays/today').then(r => r.json()).catch(() => null),
           fetch('/api/holidays/upcoming').then(r => r.json()).catch(() => null),
         ]);
-
         if (status) {
           const statusEl = document.getElementById('status-text');
-          if (statusEl) statusEl.textContent = status. running ? 'ACTIVE' : 'PAUSED';
-          
+          if (statusEl) statusEl.textContent = status.running ? 'ACTIVE' : 'PAUSED';
           const timezoneEl = document.getElementById('timezone-text');
-          if (timezoneEl) timezoneEl.textContent = status.config?. timezone || 'N/A';
-          
+          if (timezoneEl) timezoneEl.textContent = status.config?.timezone || 'N/A';
           const holidayCountEl = document.getElementById('holiday-count');
           if (holidayCountEl) holidayCountEl.textContent = status.totalHolidayAnnouncements || 0;
-          
           const customCountEl = document.getElementById('custom-count');
           if (customCountEl) customCountEl.textContent = status.totalCustomAnnouncements || 0;
-          
           const lastRunEl = document.getElementById('last-run-date');
-          if (lastRunEl) lastRunEl.textContent = status.state?. lastRunDate || '—';
+          if (lastRunEl) lastRunEl.textContent = status.state?.lastRunDate || '—';
         }
-
-        updateTodayHoliday(todayHoliday?. holiday);
+        updateTodayHoliday(todayHoliday?.holiday);
         updateUpcomingHolidays(upcomingHolidays?.holidays);
-
       } catch (error) {
         console.error('Error loading dashboard:', error);
         showToast('Failed to load dashboard data', 'error');
@@ -2395,18 +1655,16 @@
     const updateTodayHoliday = (holiday) => {
       const container = document.getElementById('today-holiday');
       if (!container) return;
-      
-      if (! holiday) {
+      if (!holiday) {
         container.innerHTML = `
           <div class="empty-state py-12">
             <div class="empty-icon">📅</div>
             <h3 class="text-2xl font-bold mb-2">No Holiday Today</h3>
-            <p class="text-gray-400">Check back tomorrow for upcoming holidays! </p>
+            <p class="text-gray-400">Check back tomorrow for upcoming holidays!</p>
           </div>
         `;
         return;
       }
-
       container.innerHTML = `
         <div class="glass p-6 rounded-xl border-l-4 border-neon-blue hover:scale-[1.02] transition-transform">
           <div class="flex items-center justify-between">
@@ -2429,8 +1687,7 @@
     const updateUpcomingHolidays = (holidays) => {
       const container = document.getElementById('upcoming-holidays');
       if (!container) return;
-      
-      if (! holidays || holidays.length === 0) {
+      if (!holidays || holidays.length === 0) {
         container.innerHTML = `
           <div class="empty-state py-12">
             <div class="empty-icon">🔮</div>
@@ -2440,7 +1697,6 @@
         `;
         return;
       }
-
       const today = new Date();
       const filtered = holidays
         .filter(h => {
@@ -2448,7 +1704,6 @@
           return hDate >= today && hDate <= new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
         })
         .slice(0, 20);
-
       if (filtered.length === 0) {
         container.innerHTML = `
           <div class="empty-state py-12">
@@ -2459,7 +1714,6 @@
         `;
         return;
       }
-
       container.innerHTML = filtered.map((h, i) => `
         <div class="glass p-5 rounded-xl hover:scale-[1.02] transition-all cursor-pointer fade-in" style="animation-delay: ${i * 0.05}s">
           <div class="flex items-center justify-between">
@@ -2477,13 +1731,10 @@
       try {
         const data = await fetch('/api/announcements/scheduled').then(r => r.json());
         const items = data.scheduled || [];
-        
         const countEl = document.getElementById('scheduled-count');
-        if (countEl) countEl.textContent = items. length;
-        
+        if (countEl) countEl.textContent = items.length;
         const container = document.getElementById('scheduled-list');
         if (!container) return;
-
         if (items.length === 0) {
           container.innerHTML = `
             <div class="empty-state py-12">
@@ -2494,23 +1745,20 @@
           `;
           return;
         }
-
         container.innerHTML = items.map((item, i) => {
-          const statusClass = 
-            item.status === 'scheduled' ? 'bg-yellow-500/20 border-yellow-400' : 
-            item.status === 'sent' ? 'bg-green-500/20 border-green-400' : 
-            'bg-red-500/20 border-red-400';
-          
+          const statusClass = item.status === 'scheduled'
+            ? 'bg-yellow-500/20 border-yellow-400'
+            : item.status === 'sent'
+              ? 'bg-green-500/20 border-green-400'
+              : 'bg-red-500/20 border-red-400';
           return `
             <div class="glass p-6 rounded-xl fade-in" style="animation-delay: ${i * 0.05}s">
               <div class="flex items-center justify-between mb-4">
                 <h4 class="font-bold text-lg">ID: ${item.id}</h4>
-                <span class="badge ${statusClass}">
-                  ${item.status. toUpperCase()}
-                </span>
+                <span class="badge ${statusClass}">${item.status.toUpperCase()}</span>
               </div>
               <p class="text-sm text-gray-400">
-                <span class="font-semibold">Scheduled: </span> ${new Date(item. scheduleTime).toLocaleString()}
+                <span class="font-semibold">Scheduled: </span> ${new Date(item.scheduleTime).toLocaleString()}
               </p>
             </div>
           `;
@@ -2535,8 +1783,7 @@
     const renderLogs = (logs) => {
       const container = document.getElementById('logs-container');
       if (!container) return;
-      
-      if (! logs || logs.length === 0) {
+      if (!logs || logs.length === 0) {
         container.innerHTML = `
           <div class="empty-state py-8">
             <div class="empty-icon">📋</div>
@@ -2545,17 +1792,9 @@
         `;
         return;
       }
-
-      const typeColors = {
-        'ERROR': 'text-red-400',
-        'SUCCESS': 'text-green-400',
-        'WARNING': 'text-yellow-400',
-        'INFO': 'text-neon-blue',
-      };
-
+      const typeColors = { ERROR: 'text-red-400', SUCCESS: 'text-green-400', WARNING: 'text-yellow-400', INFO: 'text-neon-blue' };
       container.innerHTML = logs.slice(0, 100).map(log => {
         const color = typeColors[log.type] || 'text-gray-400';
-
         return `
           <div class="mb-3 pb-3 border-b border-white/5">
             <div class="flex items-center gap-3 mb-1">
@@ -2569,13 +1808,10 @@
     };
 
     const filterLogs = (query) => {
-      if (!query) {
-        renderLogs(allLogs);
-        return;
-      }
-      const filtered = allLogs.filter(log => 
+      if (!query) { renderLogs(allLogs); return; }
+      const filtered = allLogs.filter(log =>
         log.message.toLowerCase().includes(query.toLowerCase()) ||
-        log.type. toLowerCase().includes(query.toLowerCase())
+        log.type.toLowerCase().includes(query.toLowerCase())
       );
       renderLogs(filtered);
     };
@@ -2585,34 +1821,23 @@
     const triggerHolidayCheck = async (button) => {
       button.disabled = true;
       const originalHTML = button.innerHTML;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Checking... ';
-      
+      button.innerHTML = '<span class="text-2xl">⏳</span> Checking...';
       try {
-        // Get selected roles
         const holidayRolesSelect = document.getElementById('holiday-roles');
-        const selectedRoles = holidayRolesSelect ?  
-          Array.from(holidayRolesSelect.selectedOptions).map(opt => opt.value) : 
-          ['everyone'];
-        
+        const selectedRoles = holidayRolesSelect ? Array.from(holidayRolesSelect.selectedOptions).map(opt => opt.value) : ['everyone'];
         log(`Triggering holiday check with roles: ${selectedRoles.join(', ')}`, 'INFO');
-        
         const response = await fetch('/api/trigger/holiday', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ roles: selectedRoles })
         });
         const data = await response.json();
-        
-        if (data.success) {
-          showToast('✅ Holiday check completed successfully!', 'success');
-        } else {
-          showToast(data.message || 'Failed to trigger holiday check', 'error');
-        }
-        
+        if (data.success) showToast('✅ Holiday check completed successfully!', 'success');
+        else showToast(data.message || 'Failed to trigger holiday check', 'error');
         await loadDashboard();
       } catch (error) {
         console.error('Error triggering holiday check:', error);
-        showToast('Error:  ' + error.message, 'error');
+        showToast('Error: ' + error.message, 'error');
       } finally {
         button.disabled = false;
         button.innerHTML = originalHTML;
@@ -2623,29 +1848,18 @@
       button.disabled = true;
       const originalHTML = button.innerHTML;
       button.innerHTML = '<span class="text-2xl">⏳</span> Sending...';
-      
       try {
-        // Get selected roles
         const holidayRolesSelect = document.getElementById('holiday-roles');
-        const selectedRoles = holidayRolesSelect ? 
-          Array. from(holidayRolesSelect.selectedOptions).map(opt => opt.value) : 
-          ['everyone'];
-        
-        log(`Testing New Year announcement with roles: ${selectedRoles. join(', ')}`, 'INFO');
-        
+        const selectedRoles = holidayRolesSelect ? Array.from(holidayRolesSelect.selectedOptions).map(opt => opt.value) : ['everyone'];
+        log(`Testing New Year announcement with roles: ${selectedRoles.join(', ')}`, 'INFO');
         const response = await fetch('/api/test/newyear', {
-          method:  'POST',
-          headers:  { 'Content-Type': 'application/json' },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ roles: selectedRoles })
         });
         const data = await response.json();
-        
-        if (data.success) {
-          showToast('✅ New Year test sent successfully!', 'success');
-        } else {
-          showToast('Failed to send test announcement', 'error');
-        }
-        
+        if (data.success) showToast('✅ New Year test sent successfully!', 'success');
+        else showToast('Failed to send test announcement', 'error');
         await loadDashboard();
       } catch (error) {
         console.error('Error testing New Year:', error);
@@ -2659,8 +1873,8 @@
     const loadTodayHoliday = async () => {
       try {
         const data = await fetch('/api/holidays/today').then(r => r.json());
-        updateTodayHoliday(data?. holiday);
-        showToast('Today\'s holiday refreshed', 'info');
+        updateTodayHoliday(data?.holiday);
+        showToast("Today's holiday refreshed", 'info');
       } catch (error) {
         showToast('Failed to refresh', 'error');
       }
@@ -2680,54 +1894,35 @@
     
     document.getElementById('custom-form')?.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       const title = document.getElementById('custom-title').value;
       const message = document.getElementById('custom-message').value;
       const webhookChannel = document.getElementById('custom-webhook').value;
       const imageUrl = getFinalImageUrl();
       const useAI = document.getElementById('use-ai').checked;
-      
-      // Get selected roles
       const customRolesSelect = document.getElementById('custom-roles');
-      const selectedRoles = customRolesSelect ?  
-        Array.from(customRolesSelect.selectedOptions).map(opt => opt.value) : 
-        [];
-      
+      const selectedRoles = customRolesSelect ? Array.from(customRolesSelect.selectedOptions).map(opt => opt.value) : [];
       log(`Sending custom announcement with roles: ${selectedRoles.join(', ') || 'none'}`, 'INFO');
-      
       const deliveryStatus = document.getElementById('delivery-status');
       deliveryStatus.classList.add('hidden');
-      
       try {
         const response = await fetch('/api/announcement/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:  JSON.stringify({
-            title,
-            message,
-            webhookChannel,
-            imageUrl,
-            useAI,
-            roles: selectedRoles
-          })
+          body: JSON.stringify({ title, message, webhookChannel, imageUrl, useAI, roles: selectedRoles })
         });
-        
         const data = await response.json();
-        
         if (data.success) {
           showToast('✅ Announcement sent successfully!', 'success');
           deliveryStatus.classList.remove('hidden');
-          document.getElementById('delivery-message').textContent = 
-            `Your announcement "${title}" has been delivered to Discord ${webhookChannel} channel.`;
-          
+          document.getElementById('delivery-message').textContent = `Your announcement "${title}" has been delivered to Discord ${webhookChannel} channel.`;
           setTimeout(() => resetForm(), 3000);
           await loadDashboard();
         } else {
-          showToast('❌ Failed to send announcement:  ' + (data.error || 'Unknown error'), 'error');
+          showToast('❌ Failed to send announcement: ' + (data.error || 'Unknown error'), 'error');
         }
       } catch (error) {
         console.error('Error sending announcement:', error);
-        showToast('❌ Error:  ' + error.message, 'error');
+        showToast('❌ Error: ' + error.message, 'error');
       }
     });
 
@@ -2738,59 +1933,29 @@
       const imageUrl = getFinalImageUrl();
       const scheduleTime = document.getElementById('schedule-time').value;
       const useAI = document.getElementById('use-ai').checked;
-      
-      // Get selected roles
       const customRolesSelect = document.getElementById('custom-roles');
-      const selectedRoles = customRolesSelect ? 
-        Array.from(customRolesSelect.selectedOptions).map(opt => opt.value) : 
-        [];
-      
-      if (!title || !message) {
-        showToast('Please fill in title and message', 'warning');
-        return;
-      }
-      
-      if (!scheduleTime) {
-        showToast('Please select a schedule time', 'warning');
-        return;
-      }
-      
+      const selectedRoles = customRolesSelect ? Array.from(customRolesSelect.selectedOptions).map(opt => opt.value) : [];
+      if (!title || !message) { showToast('Please fill in title and message', 'warning'); return; }
+      if (!scheduleTime) { showToast('Please select a schedule time', 'warning'); return; }
       const scheduleDate = new Date(scheduleTime);
-      if (scheduleDate <= new Date()) {
-        showToast('Schedule time must be in the future', 'error');
-        return;
-      }
-      
+      if (scheduleDate <= new Date()) { showToast('Schedule time must be in the future', 'error'); return; }
       const deliveryStatus = document.getElementById('delivery-status');
       deliveryStatus.classList.add('hidden');
-      
       try {
         const response = await fetch('/api/announcement/schedule', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:  JSON.stringify({
-            scheduleTime:  scheduleDate.toISOString(),
-            title,
-            message,
-            webhookChannel,
-            imageUrl,
-            useAI,
-            roles: selectedRoles
-          })
+          body: JSON.stringify({ scheduleTime: scheduleDate.toISOString(), title, message, webhookChannel, imageUrl, useAI, roles: selectedRoles })
         });
-        
         const data = await response.json();
-        
-        if (data. success) {
+        if (data.success) {
           showToast('✅ Announcement scheduled successfully!', 'success');
           deliveryStatus.classList.remove('hidden');
-          document.getElementById('delivery-message').textContent = 
-            `Your announcement "${title}" has been scheduled for ${scheduleDate.toLocaleString()}.`;
-          
+          document.getElementById('delivery-message').textContent = `Your announcement "${title}" has been scheduled for ${scheduleDate.toLocaleString()}.`;
           setTimeout(() => resetForm(), 3000);
           await loadDashboard();
         } else {
-          showToast('❌ Failed to schedule announcement: ' + (data. error || 'Unknown error'), 'error');
+          showToast('❌ Failed to schedule announcement: ' + (data.error || 'Unknown error'), 'error');
         }
       } catch (error) {
         console.error('Error scheduling announcement:', error);
@@ -2802,20 +1967,14 @@
     
     const initPipelineEffects = () => {
       const pipelineBoxes = document.querySelectorAll('.pipeline-box');
-      
       pipelineBoxes.forEach((box, index) => {
         setTimeout(() => {
           box.classList.add('active');
-          setTimeout(() => {
-            box.classList.remove('active');
-          }, 1000);
+          setTimeout(() => box.classList.remove('active'), 1000);
         }, index * 600);
-        
         setInterval(() => {
           box.classList.add('active');
-          setTimeout(() => {
-            box.classList.remove('active');
-          }, 1000);
+          setTimeout(() => box.classList.remove('active'), 1000);
         }, pipelineBoxes.length * 600 + 3000);
       });
     };
@@ -2824,24 +1983,18 @@
     
     const init = () => {
       console.log('Initializing dashboard...');
-      
       createParticles();
       loadDashboard();
       setupDragAndDrop();
       loadDiscordChannels();
-      loadDiscordRoles(); // ← NEW: Load server roles
-      
+      loadDiscordRoles();
       setInterval(loadDashboard, 60000);
       setTimeout(initPipelineEffects, 2000);
-      
       console.log('Dashboard initialized');
     };
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
-    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
   </script>
 </body>
 </html>

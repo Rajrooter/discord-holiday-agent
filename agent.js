@@ -19,16 +19,24 @@ require('dotenv').config();
 // ============================================
 
 const CONFIG = {
-  WEBHOOKS: {
-    ANNOUNCEMENTS: process.env.WEBHOOK_ANNOUNCEMENTS,
-    UPDATES: process.env.WEBHOOK_UPDATES,
-    HOLIDAYS: process.env.WEBHOOK_HOLIDAYS,
-    GENERAL: process.env.WEBHOOK_GENERAL
+  // Multi-server configuration
+  SERVERS: {
+    // Default server configuration (will be dynamically populated)
+    default: {
+      GUILD_ID: process.env.DISCORD_GUILD_ID,
+      BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
+      name: 'Default Server',
+      icon: null,
+      webhooks: {
+        ANNOUNCEMENTS: process.env.WEBHOOK_ANNOUNCEMENTS,
+        UPDATES: process.env.WEBHOOK_UPDATES,
+        HOLIDAYS: process.env.WEBHOOK_HOLIDAYS,
+        GENERAL: process.env.WEBHOOK_GENERAL
+      }
+    }
   },
   GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
   CALENDARIFIC_API_KEY: process.env.CALENDARIFIC_API_KEY || 'demo',
-  DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
-  DISCORD_GUILD_ID: process.env.DISCORD_GUILD_ID,
   TIMEZONE: process.env.TIMEZONE || 'Asia/Kolkata',
   SCHEDULE_TIME: process.env.SCHEDULE_TIME || '0 0 * * *',
   DASHBOARD_PORT: process.env.DASHBOARD_PORT ? Number(process.env.DASHBOARD_PORT) : 3000,
@@ -70,6 +78,85 @@ const ROLES = {
   Omnipotent: '<@&1384205587373494282>',
   Labour: '<@&1431013492810321940>'
 };
+
+// ============================================
+// SERVER MANAGEMENT FUNCTIONS
+// ============================================
+
+// Server registry to store multiple server configurations
+let serverRegistry = {};
+
+// Function to add a new server to the registry
+function addServerToRegistry(serverId, serverConfig) {
+  serverRegistry[serverId] = {
+    ...serverConfig,
+    id: serverId,
+    addedAt: new Date().toISOString()
+  };
+  log(`Server added to registry: ${serverConfig.name} (${serverId})`, 'SUCCESS');
+  return serverRegistry[serverId];
+}
+
+// Function to get server configuration
+function getServerConfig(serverId = 'default') {
+  return serverRegistry[serverId] || CONFIG.SERVERS.default;
+}
+
+// Function to get all servers
+function getAllServers() {
+  return { ...CONFIG.SERVERS, ...serverRegistry };
+}
+
+// Function to fetch server information from Discord API
+async function fetchServerInfo(guildId, botToken) {
+  try {
+    const response = await axios.get(`https://discord.com/api/v10/guilds/${guildId}`, {
+      headers: {
+        Authorization: `Bot ${botToken}`,
+        'Content-Type': 'application/json'
+      },
+      timeout: 10000
+    });
+    
+    return {
+      id: response.data.id,
+      name: response.data.name,
+      icon: response.data.icon,
+      iconUrl: response.data.icon ? `https://cdn.discordapp.com/icons/${guildId}/${response.data.icon}.png` : null
+    };
+  } catch (error) {
+    log(`Failed to fetch server info for ${guildId}: ${error.message}`, 'ERROR');
+    throw error;
+  }
+}
+
+// Function to create webhook with server-specific settings
+async function createServerWebhook(channelId, serverInfo, botToken) {
+  try {
+    const webhookData = {
+      name: serverInfo.name,
+      avatar: serverInfo.iconUrl // Will be set as base64 if needed
+    };
+
+    const response = await axios.post(
+      `https://discord.com/api/v10/channels/${channelId}/webhooks`,
+      webhookData,
+      {
+        headers: {
+          Authorization: `Bot ${botToken}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+
+    log(`Created webhook for server ${serverInfo.name} in channel ${channelId}`, 'SUCCESS');
+    return response.data;
+  } catch (error) {
+    log(`Failed to create webhook for ${serverInfo.name}: ${error.message}`, 'ERROR');
+    throw error;
+  }
+}
 
 // ============================================
 // GLOBAL ERROR HANDLERS
@@ -361,7 +448,7 @@ async function postWebhookWithRetry(webhookUrl, payload) {
   return false;
 }
 
-async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl, roles = ['everyone']) {
+async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl, roles = ['everyone'], serverInfo = null) {
   try {
     log('Sending holiday announcement to Discord...');
     const roleMentions =
@@ -369,23 +456,29 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl, r
         ? roles.map((roleId) => (roleId === 'everyone' ? '@everyone' : `<@&${roleId}>`)).join(' ')
         : '@everyone';
 
+    // Use server-specific branding if available
+    const serverName = serverInfo ? serverInfo.name : 'Digital Labour';
+    const serverIconUrl = serverInfo ? serverInfo.iconUrl : 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png';
+    
     const embed = {
       title: `🎊 Holiday Announcement 🎊`,
-      description: `**${holiday.name}**\n\n${message}\n\n— *The Digital Labour Team*`,
+      description: `**${holiday.name}**\n\n${message}\n\n— *The ${serverName} Team*`,
       color: getHolidayColor(holiday.name),
       image: { url: imageUrl },
       footer: {
-        text: 'Digital Labour Bot',
-        icon_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png'
+        text: serverName,
+        icon_url: serverIconUrl
       },
       timestamp: new Date().toISOString()
     };
+    
     const payload = {
       content: roleMentions,
-      username: 'Labour',
-      avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
+      username: serverName, // Use server name as webhook username
+      avatar_url: serverIconUrl, // Use server icon as webhook avatar
       embeds: [embed]
     };
+    
     const ok = await postWebhookWithRetry(webhookUrl, payload);
     if (!ok) {
       log('Holiday announcement failed after retries', 'ERROR');
@@ -402,9 +495,17 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl, r
 
 async function sendCustomAnnouncement(data) {
   try {
-    const { title, message, roles, imageUrl, webhookChannel, useAI } = data;
+    const { title, message, roles, imageUrl, webhookChannel, useAI, serverInfo } = data;
     const channelKey = webhookChannel || 'ANNOUNCEMENTS';
-    const webhookUrl = CONFIG.WEBHOOKS[channelKey] || CONFIG.WEBHOOKS.ANNOUNCEMENTS || CONFIG.WEBHOOKS.HOLIDAYS;
+    
+    // Get server-specific webhook or fallback to default
+    let webhookUrl;
+    if (serverInfo && serverInfo.webhooks && serverInfo.webhooks[channelKey]) {
+      webhookUrl = serverInfo.webhooks[channelKey];
+    } else {
+      webhookUrl = CONFIG.SERVERS.default.webhooks[channelKey] || CONFIG.SERVERS.default.webhooks.ANNOUNCEMENTS || CONFIG.SERVERS.default.webhooks.HOLIDAYS;
+    }
+    
     if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
 
     let finalMessage = message;
@@ -421,23 +522,29 @@ async function sendCustomAnnouncement(data) {
             .join(' ')
         : null;
 
+    // Use server-specific branding if available
+    const serverName = serverInfo ? serverInfo.name : 'Digital Labour';
+    const serverIconUrl = serverInfo ? serverInfo.iconUrl : 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png';
+
     const embed = {
       title: title || '📢 Alert — Important Update',
-      description: `${finalMessage}\n\n— *The Digital Labour Team*`,
+      description: `${finalMessage}\n\n— *The ${serverName} Team*`,
       color: 0xff6b35,
       footer: {
-        text: 'Digital Labour Bot',
-        icon_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png'
+        text: serverName,
+        icon_url: serverIconUrl
       },
       timestamp: new Date().toISOString()
     };
     if (imageUrl) embed.image = { url: imageUrl };
+    
     const payload = {
       content: roleMentions,
-      username: 'Labour',
-      avatar_url: 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png',
+      username: serverName, // Use server name as webhook username
+      avatar_url: serverIconUrl, // Use server icon as webhook avatar
       embeds: [embed]
     };
+    
     const ok = await postWebhookWithRetry(webhookUrl, payload);
     if (!ok) {
       log('Custom announcement failed after retries', 'ERROR');
@@ -558,10 +665,45 @@ async function executeHolidayCheck(manualTrigger = false, rolesOverride = null) 
 
     const aiMessage = await generateHolidayMessage(holiday.name, holiday.description);
     const imageUrl = getHolidayImage(holiday.name);
-    const webhookUrl = CONFIG.WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
+    
+    // Get webhook URL and server info for multi-server support
+    let webhookUrl;
+    let serverInfo = null;
+    
+    // Check if we have multiple servers configured
+    const allServers = getAllServers();
+    const serverIds = Object.keys(allServers);
+    
+    if (serverIds.length > 1) {
+      // For multi-server setup, send to all configured servers
+      for (const serverId of serverIds) {
+        if (serverId === 'default') continue; // Skip default in multi-server mode
+        const server = allServers[serverId];
+        const serverWebhookUrl = server.webhooks?.HOLIDAYS || server.webhooks?.ANNOUNCEMENTS;
+        if (serverWebhookUrl) {
+          try {
+            // Fetch server info if not already available
+            const serverDetails = await fetchServerInfo(server.GUILD_ID, server.BOT_TOKEN);
+            await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, serverWebhookUrl, rolesToUse, serverDetails);
+          } catch (error) {
+            log(`Failed to send to server ${server.name}: ${error.message}`, 'ERROR');
+          }
+        }
+      }
+      return { success: true, message: `Sent to multiple servers: ${holiday.name}`, holiday, aiMessage };
+    } else {
+      // Single server mode (default behavior)
+      webhookUrl = CONFIG.SERVERS.default.webhooks.HOLIDAYS || CONFIG.SERVERS.default.webhooks.ANNOUNCEMENTS;
+      try {
+        const defaultServer = await fetchServerInfo(CONFIG.SERVERS.default.GUILD_ID, CONFIG.SERVERS.default.BOT_TOKEN);
+        serverInfo = defaultServer;
+      } catch (error) {
+        log('Could not fetch server info, using defaults', 'WARNING');
+      }
+    }
 
     const rolesToUse = rolesOverride || ['everyone'];
-    const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl, rolesToUse);
+    const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl, rolesToUse, serverInfo);
 
     if (success) {
       state.lastRunDate = today;
@@ -686,13 +828,251 @@ app.get('/api/health', (req, res) => {
 });
 
 // ============================================
-// DISCORD BOT INTEGRATION - Fetch Channels
+// MULTI-SERVER MANAGEMENT ENDPOINTS
+// ============================================
+
+// Add a new server to the registry
+app.post('/api/servers/add', async (req, res) => {
+  try {
+    const { guildId, botToken, name } = req.body;
+    
+    if (!guildId || !botToken) {
+      return res.json({ success: false, error: 'Guild ID and Bot Token are required' });
+    }
+
+    // Fetch server information from Discord API
+    const serverInfo = await fetchServerInfo(guildId, botToken);
+    
+    // Create server configuration
+    const serverConfig = {
+      GUILD_ID: guildId,
+      BOT_TOKEN: botToken,
+      name: name || serverInfo.name,
+      icon: serverInfo.icon,
+      iconUrl: serverInfo.iconUrl,
+      webhooks: {}
+    };
+
+    // Add to registry
+    const addedServer = addServerToRegistry(guildId, serverConfig);
+    
+    res.json({ 
+      success: true, 
+      server: addedServer,
+      message: `Server "${serverConfig.name}" added successfully`
+    });
+  } catch (error) {
+    log(`Failed to add server: ${error.message}`, 'ERROR');
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get all registered servers
+app.get('/api/servers', (req, res) => {
+  try {
+    const servers = getAllServers();
+    res.json({ 
+      success: true, 
+      servers,
+      totalServers: Object.keys(servers).length
+    });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get channels for a specific server
+app.get('/api/servers/:serverId/channels', async (req, res) => {
+  try {
+    const { serverId } = req.params;
+    const serverConfig = getServerConfig(serverId);
+    
+    if (!serverConfig.GUILD_ID || !serverConfig.BOT_TOKEN) {
+      return res.json({
+        success: false,
+        error: 'Server not found or incomplete configuration'
+      });
+    }
+
+    const channelsResponse = await axios.get(
+      `https://discord.com/api/v10/guilds/${serverConfig.GUILD_ID}/channels`,
+      {
+        headers: {
+          Authorization: `Bot ${serverConfig.BOT_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+
+    const textChannels = channelsResponse.data
+      .filter((ch) => ch.type === 0 || ch.type === 5)
+      .map((ch) => ({
+        id: ch.id,
+        name: ch.name,
+        type: ch.type === 5 ? 'announcement' : 'text',
+        position: ch.position,
+        category: ch.parent_id,
+        nsfw: ch.nsfw || false
+      }))
+      .sort((a, b) => a.position - b.position);
+
+    const categories = channelsResponse.data
+      .filter((ch) => ch.type === 4)
+      .reduce((acc, cat) => {
+        acc[cat.id] = cat.name;
+        return acc;
+      }, {});
+
+    const channelsWithCategories = textChannels.map((ch) => ({
+      ...ch,
+      categoryName: ch.category ? categories[ch.category] : null
+    }));
+
+    res.json({
+      success: true,
+      channels: channelsWithCategories,
+      serverName: serverConfig.name,
+      totalChannels: textChannels.length
+    });
+  } catch (error) {
+    log(`Failed to fetch channels for server ${req.params.serverId}: ${error.message}`, 'ERROR');
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Get roles for a specific server
+app.get('/api/servers/:serverId/roles', async (req, res) => {
+  try {
+    const { serverId } = req.params;
+    const serverConfig = getServerConfig(serverId);
+    
+    if (!serverConfig.GUILD_ID || !serverConfig.BOT_TOKEN) {
+      return res.json({
+        success: false,
+        error: 'Server not found or incomplete configuration'
+      });
+    }
+
+    const rolesResponse = await axios.get(
+      `https://discord.com/api/v10/guilds/${serverConfig.GUILD_ID}/roles`,
+      {
+        headers: {
+          Authorization: `Bot ${serverConfig.BOT_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
+    );
+
+    const roles = rolesResponse.data
+      .filter((role) => !role.managed && role.name !== '@everyone')
+      .map((role) => ({
+        id: role.id,
+        name: role.name,
+        color: role.color,
+        position: role.position,
+        mentionable: role.mentionable
+      }))
+      .sort((a, b) => b.position - a.position);
+
+    res.json({
+      success: true,
+      roles,
+      totalRoles: roles.length,
+      serverName: serverConfig.name
+    });
+  } catch (error) {
+    log(`Failed to fetch roles for server ${req.params.serverId}: ${error.message}`, 'ERROR');
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Create webhook for a specific server and channel
+app.post('/api/servers/:serverId/webhooks/create', async (req, res) => {
+  try {
+    const { serverId } = req.params;
+    const { channelId, webhookType } = req.body;
+    
+    if (!channelId || !webhookType) {
+      return res.json({ success: false, error: 'Channel ID and webhook type are required' });
+    }
+
+    const serverConfig = getServerConfig(serverId);
+    if (!serverConfig.GUILD_ID || !serverConfig.BOT_TOKEN) {
+      return res.json({ success: false, error: 'Server not found or incomplete configuration' });
+    }
+
+    // Fetch current server info
+    const serverInfo = await fetchServerInfo(serverConfig.GUILD_ID, serverConfig.BOT_TOKEN);
+    
+    // Create webhook
+    const webhook = await createServerWebhook(channelId, serverInfo, serverConfig.BOT_TOKEN);
+    
+    // Store webhook URL in server configuration
+    if (!serverConfig.webhooks) serverConfig.webhooks = {};
+    serverConfig.webhooks[webhookType.toUpperCase()] = webhook.url;
+    
+    // Update server registry
+    addServerToRegistry(serverId, serverConfig);
+    
+    res.json({
+      success: true,
+      webhook: {
+        id: webhook.id,
+        name: webhook.name,
+        url: webhook.url,
+        type: webhookType.toUpperCase(),
+        serverName: serverInfo.name
+      },
+      message: `Webhook "${serverInfo.name}" created successfully for ${webhookType}`
+    });
+  } catch (error) {
+    log(`Failed to create webhook for server ${req.params.serverId}: ${error.message}`, 'ERROR');
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// Send custom announcement to specific server
+app.post('/api/servers/:serverId/announcement/send', async (req, res) => {
+  try {
+    const { serverId } = req.params;
+    const serverConfig = getServerConfig(serverId);
+    
+    if (!serverConfig.GUILD_ID || !serverConfig.BOT_TOKEN) {
+      return res.json({ success: false, error: 'Server not found or incomplete configuration' });
+    }
+
+    // Fetch server info for branding
+    const serverInfo = await fetchServerInfo(serverConfig.GUILD_ID, serverConfig.BOT_TOKEN);
+    
+    // Add server info to the request data
+    const announcementData = {
+      ...req.body,
+      serverInfo: {
+        name: serverInfo.name,
+        iconUrl: serverInfo.iconUrl,
+        webhooks: serverConfig.webhooks
+      }
+    };
+    
+    const result = await sendCustomAnnouncement(announcementData);
+    res.json(result);
+  } catch (error) {
+    log(`Failed to send announcement to server ${req.params.serverId}: ${error.message}`, 'ERROR');
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// ============================================
+// DISCORD BOT INTEGRATION - Fetch Channels (Legacy - for backward compatibility)
 // ============================================
 
 app.get('/api/discord/channels', async (req, res) => {
   try {
-    const DISCORD_BOT_TOKEN = CONFIG.DISCORD_BOT_TOKEN;
-    const DISCORD_GUILD_ID = CONFIG.DISCORD_GUILD_ID;
+    const defaultServer = CONFIG.SERVERS.default;
+    const DISCORD_BOT_TOKEN = defaultServer.BOT_TOKEN;
+    const DISCORD_GUILD_ID = defaultServer.GUILD_ID;
 
     if (!DISCORD_BOT_TOKEN || !DISCORD_GUILD_ID) {
       log('Discord bot credentials not configured', 'WARNING');
@@ -802,8 +1182,9 @@ app.get('/api/discord/channels', async (req, res) => {
 
 app.get('/api/discord/roles', async (req, res) => {
   try {
-    const DISCORD_BOT_TOKEN = CONFIG.DISCORD_BOT_TOKEN;
-    const DISCORD_GUILD_ID = CONFIG.DISCORD_GUILD_ID;
+    const defaultServer = CONFIG.SERVERS.default;
+    const DISCORD_BOT_TOKEN = defaultServer.BOT_TOKEN;
+    const DISCORD_GUILD_ID = defaultServer.GUILD_ID;
 
     if (!DISCORD_BOT_TOKEN || !DISCORD_GUILD_ID) {
       log('Discord bot credentials not configured', 'WARNING');
@@ -916,13 +1297,35 @@ app.post('/api/generate-image', async (req, res) => {
 
 app.post('/api/test/newyear', async (req, res) => {
   try {
-    const { roles } = req.body || {};
+    const { roles, serverId } = req.body || {};
     const holiday = { date: '2026-01-01', name: "New Year's Day", description: 'New Year 2026' };
     const aiMessage = await generateHolidayMessage(holiday.name, holiday.description);
     const imageUrl = getHolidayImage(holiday.name);
-    const webhookUrl = CONFIG.WEBHOOKS.HOLIDAYS || CONFIG.WEBHOOKS.ANNOUNCEMENTS;
+    
+    let webhookUrl;
+    let serverInfo = null;
+    
+    if (serverId) {
+      // Test for specific server
+      const serverConfig = getServerConfig(serverId);
+      webhookUrl = serverConfig.webhooks?.HOLIDAYS || serverConfig.webhooks?.ANNOUNCEMENTS;
+      try {
+        serverInfo = await fetchServerInfo(serverConfig.GUILD_ID, serverConfig.BOT_TOKEN);
+      } catch (error) {
+        log('Could not fetch server info for test, using defaults', 'WARNING');
+      }
+    } else {
+      // Default server test
+      webhookUrl = CONFIG.SERVERS.default.webhooks.HOLIDAYS || CONFIG.SERVERS.default.webhooks.ANNOUNCEMENTS;
+      try {
+        serverInfo = await fetchServerInfo(CONFIG.SERVERS.default.GUILD_ID, CONFIG.SERVERS.default.BOT_TOKEN);
+      } catch (error) {
+        log('Could not fetch server info for test, using defaults', 'WARNING');
+      }
+    }
+    
     const rolesToUse = roles && roles.length > 0 ? roles : ['everyone'];
-    const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl, rolesToUse);
+    const success = await sendHolidayAnnouncement(holiday, aiMessage, imageUrl, webhookUrl, rolesToUse, serverInfo);
     res.json({ success, message: success ? 'Sent!' : 'Failed' });
   } catch (error) {
     res.json({ success: false, error: error.message });
@@ -938,7 +1341,8 @@ app.get('/', (req, res) => {
 // ============================================
 
 function validateConfig() {
-  if (!CONFIG.WEBHOOKS.ANNOUNCEMENTS && !CONFIG.WEBHOOKS.HOLIDAYS) {
+  const defaultServer = CONFIG.SERVERS.default;
+  if (!defaultServer.webhooks.ANNOUNCEMENTS && !defaultServer.webhooks.HOLIDAYS) {
     log('ERROR: No webhook configured!', 'ERROR');
     log('Add to .env: WEBHOOK_ANNOUNCEMENTS=your_webhook_url', 'INFO');
     return false;
@@ -1025,3 +1429,4 @@ async function startAgent() {
 }
 
 startAgent();
+

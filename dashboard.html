@@ -710,13 +710,13 @@
 
     .image-mode-btn:hover {
       border-color: rgba(0, 212, 255, 0.5);
-      background: rgba(0, 212, 255, 0.05);
+      background: rgba(255, 255, 255, 0.05);
       transform: translateY(-2px);
     }
 
     .image-mode-btn.active {
       border-color: rgba(0, 212, 255, 0.8);
-      background: rgba(0, 212, 255, 0.1);
+      background: rgba(0, 255, 255, 0.1);
       box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
     }
 
@@ -752,7 +752,7 @@
 
     .upload-area:hover {
       border-color:  rgba(0, 212, 255, 0.6);
-      background: rgba(0, 212, 255, 0.05);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .upload-area.dragover {
@@ -796,7 +796,7 @@
 
     .size-option:hover {
       border-color: rgba(0, 212, 255, 0.5);
-      background: rgba(0, 212, 255, 0.05);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .size-option. active {
@@ -944,6 +944,16 @@
       .image-mode-selector {
         grid-template-columns: repeat(2, 1fr);
       }
+    }
+
+    /* Performance optimizations */
+    .optimized-scroll {
+      will-change: transform;
+      transform: translateZ(0);
+    }
+
+    .optimized-animation {
+      will-change: transform, opacity;
     }
   </style>
 </head>
@@ -1113,6 +1123,7 @@
                   <div>
                     <label class="block mb-3">Roles to Mention</label>
                     <div id="roles-container" class="flex flex-wrap gap-2">
+                      <button type="button" class="deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30" onclick="deselectAllRoles()">Deselect All</button>
                       <!-- Roles will be loaded dynamically -->
                     </div>
                   </div>
@@ -1141,6 +1152,7 @@
 
                     <div class="image-mode-content active" id="url-mode">
                       <input type="url" id="image-url" placeholder="Enter image URL (https://...)" class="mt-4">
+                      <button type="button" class="deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30 mt-2" onclick="clearImageUrl()">Clear URL</button>
                       <div class="discord-rules mt-4">
                         <div class="discord-rules-title">
                           <span>⚠️</span> Discord Image Rules
@@ -1163,6 +1175,7 @@
                       </div>
                       <div class="image-preview-container hidden">
                         <img id="image-preview" class="image-preview" alt="Preview">
+                        <button type="button" class="deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30 mt-2" onclick="clearUpload()">Clear Upload</button>
                       </div>
                     </div>
 
@@ -1249,7 +1262,7 @@
             <div id="logs-tab" class="tab-content hidden">
               <div class="glass rounded-2xl p-6">
                 <h2 class="text-2xl font-bold mb-6 glow">Activity Logs</h2>
-                <div id="logs-container" class="space-y-2 max-h-96 overflow-y-auto">
+                <div id="logs-container" class="space-y-2 max-h-96 overflow-y-auto optimized-scroll">
                   <!-- Logs will be loaded here -->
                 </div>
               </div>
@@ -1263,7 +1276,7 @@
           <h3 class="text-xl font-bold mb-6 glow">Quick Actions</h3>
           
           <div class="space-y-4">
-            <button id="trigger-holiday" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3">
+            <button id="trigger-holiday" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3 optimized-animation">
               <span class="text-2xl">🎉</span>
               <div>
                 <div class="font-bold">Trigger Holiday Check</div>
@@ -1271,7 +1284,7 @@
               </div>
             </button>
 
-            <button id="test-announcement" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3">
+            <button id="test-announcement" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3 optimized-animation">
               <span class="text-2xl">🧪</span>
               <div>
                 <div class="font-bold">Test Announcement</div>
@@ -1279,7 +1292,7 @@
               </div>
             </button>
 
-            <button id="refresh-status" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3">
+            <button id="refresh-status" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3 optimized-animation">
               <span class="text-2xl">🔄</span>
               <div>
                 <div class="font-bold">Refresh Status</div>
@@ -1297,7 +1310,7 @@
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">Timezone:</span>
-                <span id="timezone">Asia/Kolkata</span>
+                <span>Asia/Kolkata</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-400">Version:</span>
@@ -1335,6 +1348,33 @@
     let channels = [];
     let roles = [];
     let announcements = [];
+
+    // Throttle function for performance
+    function throttle(func, limit) {
+      let inThrottle;
+      return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+          func.apply(context, args);
+          inThrottle = true;
+          setTimeout(() => inThrottle = false, limit);
+        }
+      };
+    }
+
+    // Debounce function for performance
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
 
     // ============================================
     // UTILITY FUNCTIONS
@@ -1376,25 +1416,28 @@
     }
 
     function switchTab(tabName) {
-      // Update tab buttons
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.classList.remove('active');
-        tab.classList.add('text-gray-400');
+      // Use requestAnimationFrame for smooth transitions
+      requestAnimationFrame(() => {
+        // Update tab buttons
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+          tab.classList.add('text-gray-400');
+        });
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.remove('text-gray-400');
+        
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.add('hidden');
+        });
+        document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        
+        currentTab = tabName;
+        
+        // Load tab-specific data
+        if (tabName === 'servers') loadServers();
+        if (tabName === 'logs') loadLogs();
       });
-      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('text-gray-400');
-      
-      // Update tab content
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
-      document.getElementById(`${tabName}-tab`).classList.remove('hidden');
-      
-      currentTab = tabName;
-      
-      // Load tab-specific data
-      if (tabName === 'servers') loadServers();
-      if (tabName === 'logs') loadLogs();
     }
 
     // ============================================
@@ -1461,19 +1504,7 @@
 
     function renderRoles() {
       const container = document.getElementById('roles-container');
-      container.innerHTML = '';
-      
-      // Add "everyone" option
-      const everyoneBtn = document.createElement('button');
-      everyoneBtn.type = 'button';
-      everyoneBtn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-        selectedRoles.includes('everyone') 
-          ? 'bg-neon-blue text-black' 
-          : 'glass text-gray-300 hover:bg-neon-blue hover:bg-opacity-20'
-      }`;
-      everyoneBtn.textContent = '@everyone';
-      everyoneBtn.onclick = () => toggleRole('everyone');
-      container.appendChild(everyoneBtn);
+      container.innerHTML = '<button type="button" class="deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30" onclick="deselectAllRoles()">Deselect All</button>';
       
       // Add server roles
       roles.forEach(role => {
@@ -1497,6 +1528,23 @@
         selectedRoles.push(roleId);
       }
       renderRoles();
+    }
+
+    function deselectAllRoles() {
+      selectedRoles = [];
+      renderRoles();
+    }
+
+    function clearImageUrl() {
+      document.getElementById('image-url').value = '';
+      currentImageUrl = '';
+    }
+
+    function clearUpload() {
+      document.getElementById('file-input').value = '';
+      document.getElementById('image-preview').src = '';
+      document.querySelector('.image-preview-container').classList.add('hidden');
+      currentImageUrl = '';
     }
 
     async function loadServers() {
@@ -1583,9 +1631,10 @@
     // EVENT HANDLERS
     // ============================================
 
-    // Tab switching
+    // Tab switching with debounced handler
+    const debouncedSwitchTab = debounce((tabName) => switchTab(tabName), 150);
     document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+      tab.addEventListener('click', () => debouncedSwitchTab(tab.dataset.tab));
     });
 
     // Announcement form submission
@@ -1605,9 +1654,11 @@
       if (selectedImageMode === 'url') {
         data.imageUrl = document.getElementById('image-url').value;
       } else if (selectedImageMode === 'upload') {
-        // Handle file upload
+        // Handle file upload - Discord doesn't support direct upload, so warn
+        showToast('Warning', 'File upload not supported for Discord. Use URL mode instead.', 'warning');
+        return;
       } else if (selectedImageMode === 'generate') {
-        // Generate image first
+        data.imageUrl = currentImageUrl;
       }
       
       try {
@@ -1621,7 +1672,7 @@
         
         if (result.success) {
           showToast('Success', 'Announcement sent successfully!', 'success');
-          // Do not clear form automatically to keep user selections
+          // Keep form selections as requested
         } else {
           showToast('Error', result.error || 'Failed to send announcement', 'error');
         }
@@ -1630,19 +1681,13 @@
       }
     });
 
-    // Clear form button
+    // Clear form button - modified to keep user selections
     document.getElementById('clear-form').addEventListener('click', () => {
       document.getElementById('announcement-form').reset();
-      selectedRoles = [];
-      renderRoles();
-      selectedImageMode = 'url';
-      document.querySelectorAll('.image-mode-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelector('[data-mode="url"]').classList.add('active');
-      document.querySelectorAll('.image-mode-content').forEach(content => content.classList.remove('active'));
-      document.getElementById('url-mode').classList.add('active');
-      currentImageUrl = '';
-      document.getElementById('image-preview').src = '';
-      document.querySelector('.image-preview-container').classList.add('hidden');
+      // Do not reset selectedRoles or image selections
+      // selectedRoles remains as is
+      // currentImageUrl remains as is
+      document.getElementById('use-ai').checked = false;
     });
 
     // Image mode switching
@@ -1741,8 +1786,8 @@
       });
     });
 
-    // Quick action buttons
-    document.getElementById('trigger-holiday').addEventListener('click', async () => {
+    // Quick action buttons with throttled handlers
+    const throttledHolidayTrigger = throttle(async () => {
       try {
         const response = await fetch('/api/trigger/holiday', { method: 'POST' });
         const result = await response.json();
@@ -1756,9 +1801,9 @@
       } catch (error) {
         showToast('Error', 'Failed to trigger holiday check', 'error');
       }
-    });
+    }, 1000);
 
-    document.getElementById('test-announcement').addEventListener('click', async () => {
+    const throttledTestAnnouncement = throttle(async () => {
       try {
         const response = await fetch('/api/test/newyear', { method: 'POST' });
         const result = await response.json();
@@ -1771,14 +1816,18 @@
       } catch (error) {
         showToast('Error', 'Network error occurred', 'error');
       }
-    });
+    }, 1000);
 
-    document.getElementById('refresh-status').addEventListener('click', () => {
+    const throttledRefreshStatus = throttle(() => {
       loadStatus();
       loadChannels();
       loadRoles();
       showToast('Success', 'Status refreshed!', 'success');
-    });
+    }, 1000);
+
+    document.getElementById('trigger-holiday').addEventListener('click', throttledHolidayTrigger);
+    document.getElementById('test-announcement').addEventListener('click', throttledTestAnnouncement);
+    document.getElementById('refresh-status').addEventListener('click', throttledRefreshStatus);
 
     // Add server form
     document.getElementById('add-server-form').addEventListener('submit', async (e) => {
@@ -1816,7 +1865,7 @@
     // INITIALIZATION
     // ============================================
 
-    // Create floating particles
+    // Create floating particles with optimized animation
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
       for (let i = 0; i < 20; i++) {

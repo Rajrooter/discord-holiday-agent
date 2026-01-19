@@ -1151,7 +1151,7 @@
                     </div>
 
                     <div class="image-mode-content active" id="url-mode">
-                      <input type="url" id="image-url" placeholder="Enter image URL (https://...)" class="mt-4">
+                      <input type="url" id="image-url" placeholder="Enter image or GIF URL (https://...)" class="mt-4">
                       <button type="button" class="deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30 mt-2" onclick="clearImageUrl()">Clear URL</button>
                       <div class="discord-rules mt-4">
                         <div class="discord-rules-title">
@@ -1161,7 +1161,7 @@
                           <li>Only public HTTPS URLs are supported</li>
                           <li>Images must be under 8MB</li>
                           <li>Supported formats: PNG, JPG, GIF, WebP</li>
-                          <li>Base64 encoded images are not allowed</li>
+                          <li>GIFs are supported in embeds</li>
                         </ul>
                       </div>
                     </div>
@@ -1196,10 +1196,17 @@
                     </div>
 
                     <div class="image-mode-content" id="gif-mode">
-                      <div class="text-center py-8 text-gray-400">
-                        <div class="text-4xl mb-4">🎬</div>
-                        <div class="text-lg font-bold mb-2">GIF Support Coming Soon</div>
-                        <div class="text-sm">This feature is under development</div>
+                      <input type="url" id="gif-url" placeholder="Enter GIF URL (https://...)" class="mt-4">
+                      <button type="button" class="deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30 mt-2" onclick="clearGifUrl()">Clear GIF</button>
+                      <div class="discord-rules mt-4">
+                        <div class="discord-rules-title">
+                          <span>⚠️</span> Discord GIF Rules
+                        </div>
+                        <ul class="discord-rules-list">
+                          <li>Only public HTTPS URLs are supported</li>
+                          <li>GIFs must be under 8MB</li>
+                          <li>Animated GIFs work in embeds</li>
+                        </ul>
                       </div>
                     </div>
                   </div>
@@ -1547,6 +1554,11 @@
       currentImageUrl = '';
     }
 
+    function clearGifUrl() {
+      document.getElementById('gif-url').value = '';
+      currentImageUrl = '';
+    }
+
     async function loadServers() {
       try {
         const response = await fetch('/api/servers');
@@ -1641,31 +1653,31 @@
     document.getElementById('announcement-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const formData = new FormData(e.target);
-      const data = {
-        title: formData.get('announcement-title'),
-        message: formData.get('announcement-message'),
-        roles: selectedRoles,
-        webhookChannel: formData.get('webhook-channel'),
-        useAI: document.getElementById('use-ai').checked
-      };
+      const formData = new FormData();
+      formData.append('title', document.getElementById('announcement-title').value);
+      formData.append('message', document.getElementById('announcement-message').value);
+      formData.append('roles', JSON.stringify(selectedRoles));
+      formData.append('webhookChannel', document.getElementById('webhook-channel').value);
+      formData.append('useAI', document.getElementById('use-ai').checked);
       
       // Add image based on selected mode
       if (selectedImageMode === 'url') {
-        data.imageUrl = document.getElementById('image-url').value;
+        formData.append('imageUrl', document.getElementById('image-url').value);
       } else if (selectedImageMode === 'upload') {
-        // Handle file upload - Discord doesn't support direct upload, so warn
-        showToast('Warning', 'File upload not supported for Discord. Use URL mode instead.', 'warning');
-        return;
+        const fileInput = document.getElementById('file-input');
+        if (fileInput.files[0]) {
+          formData.append('imageFile', fileInput.files[0]);
+        }
       } else if (selectedImageMode === 'generate') {
-        data.imageUrl = currentImageUrl;
+        formData.append('imageUrl', currentImageUrl);
+      } else if (selectedImageMode === 'gif') {
+        formData.append('imageUrl', document.getElementById('gif-url').value);
       }
       
       try {
         const response = await fetch('/api/announcement/send', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+          body: formData
         });
         
         const result = await response.json();
@@ -1713,8 +1725,7 @@
         reader.onload = (e) => {
           document.getElementById('image-preview').src = e.target.result;
           document.querySelector('.image-preview-container').classList.remove('hidden');
-          currentImageUrl = e.target.result; // This will be base64, but Discord doesn't support it
-          showToast('Warning', 'File uploaded but Discord requires HTTPS URLs. Use URL mode for best results.', 'warning');
+          // Note: File will be uploaded to imgbb on form submission
         };
         reader.readAsDataURL(file);
       }

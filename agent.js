@@ -360,7 +360,7 @@ function todayDateString() {
 // Function to upload image to imgbb
 async function uploadToImgbb(imageBuffer, filename) {
   if (!CONFIG.IMGBB_API_KEY || CONFIG.IMGBB_API_KEY === 'your_imgbb_key_here') {
-    throw new Error('Imgbb API key not configured');
+    throw new Error('Imgbb API key not configured. Please add IMGBB_API_KEY to your .env file.');
   }
 
   const form = new FormData();
@@ -376,7 +376,7 @@ async function uploadToImgbb(imageBuffer, filename) {
     if (response.data?.success) {
       return response.data.data.url;
     } else {
-      throw new Error('Imgbb upload failed');
+      throw new Error('Imgbb upload failed: ' + (response.data?.error?.message || 'Unknown error'));
     }
   } catch (error) {
     log(`Imgbb upload failed: ${error.message}`, 'ERROR');
@@ -391,6 +391,7 @@ async function validateImageUrl(url) {
     const contentType = response.headers['content-type'];
     return response.status === 200 && contentType && contentType.startsWith('image/');
   } catch (error) {
+    log(`Image URL validation failed for ${url}: ${error.message}`, 'WARNING');
     return false;
   }
 }
@@ -504,6 +505,10 @@ Return ONLY the enhanced message. `;
 // ============================================
 
 async function postWebhookWithRetry(webhookUrl, payload) {
+  if (!webhookUrl || webhookUrl.trim() === '') {
+    log('Webhook URL is empty or not configured', 'ERROR');
+    return false;
+  }
   let attempt = 0;
   while (attempt < CONFIG.RETRY_ATTEMPTS) {
     try {
@@ -512,7 +517,9 @@ async function postWebhookWithRetry(webhookUrl, payload) {
     } catch (err) {
       attempt++;
       log(`Webhook post attempt ${attempt} failed: ${err.message}`, 'WARNING');
-      await new Promise((r) => setTimeout(r, 500 * Math.pow(2, attempt)));
+      if (attempt < CONFIG.RETRY_ATTEMPTS) {
+        await new Promise((r) => setTimeout(r, 500 * Math.pow(2, attempt)));
+      }
     }
   }
   return false;
@@ -565,25 +572,42 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl, r
 
 async function sendCustomAnnouncement(data) {
   try {
-    const { title, message, roles, imageUrl, imageFile, webhookChannel, useAI, serverInfo } = data;
+    const { title, message, roles, imageUrl, imageFile, webhookChannel, useAI } = data;
+    
+    // Parse roles from JSON string
+    let parsedRoles = [];
+    if (roles) {
+      try {
+        parsedRoles = JSON.parse(roles);
+      } catch (e) {
+        log(`Failed to parse roles JSON: ${e.message}`, 'ERROR');
+        parsedRoles = [];
+      }
+    }
+    
     const channelKey = webhookChannel || 'ANNOUNCEMENTS';
     
     // Get server-specific webhook or fallback to default
     let webhookUrl;
-    if (serverInfo && serverInfo.webhooks && serverInfo.webhooks[channelKey]) {
-      webhookUrl = serverInfo.webhooks[channelKey];
+    if (data.serverInfo && data.serverInfo.webhooks && data.serverInfo.webhooks[channelKey]) {
+      webhookUrl = data.serverInfo.webhooks[channelKey];
     } else {
       webhookUrl = CONFIG.SERVERS.default.webhooks[channelKey] || CONFIG.SERVERS.default.webhooks.ANNOUNCEMENTS || CONFIG.SERVERS.default.webhooks.HOLIDAYS;
     }
     
-    if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
+    if (!webhookUrl) {
+      log('No webhook URL configured for channel: ' + channelKey, 'ERROR');
+      return { success: false, error: 'Webhook not configured for this channel' };
+    }
 
     let finalMessage = message;
-    if (useAI) finalMessage = await enhanceCustomMessage(message);
+    if (useAI === 'true') {
+      finalMessage = await enhanceCustomMessage(message);
+    }
 
     const roleMentions =
-      roles && roles.length > 0
-        ? roles
+      parsedRoles && parsedRoles.length > 0
+        ? parsedRoles
             .map((roleId) => {
               if (roleId === 'everyone') return '@everyone';
               if (ROLES[roleId]) return ROLES[roleId];
@@ -593,8 +617,8 @@ async function sendCustomAnnouncement(data) {
         : null;
 
     // Use server-specific branding if available
-    const serverName = serverInfo ? serverInfo.name : 'Digital Labour';
-    const serverIconUrl = serverInfo ? serverInfo.iconUrl : 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png';
+    const serverName = data.serverInfo ? data.serverInfo.name : 'Digital Labour';
+    const serverIconUrl = data.serverInfo ? data.serverInfo.iconUrl : 'https://i.ibb.co/H5pcw68/Chat-GPT-Image-Dec-27-2025-01-47-14-AM.png';
 
     const embed = {
       title: title || '📢 Alert — Important Update',
@@ -615,15 +639,16 @@ async function sendCustomAnnouncement(data) {
         embed.image = { url: uploadedUrl };
         log('Image uploaded to imgbb successfully', 'SUCCESS');
       } catch (error) {
-        return { success: false, error: 'Failed to upload image' };
+        log(`Imgbb upload failed: ${error.message}`, 'ERROR');
+        return { success: false, error: 'Failed to upload image to hosting service. Please check IMGBB_API_KEY in .env or use a direct URL.' };
       }
-    } else if (imageUrl) {
+    } else if (imageUrl && imageUrl.trim()) {
       // Validate image URL
-      const isValid = await validateImageUrl(imageUrl);
+      const isValid = await validateImageUrl(imageUrl.trim());
       if (!isValid) {
-        return { success: false, error: 'Invalid or inaccessible image URL' };
+        return { success: false, error: 'Invalid or inaccessible image URL. Please ensure it\'s a direct link to an image.' };
       }
-      embed.image = { url: imageUrl };
+      embed.image = { url: imageUrl.trim() };
     }
     
     const payload = {
@@ -633,10 +658,11 @@ async function sendCustomAnnouncement(data) {
       embeds: [embed]
     };
     
+    log(`Sending to webhook: ${webhookUrl}`, 'INFO');
     const ok = await postWebhookWithRetry(webhookUrl, payload);
     if (!ok) {
       log('Custom announcement failed after retries', 'ERROR');
-      return { success: false, error: 'Webhook failed after retries' };
+      return { success: false, error: 'Failed to send to Discord webhook. Please check webhook URL configuration.' };
     }
     log('Custom announcement sent!', 'SUCCESS');
     botStatus.totalCustomAnnouncements++;
@@ -836,12 +862,14 @@ async function getTodaysHoliday() {
 
 const app = express();
 app.use(cors());
-app.use(express.json());
 app.use(express.static('public'));
 
-// Multer for file uploads
+// Add multer for file uploads
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
+
+// Routes that need JSON parsing
+app.use('/api', express.json({ type: 'application/json' }));
 
 app.get('/api/status', (req, res) => {
   res.json({
@@ -900,7 +928,8 @@ app.post('/api/announcement/send', upload.single('imageFile'), async (req, res) 
     const result = await sendCustomAnnouncement(data);
     res.json(result);
   } catch (error) {
-    res.json({ success: false, error: error.message });
+    log(`Announcement send error: ${error.message}`, 'ERROR');
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 

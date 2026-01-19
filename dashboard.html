@@ -393,7 +393,7 @@
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
       backdrop-filter: blur(10px) !important;
       position: relative !important;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d4ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300d4ff' stroke-width='2' stroke-linecap='round' [...]
       background-repeat: no-repeat !important;
       background-position: right 16px center !important;
       background-size: 20px !important;
@@ -999,2466 +999,852 @@
             </p>
           </div>
         </div>
-        
-        <div class="flex flex-col gap-3">
-          <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
-            <div class="w-3 h-3 bg-green-400 rounded-full status-dot"></div>
-            <span class="text-green-400 font-bold text-sm" id="status-text">ACTIVE</span>
+        <div class="flex items-center gap-4">
+          <div id="bot-status" class="glass px-4 py-2 rounded-xl flex items-center gap-3">
+            <div class="w-2 h-2 bg-gray-400 rounded-full status-dot"></div>
+            <span class="text-sm font-medium">Bot Status</span>
           </div>
-          <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
-            <span class="text-sm">🌍</span>
-            <span class="text-gray-300 font-semibold text-sm" id="timezone-text">Loading... </span>
-          </div>
-          <div class="glass px-5 py-3 rounded-full flex items-center gap-3">
-            <span class="text-sm">⏰</span>
-            <span class="text-gray-300 font-semibold text-sm" id="uptime-text">Starting...</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-8 pt-6 border-t border-white/10">
-        <div class="flex items-center justify-between mb-3">
-          <div class="flex items-center gap-2">
-            <span class="text-2xl">⏳</span>
-            <span class="text-gray-300 font-semibold">Next midnight check in</span>
-          </div>
-          <span class="font-mono font-bold text-xl glow" id="countdown-text">--:--:--</span>
-        </div>
-        <div class="h-3 bg-white/5 rounded-full overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-neon-blue to-neon-purple rounded-full transition-all duration-1000" id="progress-bar" style="width: 0%"></div>
         </div>
       </div>
     </header>
 
-    <nav class="glass rounded-2xl p-2 mb-8 flex flex-wrap gap-2 fade-in" role="tablist" style="animation-delay: 0.1s">
-      <button 
-        class="tab active flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
-        role="tab"
-        aria-label="Dashboard overview"
-        onclick="switchTab('overview')"
-      >
-        📊 Overview
-      </button>
-      <button 
-        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
-        role="tab"
-        aria-label="Server management"
-        onclick="switchTab('servers')"
-      >
-        🌐 Servers
-      </button>
-      <button 
-        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
-        role="tab"
-        aria-label="Holiday management"
-        onclick="switchTab('holidays')"
-      >
-        🎉 Holidays
-      </button>
-      <button 
-        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
-        role="tab"
-        aria-label="Custom announcements"
-        onclick="switchTab('custom')"
-      >
-        📢 Custom
-      </button>
-      <button 
-        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
-        role="tab"
-        aria-label="Scheduled items"
-        onclick="switchTab('scheduled')"
-      >
-        📅 Scheduled
-      </button>
-      <button 
-        class="tab flex-1 min-w-[140px] px-6 py-4 rounded-xl font-bold text-base hover:bg-white/5 transition-all focus:outline-none"
-        role="tab"
-        aria-label="Activity logs"
-        onclick="switchTab('logs')"
-      >
-        📋 Logs
-      </button>
-    </nav>
-        <div>
-      <div id="overview-panel" class="panel">
-        <div class="grid grid-cols-1 md: grid-cols-3 gap-6 mb-8">
-          <div class="card glass-strong rounded-2xl p-8 scale-in">
-            <div class="flex items-center justify-between mb-6">
-              <span class="text-6xl bounce">🎊</span>
-              <div class="badge">
-                <span class="w-2 h-2 bg-neon-blue rounded-full pulse"></span>
-                Active
-              </div>
-            </div>
-            <div class="text-6xl font-black glow mb-3" id="holiday-count">0</div>
-            <h3 class="text-lg font-bold text-gray-300">Holiday Announcements</h3>
-            <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
-          </div>
-
-          <div class="card glass-strong rounded-2xl p-8 scale-in" style="animation-delay: 0.1s">
-            <div class="flex items-center justify-between mb-6">
-              <span class="text-6xl bounce" style="animation-delay: 0.2s">📢</span>
-              <div class="badge" style="background: rgba(181, 55, 255, 0.15); border-color: rgba(181, 55, 255, 0.3)">
-                <span class="w-2 h-2 bg-neon-purple rounded-full pulse"></span>
-                Ready
-              </div>
-            </div>
-            <div class="text-6xl font-black glow-purple mb-3" id="custom-count">0</div>
-            <h3 class="text-lg font-bold text-gray-300">Custom Announcements</h3>
-            <p class="text-sm text-gray-400 mt-1">Total sent successfully</p>
-          </div>
-
-          <div class="card glass-strong rounded-2xl p-8 scale-in" style="animation-delay: 0.2s">
-            <div class="flex items-center justify-between mb-6">
-              <span class="text-6xl bounce" style="animation-delay: 0.4s">⏰</span>
-              <div class="badge" style="background: rgba(255, 61, 154, 0.15); border-color: rgba(255, 61, 154, 0.3)">
-                <span class="w-2 h-2 bg-neon-pink rounded-full pulse"></span>
-                Queue
-              </div>
-            </div>
-            <div class="text-6xl font-black glow-pink mb-3" id="scheduled-count">0</div>
-            <h3 class="text-lg font-bold text-gray-300">Scheduled Items</h3>
-            <p class="text-sm text-gray-400 mt-1">Pending in queue</p>
-          </div>
-        </div>
-
-        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay: 0.25s">
-          <h2 class="text-2xl font-black glow mb-8 text-center">System Pipelines</h2>
-          
-          <div class="glass p-8 rounded-xl mb-6 relative overflow-hidden">
-            <div class="pipeline-bg"></div>
-            <div class="flex items-center gap-3 mb-6">
-              <span class="text-3xl">🎉</span>
-              <span class="text-xl font-bold glow">Automated Holiday Announcement Flow</span>
-            </div>
-            <div class="pipeline">
-              <div class="pipeline-step">
-                <div class="pipeline-box">
-                  <div class="pipeline-icon">⏰</div>
-                  <div class="pipeline-label">Midnight<br>Trigger</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection">
-                <div class="energy-wave"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box">
-                  <div class="pipeline-icon">🔍</div>
-                  <div class="pipeline-label">Fetch<br>Holidays</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection">
-                <div class="energy-wave" style="animation-delay: 0.5s;"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box">
-                  <div class="pipeline-icon">🤖</div>
-                  <div class="pipeline-label">Gemini<br>AI</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection">
-                <div class="energy-wave" style="animation-delay:  1s;"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box">
-                  <div class="pipeline-icon">📡</div>
-                  <div class="pipeline-label">Webhook<br>API</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection">
-                <div class="energy-wave" style="animation-delay: 1.5s;"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box">
-                  <div class="pipeline-icon">✅</div>
-                  <div class="pipeline-label">Discord<br>Sent</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="glass p-8 rounded-xl relative overflow-hidden">
-            <div class="pipeline-bg"></div>
-            <div class="flex items-center gap-3 mb-6">
-              <span class="text-3xl">📢</span>
-              <span class="text-xl font-bold glow-purple">Custom Announcement Flow</span>
-            </div>
-            <div class="pipeline">
-              <div class="pipeline-step">
-                <div class="pipeline-box purple">
-                  <div class="pipeline-icon">✍️</div>
-                  <div class="pipeline-label">User<br>Input</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection purple">
-                <div class="energy-wave"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box purple">
-                  <div class="pipeline-icon">📝</div>
-                  <div class="pipeline-label">API<br>Called</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection purple">
-                <div class="energy-wave" style="animation-delay: 0.5s;"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box purple">
-                  <div class="pipeline-icon">🤖</div>
-                  <div class="pipeline-label">AI Enhance<br>(Optional)</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection purple">
-                <div class="energy-wave" style="animation-delay: 1s;"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box purple">
-                  <div class="pipeline-icon">📡</div>
-                  <div class="pipeline-label">Webhook<br>API</div>
-                </div>
-              </div>
-              
-              <div class="pipeline-connection purple">
-                <div class="energy-wave" style="animation-delay: 1.5s;"></div>
-              </div>
-              
-              <div class="pipeline-step">
-                <div class="pipeline-box purple">
-                  <div class="pipeline-icon">✅</div>
-                  <div class="pipeline-label">Discord<br>Sent</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="glass-strong rounded-2xl p-8 mb-8 fade-in" style="animation-delay: 0.3s">
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-              <span class="text-4xl bounce">📅</span>
-              <h2 class="text-2xl font-black">Today's Holiday</h2>
-            </div>
-            <button 
-              class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10"
-              onclick="loadTodayHoliday()"
-              aria-label="Refresh today's holiday"
-            >
-              🔄 Refresh
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+      <div class="lg:col-span-3">
+        <div class="tabs glass-strong rounded-3xl p-6 mb-8">
+          <div class="flex gap-8 mb-6 overflow-x-auto">
+            <button class="tab active text-lg font-bold text-white whitespace-nowrap" data-tab="overview">
+              Overview
+            </button>
+            <button class="tab text-lg font-bold text-gray-400 hover:text-white whitespace-nowrap" data-tab="announcements">
+              Announcements
+            </button>
+            <button class="tab text-lg font-bold text-gray-400 hover:text-white whitespace-nowrap" data-tab="servers">
+              Multi-Server
+            </button>
+            <button class="tab text-lg font-bold text-gray-400 hover:text-white whitespace-nowrap" data-tab="logs">
+              Activity Logs
             </button>
           </div>
-          <div id="today-holiday">
-            <div class="skeleton h-32 w-full rounded-xl"></div>
-          </div>
-        </div>
 
-        <div class="glass-strong rounded-2xl p-8 fade-in" style="animation-delay: 0.4s">
-          <div class="flex items-center justify-between mb-6">
-            <div class="flex items-center gap-3">
-              <span class="text-4xl">🔮</span>
-              <h2 class="text-2xl font-black">Upcoming Holidays</h2>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="badge">Next 30 days</span>
-              <button 
-                class="btn glass px-5 py-2 rounded-xl font-semibold text-sm hover:bg-white/10"
-                onclick="loadUpcomingHolidays()"
-                aria-label="Refresh upcoming holidays"
-              >
-                🔄 Refresh
-              </button>
-            </div>
-          </div>
-          <div id="upcoming-holidays" class="space-y-4 max-h-[600px] overflow-y-auto pr-2">
-            <div class="skeleton h-24 w-full rounded-xl mb-4"></div>
-            <div class="skeleton h-24 w-full rounded-xl mb-4"></div>
-            <div class="skeleton h-24 w-full rounded-xl"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="servers-panel" class="panel hidden">
-        <div class="glass-strong rounded-2xl p-8">
-          <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-4">
-              <span class="text-6xl">🌐</span>
-              <div>
-                <h2 class="text-3xl font-black glow mb-2">Multi-Server Management</h2>
-                <p class="text-gray-400">Add and manage Discord servers for holiday automation</p>
-              </div>
-            </div>
-            <div class="flex gap-3">
-              <button 
-                onclick="refreshServers()" 
-                class="btn bg-neon-blue/20 hover:bg-neon-blue/30 text-neon-blue px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 flex items-center gap-2"
-              >
-                🔄 Refresh
-              </button>
-              <button 
-                onclick="showAddServerModal()" 
-                class="btn bg-gradient-to-r from-neon-blue to-neon-purple text-white px-6 py-3 rounded-xl font-bold transition-all hover:scale-105 flex items-center gap-2"
-              >
-                ➕ Add Server
-              </button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8" id="servers-grid">
-            <!-- Server cards will be dynamically inserted here -->
-            <div class="skeleton h-64 w-full rounded-2xl"></div>
-            <div class="skeleton h-64 w-full rounded-2xl"></div>
-            <div class="skeleton h-64 w-full rounded-2xl"></div>
-          </div>
-
-          <div class="glass p-8 rounded-xl">
-            <h3 class="font-bold text-xl mb-6 flex items-center gap-2">
-              <span class="text-2xl">📋</span>
-              Server Statistics
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div class="text-center">
-                <div class="text-4xl font-black glow mb-2" id="total-servers">0</div>
-                <p class="text-gray-400">Total Servers</p>
-              </div>
-              <div class="text-center">
-                <div class="text-4xl font-black glow-purple mb-2" id="active-servers">0</div>
-                <p class="text-gray-400">Active Servers</p>
-              </div>
-              <div class="text-center">
-                <div class="text-4xl font-black glow-pink mb-2" id="total-webhooks">0</div>
-                <p class="text-gray-400">Total Webhooks</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div id="holidays-panel" class="panel hidden">
-        <div class="glass-strong rounded-2xl p-8">
-          <div class="flex items-center gap-4 mb-8">
-            <span class="text-6xl">🎉</span>
-            <div>
-              <h2 class="text-3xl font-black glow mb-2">Holiday Automation</h2>
-              <p class="text-gray-400">Manage and test holiday announcements</p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 md: grid-cols-2 gap-6 mb-8">
-            <div class="glass p-6 rounded-xl">
-              <div class="flex items-center gap-3 mb-4">
-                <span class="text-3xl">⏰</span>
-                <div>
-                  <h3 class="font-bold text-lg">Next Check</h3>
-                  <p class="text-sm text-gray-400">Automated midnight scan</p>
-                </div>
-              </div>
-              <p class="font-mono text-neon-blue font-bold" id="next-check-time">Daily at 00:00 IST</p>
-            </div>
-
-            <div class="glass p-6 rounded-xl">
-              <div class="flex items-center gap-3 mb-4">
-                <span class="text-3xl">✅</span>
-                <div>
-                  <h3 class="font-bold text-lg">Last Run</h3>
-                  <p class="text-sm text-gray-400">Most recent check</p>
-                </div>
-              </div>
-              <p class="font-mono text-neon-purple font-bold" id="last-run-date">—</p>
-            </div>
-          </div>
-
-          <div class="glass p-8 rounded-xl mb-8">
-            <h3 class="font-bold text-xl mb-6 flex items-center gap-2">
-              <span class="text-2xl">🎮</span> Quick Actions
-            </h3>
-            
-            <!-- ROLE SELECTOR FOR HOLIDAYS -->
-            <div class="mb-6">
-              <label for="holiday-roles">
-                <span class="flex items-center gap-2">
-                  <span>👥 Mention Roles</span>
-                  <span class="text-xs text-gray-400">(for holiday announcements)</span>
-                </span>
-              </label>
-              <select id="holiday-roles" multiple class="h-32">
-                <option value="everyone" selected>@everyone</option>
-              </select>
-              <p class="text-xs text-gray-400 mt-2">
-                💡 Hold Ctrl (Windows) or Cmd (Mac) to select multiple roles
-              </p>
-            </div>
-            <!-- END ROLE SELECTOR -->
-            
-            <div class="flex flex-wrap gap-4">
-              <button 
-                id="trigger-btn"
-                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105"
-                onclick="triggerHolidayCheck(this)"
-                aria-label="Trigger holiday check"
-              >
-                <span class="text-2xl">🚀</span>
-                Trigger Check Now
-              </button>
-              <button 
-                id="test-btn"
-                class="btn glass-strong px-8 py-4 rounded-xl font-bold text-base flex items-center gap-3 hover:scale-105"
-                onclick="testNewYear(this)"
-                aria-label="Test New Year announcement"
-              >
-                <span class="text-2xl">🎆</span>
-                Test New Year
-              </button>
-            </div>
-          </div>
-
-          <div class="glass p-8 rounded-xl bg-gradient-to-br from-neon-blue/5 to-neon-purple/5">
-            <h3 class="font-bold text-xl mb-4 flex items-center gap-2">
-              <span class="text-2xl">💡</span> How It Works
-            </h3>
-            <div class="space-y-3 text-gray-300">
-              <div class="flex items-start gap-3">
-                <span class="text-neon-blue text-xl mt-1">→</span>
-                <p>Checks for holidays automatically at midnight (00:00) in your timezone</p>
-              </div>
-              <div class="flex items-start gap-3">
-                <span class="text-neon-blue text-xl mt-1">→</span>
-                <p>Uses triple redundancy (cron + minute-guard + external trigger) for 100% reliability</p>
-              </div>
-              <div class="flex items-start gap-3">
-                <span class="text-neon-blue text-xl mt-1">→</span>
-                <p>Generates AI-powered messages via Google Gemini with smart fallback templates</p>
-              </div>
-              <div class="flex items-start gap-3">
-                <span class="text-neon-blue text-xl mt-1">→</span>
-                <p>State persistence ensures no checks are ever missed</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-            <div id="custom-panel" class="panel hidden">
-        <div class="glass-strong rounded-2xl p-8">
-          <div class="flex items-center gap-4 mb-8">
-            <span class="text-6xl">📢</span>
-            <div>
-              <h2 class="text-3xl font-black glow mb-2">Custom Announcements</h2>
-              <p class="text-gray-400">Send custom messages to your Discord server</p>
-            </div>
-          </div>
-
-          <form id="custom-form" class="space-y-6">
-            <div>
-              <label for="custom-title">Announcement Title</label>
-              <input 
-                type="text" 
-                id="custom-title" 
-                placeholder="e.g., Important Update" 
-                required
-              />
-            </div>
-
-            <div>
-              <label for="custom-message">Message</label>
-              <textarea 
-                id="custom-message" 
-                rows="6" 
-                placeholder="Enter your announcement message here..."
-                required
-              ></textarea>
-            </div>
-
-            <div>
-              <label for="custom-server">
-                <span class="flex items-center gap-2">
-                  Discord Server
-                  <span id="server-loading" class="text-xs px-3 py-1 rounded-full hidden">
-                    <span class="w-2 h-2 rounded-full inline-block mr-1 bg-yellow-400"></span>
-                    <span>Loading...</span>
-                  </span>
-                </span>
-              </label>
-              
-              <div class="relative">
-                <select id="custom-server" required onchange="loadServerChannels(this.value)">
-                  <option value="" disabled selected>🔄 Loading servers...</option>
-                </select>
-                
-                <div id="server-spinner" class="absolute right-3 top-1/2 -translate-y-1/2 hidden">
-                  <div class="spinner" style="width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label for="custom-webhook">
-                <span class="flex items-center gap-2">
-                  Discord Channel
-                  <span id="bot-status" class="text-xs px-3 py-1 rounded-full hidden">
-                    <span class="w-2 h-2 rounded-full inline-block mr-1"></span>
-                    <span id="bot-status-text">Connecting...</span>
-                  </span>
-                </span>
-              </label>
-              
-              <div class="relative">
-                <select id="custom-webhook" required onchange="updateChannelPreview(this.value)" disabled>
-                  <option value="" disabled selected>📡 Please select a server first</option>
-                </select>
-                
-                <div id="channel-loading" class="absolute right-3 top-1/2 -translate-y-1/2 hidden">
-                  <div class="spinner" style="width: 20px; height: 20px;"></div>
-                </div>
-              </div>
-              
-              <div id="channel-preview" class="hidden mt-4 p-5 glass rounded-xl border border-neon-blue/30">
-                <div class="flex items-start gap-4">
-                  <div class="text-5xl">
-                    <span id="preview-emoji">📢</span>
+          <div id="tab-content">
+            <!-- Overview Tab -->
+            <div id="overview-tab" class="tab-content active">
+              <div class="pipeline">
+                <div class="pipeline-step">
+                  <div class="pipeline-box active">
+                    <div class="pipeline-icon">🎯</div>
+                    <div class="pipeline-label">Holiday Check</div>
                   </div>
-                  <div class="flex-1">
-                    <div class="flex items-center gap-2 mb-2">
-                      <span class="text-xs px-2 py-1 rounded bg-neon-blue/20 text-neon-blue font-mono" id="preview-type">TEXT</span>
-                      <span class="text-xs text-gray-500" id="preview-category"></span>
-                    </div>
-                    <div class="font-bold text-xl mb-2" id="preview-name">#announcements</div>
-                    <div class="text-sm text-gray-400 mb-3" id="preview-description">Select a channel to send announcements</div>
-                    <div class="flex items-center gap-4 text-xs">
-                      <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 bg-green-400 rounded-full pulse"></div>
-                        <span class="text-green-400 font-semibold">Bot Connected</span>
-                      </div>
-                      <div class="flex items-center gap-2 text-gray-400">
-                        <span>🔗</span>
-                        <span id="preview-webhook-status">Using configured webhook</span>
-                      </div>
-                    </div>
+                </div>
+                <div class="pipeline-connection"></div>
+                <div class="pipeline-step">
+                  <div class="pipeline-box">
+                    <div class="pipeline-icon">🤖</div>
+                    <div class="pipeline-label">AI Generation</div>
+                  </div>
+                </div>
+                <div class="pipeline-connection purple"></div>
+                <div class="pipeline-step">
+                  <div class="pipeline-box purple">
+                    <div class="pipeline-icon">📡</div>
+                    <div class="pipeline-label">Discord Webhook</div>
                   </div>
                 </div>
               </div>
-              
-              <div class="mt-4 p-4 glass rounded-xl border border-neon-purple/20">
-                <div class="flex items-center justify-between">
-                  <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-2xl" id="server-icon">
-                      🎮
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                <div class="card glass rounded-2xl p-6">
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold">Today's Holiday</h3>
+                    <span class="text-2xl">📅</span>
+                  </div>
+                  <div id="today-holiday" class="text-3xl font-black text-white mb-2">--</div>
+                  <p class="text-gray-400 text-sm">Current status</p>
+                </div>
+
+                <div class="card glass rounded-2xl p-6">
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold">Total Announcements</h3>
+                    <span class="text-2xl">📢</span>
+                  </div>
+                  <div id="total-announcements" class="text-3xl font-black text-white mb-2">--</div>
+                  <p class="text-gray-400 text-sm">Holiday messages sent</p>
+                </div>
+
+                <div class="card glass rounded-2xl p-6">
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold">Next Check</h3>
+                    <span class="text-2xl">⏰</span>
+                  </div>
+                  <div id="next-check" class="text-xl font-bold text-white mb-2">--</div>
+                  <p class="text-gray-400 text-sm">Scheduled midnight check</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Announcements Tab -->
+            <div id="announcements-tab" class="tab-content hidden">
+              <div class="glass rounded-2xl p-6">
+                <h2 class="text-2xl font-bold mb-6 glow">Send Custom Announcement</h2>
+                
+                <form id="announcement-form" class="space-y-6">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label for="announcement-title">Title</label>
+                      <input type="text" id="announcement-title" placeholder="Enter announcement title" required>
                     </div>
                     <div>
-                      <div class="text-xs text-gray-400">Connected Server</div>
-                      <div class="font-bold text-base" id="server-name">Loading...</div>
+                      <label for="webhook-channel">Channel</label>
+                      <select id="webhook-channel" required>
+                        <option value="">Select channel</option>
+                        <option value="ANNOUNCEMENTS">Announcements</option>
+                        <option value="GENERAL">General</option>
+                        <option value="UPDATES">Updates</option>
+                        <option value="HOLIDAYS">Holidays</option>
+                      </select>
                     </div>
                   </div>
-                  <div class="text-right">
-                    <div class="text-xs text-gray-400">Available Channels</div>
-                    <div class="font-bold text-2xl text-neon-blue" id="channel-count">0</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div id="channel-error" class="hidden mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-                <div class="flex items-start gap-3">
-                  <span class="text-2xl">⚠️</span>
-                  <div class="flex-1">
-                    <div class="font-bold text-red-400 mb-1">Failed to Connect Bot</div>
-                    <div class="text-sm text-gray-300" id="error-message">Could not fetch channels</div>
-                    <div class="text-xs text-gray-400 mt-2">Using fallback channel list</div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <!-- ROLE SELECTOR FOR CUSTOM ANNOUNCEMENTS -->
-            <div>
-              <label for="custom-roles">
-                <span class="flex items-center gap-2">
-                  <span>👥 Mention Roles</span>
-                  <span class="text-xs text-gray-400">(optional)</span>
-                </span>
-              </label>
-              <select id="custom-roles" multiple class="h-32">
-                <option value="everyone">@everyone</option>
-              </select>
-              <p class="text-xs text-gray-400 mt-2">
-                💡 Hold Ctrl/Cmd to select multiple roles.  Leave unselected to mention no one.
-              </p>
-            </div>
-            <!-- END ROLE SELECTOR -->
+                  <div>
+                    <label for="announcement-message">Message</label>
+                    <textarea id="announcement-message" rows="4" placeholder="Enter your announcement message..." required></textarea>
+                  </div>
 
-            <div>
-              <label>Image Options (Optional)</label>
-              <div class="image-options">
-                <div class="image-mode-selector">
-                  <div class="image-mode-btn active" data-mode="url" onclick="switchImageMode('url')">
-                    <div class="icon">🔗</div>
-                    <div class="label">URL</div>
-                  </div>
-                  <div class="image-mode-btn" data-mode="upload" onclick="switchImageMode('upload')">
-                    <div class="icon">📁</div>
-                    <div class="label">Upload</div>
-                  </div>
-                  <div class="image-mode-btn" data-mode="ai-auto" onclick="switchImageMode('ai-auto')">
-                    <div class="icon">🤖</div>
-                    <div class="label">AI Auto</div>
-                  </div>
-                  <div class="image-mode-btn" data-mode="ai-prompt" onclick="switchImageMode('ai-prompt')">
-                    <div class="icon">✨</div>
-                    <div class="label">AI Custom</div>
-                  </div>
-                </div>
-
-                <div id="mode-url" class="image-mode-content active">
-                  <input 
-                    type="url" 
-                    id="image-url-input"
-                    placeholder="https://example.com/image.png"
-                    class="w-full"
-                  />
-                </div>
-
-                <div id="mode-upload" class="image-mode-content">
-                  <div class="upload-area" id="upload-area" onclick="document.getElementById('file-upload').click()">
-                    <div class="text-5xl mb-4">📤</div>
-                    <p class="text-lg font-semibold mb-2">Drop image here or click to browse</p>
-                    <p class="text-sm text-gray-400">Supports:  JPG, PNG, WebP (Max 10MB)</p>
-                  </div>
-                  <input type="file" id="file-upload" accept="image/*" onchange="handleFileUpload(event)" />
-                  <div id="upload-info" class="file-info hidden"></div>
-                </div>
-
-                <div id="mode-ai-auto" class="image-mode-content">
-                  <p class="text-sm text-gray-400 mb-4">
-                    AI will automatically analyze your announcement and generate a relevant image
-                  </p>
-                  <div class="size-selector">
-                    <div class="size-option active" data-size="1024x1024" onclick="selectSize(this, '1024x1024')">
-                      <div class="text-lg mb-1">🖼️</div>
-                      <div>Square</div>
-                      <div class="text-xs text-gray-400">1024×1024</div>
-                    </div>
-                    <div class="size-option" data-size="1792x1024" onclick="selectSize(this, '1792x1024')">
-                      <div class="text-lg mb-1">🖼️</div>
-                      <div>Landscape</div>
-                      <div class="text-xs text-gray-400">1792×1024</div>
-                    </div>
-                    <div class="size-option" data-size="1024x1792" onclick="selectSize(this, '1024x1792')">
-                      <div class="text-lg mb-1">🖼️</div>
-                      <div>Portrait</div>
-                      <div class="text-xs text-gray-400">1024×1792</div>
+                  <div>
+                    <label class="block mb-3">Roles to Mention</label>
+                    <div id="roles-container" class="flex flex-wrap gap-2">
+                      <!-- Roles will be loaded dynamically -->
                     </div>
                   </div>
-                  <button 
-                    type="button"
-                    class="btn glass-strong px-6 py-3 rounded-xl font-semibold w-full mt-4 hover:scale-105 flex items-center justify-center gap-2"
-                    onclick="generateAutoImage()"
-                  >
-                    <span class="text-xl">🎨</span>
-                    Generate Image from Theme
-                  </button>
-                </div>
 
-                <div id="mode-ai-prompt" class="image-mode-content">
-                  <textarea 
-                    id="ai-prompt-input"
-                    class="prompt-input"
-                    placeholder="Describe the image you want to generate...  e.g., 'A futuristic cityscape at sunset with neon lights and flying cars'"
-                    rows="4"
-                  ></textarea>
-                  <div class="size-selector mt-4">
-                    <div class="size-option active" data-size="1024x1024" onclick="selectSize(this, '1024x1024')">
-                      <div class="text-lg mb-1">🖼️</div>
-                      <div>Square</div>
-                      <div class="text-xs text-gray-400">1024×1024</div>
+                  <div class="image-options">
+                    <label class="block mb-3 font-semibold">Image Options</label>
+                    
+                    <div class="image-mode-selector">
+                      <div class="image-mode-btn active" data-mode="url">
+                        <div class="icon">🔗</div>
+                        <div class="label">URL</div>
+                      </div>
+                      <div class="image-mode-btn" data-mode="upload">
+                        <div class="icon">📁</div>
+                        <div class="label">Upload</div>
+                      </div>
+                      <div class="image-mode-btn" data-mode="generate">
+                        <div class="icon">🎨</div>
+                        <div class="label">AI Generate</div>
+                      </div>
+                      <div class="image-mode-btn" data-mode="gif">
+                        <div class="icon">🎬</div>
+                        <div class="label">GIF</div>
+                      </div>
                     </div>
-                    <div class="size-option" data-size="1792x1024" onclick="selectSize(this, '1792x1024')">
-                      <div class="text-lg mb-1">🖼️</div>
-                      <div>Landscape</div>
-                      <div class="text-xs text-gray-400">1792×1024</div>
+
+                    <div class="image-mode-content active" id="url-mode">
+                      <input type="url" id="image-url" placeholder="Enter image URL (https://...)" class="mt-4">
+                      <div class="discord-rules mt-4">
+                        <div class="discord-rules-title">
+                          <span>⚠️</span> Discord Image Rules
+                        </div>
+                        <ul class="discord-rules-list">
+                          <li>Only public HTTPS URLs are supported</li>
+                          <li>Images must be under 8MB</li>
+                          <li>Supported formats: PNG, JPG, GIF, WebP</li>
+                          <li>Base64 encoded images are not allowed</li>
+                        </ul>
+                      </div>
                     </div>
-                    <div class="size-option" data-size="1024x1792" onclick="selectSize(this, '1024x1792')">
-                      <div class="text-lg mb-1">🖼️</div>
-                      <div>Portrait</div>
-                      <div class="text-xs text-gray-400">1024×1792</div>
+
+                    <div class="image-mode-content" id="upload-mode">
+                      <div class="upload-area" id="upload-area">
+                        <div class="text-4xl mb-4">📤</div>
+                        <div class="text-lg font-bold mb-2">Drop files here or click to upload</div>
+                        <div class="text-sm text-gray-400">PNG, JPG, GIF up to 8MB</div>
+                        <input type="file" id="file-input" accept="image/*">
+                      </div>
+                      <div class="image-preview-container hidden">
+                        <img id="image-preview" class="image-preview" alt="Preview">
+                      </div>
+                    </div>
+
+                    <div class="image-mode-content" id="generate-mode">
+                      <div class="prompt-input" id="ai-prompt" placeholder="Describe the image you want to generate..."></div>
+                      <div class="size-selector">
+                        <div class="size-option active" data-size="1024x1024">1:1 Square</div>
+                        <div class="size-option" data-size="1024x1792">9:16 Portrait</div>
+                        <div class="size-option" data-size="1792x1024">16:9 Landscape</div>
+                      </div>
+                      <button type="button" id="generate-btn" class="btn glass px-6 py-3 rounded-xl mt-4 w-full">
+                        Generate Image
+                      </button>
+                      <div class="generating-indicator hidden" id="generating-indicator">
+                        <div class="spinner"></div>
+                        <span>Generating your image...</span>
+                      </div>
+                    </div>
+
+                    <div class="image-mode-content" id="gif-mode">
+                      <div class="text-center py-8 text-gray-400">
+                        <div class="text-4xl mb-4">🎬</div>
+                        <div class="text-lg font-bold mb-2">GIF Support Coming Soon</div>
+                        <div class="text-sm">This feature is under development</div>
+                      </div>
                     </div>
                   </div>
-                  <button 
-                    type="button"
-                    class="btn glass-strong px-6 py-3 rounded-xl font-semibold w-full mt-4 hover:scale-105 flex items-center justify-center gap-2"
-                    onclick="generateCustomImage()"
-                  >
-                    <span class="text-xl">✨</span>
-                    Generate from Prompt
-                  </button>
-                </div>
 
-                <div id="generation-status" class="hidden"></div>
+                  <div class="flex items-center gap-3">
+                    <input type="checkbox" id="use-ai" class="w-4 h-4">
+                    <label for="use-ai" class="text-sm">Enhance message with AI</label>
+                  </div>
 
-                <div id="image-preview-container" class="image-preview-container hidden">
-                  <img id="image-preview" class="image-preview" alt="Preview" />
-                  <div class="p-4 flex gap-3">
-                    <button 
-                      type="button"
-                      class="btn glass px-4 py-2 rounded-lg font-semibold text-sm flex-1 hover:scale-105"
-                      onclick="regenerateImage()"
-                    >
-                      🔄 Regenerate
+                  <div class="button-group">
+                    <button type="submit" class="btn glass px-8 py-4 rounded-xl font-bold">
+                      Send Announcement
                     </button>
-                    <button 
-                      type="button"
-                      class="btn glass px-4 py-2 rounded-lg font-semibold text-sm flex-1 hover:scale-105"
-                      onclick="clearImage()"
-                    >
-                      🗑️ Remove
+                    <button type="button" id="clear-form" class="btn glass px-8 py-4 rounded-xl font-bold">
+                      Clear Form
                     </button>
                   </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- Multi-Server Tab -->
+            <div id="servers-tab" class="tab-content hidden">
+              <div class="glass rounded-2xl p-6">
+                <h2 class="text-2xl font-bold mb-6 glow">Multi-Server Management</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div class="glass rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-4">Add New Server</h3>
+                    <form id="add-server-form" class="space-y-4">
+                      <div>
+                        <label for="server-guild-id">Guild ID</label>
+                        <input type="text" id="server-guild-id" placeholder="123456789012345678" required>
+                      </div>
+                      <div>
+                        <label for="server-bot-token">Bot Token</label>
+                        <input type="password" id="server-bot-token" placeholder="Your bot token" required>
+                      </div>
+                      <div>
+                        <label for="server-name">Server Name (optional)</label>
+                        <input type="text" id="server-name" placeholder="Custom name">
+                      </div>
+                      <button type="submit" class="btn glass px-6 py-3 rounded-xl w-full">
+                        Add Server
+                      </button>
+                    </form>
+                  </div>
+
+                  <div class="glass rounded-xl p-6">
+                    <h3 class="text-xl font-bold mb-4">Registered Servers</h3>
+                    <div id="servers-list" class="space-y-3">
+                      <!-- Servers will be loaded here -->
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div>
-              <label for="schedule-time">Schedule Time (optional)</label>
-              <input 
-                type="datetime-local" 
-                id="schedule-time"
-              />
-              <p class="text-xs text-gray-400 mt-2">Leave empty to send immediately</p>
-            </div>
-
-            <div class="flex items-center gap-4">
-              <input type="checkbox" id="use-ai" class="w-5 h-5" style="width: 20px; height: 20px; cursor: pointer;">
-              <label for="use-ai" class="! mb-0 cursor-pointer">Enhance message with AI</label>
-            </div>
-
-            <div class="button-group">
-              <button 
-                type="submit"
-                class="btn glass-strong px-8 py-4 rounded-xl font-bold flex-1 hover:scale-105 flex items-center justify-center gap-2"
-              >
-                <span class="text-xl">🚀</span>
-                Send Now
-              </button>
-              <button 
-                type="button"
-                id="schedule-btn"
-                class="btn glass-strong px-8 py-4 rounded-xl font-bold flex-1 hover:scale-105 flex items-center justify-center gap-2"
-                onclick="scheduleAnnouncement()"
-              >
-                <span class="text-xl">📅</span>
-                Schedule Message
-              </button>
-              <button 
-                type="button"
-                class="btn glass px-6 py-4 rounded-xl font-semibold hover:scale-105"
-                onclick="resetForm()"
-              >
-                Clear All
-              </button>
-            </div>
-          </form>
-
-          <div id="delivery-status" class="mt-8 hidden">
-            <div class="glass p-6 rounded-xl border-l-4 border-green-400">
-              <h3 class="font-bold text-lg mb-2 flex items-center gap-2">
-                <span class="text-2xl">✅</span>
-                Message Delivered Successfully!
-              </h3>
-              <p class="text-sm text-gray-400" id="delivery-message">Your announcement has been sent to Discord. </p>
+            <!-- Logs Tab -->
+            <div id="logs-tab" class="tab-content hidden">
+              <div class="glass rounded-2xl p-6">
+                <h2 class="text-2xl font-bold mb-6 glow">Activity Logs</h2>
+                <div id="logs-container" class="space-y-2 max-h-96 overflow-y-auto">
+                  <!-- Logs will be loaded here -->
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div id="scheduled-panel" class="panel hidden">
-        <div class="glass-strong rounded-2xl p-8">
-          <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-4">
-              <span class="text-6xl">📅</span>
+      <div class="lg:col-span-1">
+        <div class="glass-strong rounded-3xl p-6 sticky top-8">
+          <h3 class="text-xl font-bold mb-6 glow">Quick Actions</h3>
+          
+          <div class="space-y-4">
+            <button id="trigger-holiday" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3">
+              <span class="text-2xl">🎉</span>
               <div>
-                <h2 class="text-3xl font-black glow mb-2">Scheduled Items</h2>
-                <p class="text-gray-400">View and manage scheduled announcements</p>
+                <div class="font-bold">Trigger Holiday Check</div>
+                <div class="text-sm text-gray-400">Force check for today's holiday</div>
               </div>
-            </div>
-            <button 
-              class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10"
-              onclick="loadScheduledItems()"
-              aria-label="Refresh scheduled items"
-            >
-              🔄 Refresh
+            </button>
+
+            <button id="test-announcement" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3">
+              <span class="text-2xl">🧪</span>
+              <div>
+                <div class="font-bold">Test Announcement</div>
+                <div class="text-sm text-gray-400">Send a test New Year message</div>
+              </div>
+            </button>
+
+            <button id="refresh-status" class="btn glass w-full px-6 py-4 rounded-xl font-bold text-left flex items-center gap-3">
+              <span class="text-2xl">🔄</span>
+              <div>
+                <div class="font-bold">Refresh Status</div>
+                <div class="text-sm text-gray-400">Update bot status and counters</div>
+              </div>
             </button>
           </div>
-          <div id="scheduled-list" class="space-y-4">
-            <div class="skeleton h-28 w-full rounded-xl mb-4"></div>
-            <div class="skeleton h-28 w-full rounded-xl"></div>
-          </div>
-        </div>
-      </div>
 
-      <div id="logs-panel" class="panel hidden">
-        <div class="glass-strong rounded-2xl p-8">
-          <div class="flex items-center justify-between mb-8">
-            <div class="flex items-center gap-4">
-              <span class="text-6xl">📋</span>
-              <div>
-                <h2 class="text-3xl font-black glow mb-2">Activity Logs</h2>
-                <p class="text-gray-400">Monitor system activity and events</p>
+          <div class="mt-8">
+            <h4 class="font-bold mb-4">System Info</h4>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-400">Uptime:</span>
+                <span id="uptime">--</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Timezone:</span>
+                <span id="timezone">Asia/Kolkata</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-400">Version:</span>
+                <span>1.0.0</span>
               </div>
             </div>
-            <div class="flex items-center gap-3">
-              <input 
-                type="text" 
-                id="log-search"
-                placeholder="Search logs..."
-                class="glass px-4 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue/50 focus:outline-none w-64"
-                oninput="filterLogs(this.value)"
-              />
-              <button 
-                class="btn glass px-5 py-3 rounded-xl font-semibold hover:bg-white/10"
-                onclick="loadLogs()"
-                aria-label="Refresh activity logs"
-              >
-                🔄 Refresh
-              </button>
-            </div>
-          </div>
-          <div id="logs-container" class="glass p-6 rounded-xl max-h-[700px] overflow-y-auto font-mono text-sm">
-            <div class="skeleton h-10 w-full rounded mb-3"></div>
-            <div class="skeleton h-10 w-full rounded mb-3"></div>
-            <div class="skeleton h-10 w-full rounded"></div>
           </div>
         </div>
       </div>
     </div>
-
-    <footer class="mt-12 text-center text-gray-400 text-sm fade-in" style="animation-delay: 0.6s">
-      <div class="flex items-center justify-center gap-2 mb-2">
-        <span>Made with</span>
-        <span class="text-red-400 text-xl pulse">❤️</span>
-        <span>by Digital Labour Team</span>
-      </div>
-      <p class="text-xs text-gray-500">
-        Powered by Node.js • Express • Google Gemini AI
-      </p>
-      <p class="text-xs text-gray-600 mt-1">
-        © 2026 Digital Labour • All rights reserved
-      </p>
-    </footer>
   </div>
-    <script>
-    // ==================== UTILITIES ====================
-    
-    const createParticles = () => {
-      const container = document.getElementById('particles');
-      for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.animationDelay = `${Math.random() * 20}s`;
-        particle.style.animationDuration = `${15 + Math.random() * 10}s`;
-        container.appendChild(particle);
-      }
-    };
 
-    const showToast = (message, type = 'info') => {
-      const container = document.getElementById('toast-container');
-      const toast = document. createElement('div');
+  <!-- Toast Notification Template -->
+  <div id="toast-template" class="toast glass hidden">
+    <div class="flex items-start gap-3">
+      <div class="text-2xl">ℹ️</div>
+      <div class="flex-1">
+        <div class="font-bold" id="toast-title">Notification</div>
+        <div class="text-sm mt-1" id="toast-message">Message</div>
+      </div>
+      <button class="text-gray-400 hover:text-white" onclick="hideToast(this.parentElement.parentElement)">×</button>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // GLOBAL STATE
+    // ============================================
+
+    let currentTab = 'overview';
+    let selectedRoles = [];
+    let selectedImageMode = 'url';
+    let currentImageUrl = '';
+    let servers = [];
+    let channels = [];
+    let roles = [];
+    let announcements = [];
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+
+    function showToast(title, message, type = 'info') {
+      const toast = document.getElementById('toast-template').cloneNode(true);
+      toast.id = '';
+      toast.classList.remove('hidden');
+      toast.querySelector('#toast-title').textContent = title;
+      toast.querySelector('#toast-message').textContent = message;
       
-      const colors = {
-        success: 'from-green-500/20 to-green-600/20 border-green-400',
-        error: 'from-red-500/20 to-red-600/20 border-red-400',
-        info: 'from-neon-blue/20 to-neon-blue/20 border-neon-blue',
-        warning: 'from-yellow-500/20 to-yellow-600/20 border-yellow-400',
-      };
+      const icon = toast.querySelector('.text-2xl');
+      if (type === 'success') icon.textContent = '✅';
+      else if (type === 'error') icon.textContent = '❌';
+      else if (type === 'warning') icon.textContent = '⚠️';
       
-      const icons = {
-        success: '✅',
-        error: '❌',
-        info: 'ℹ️',
-        warning: '⚠️',
-      };
-      
-      toast.className = `toast glass-strong rounded-2xl p-4 border ${colors[type]} flex items-center gap-4`;
-      toast.innerHTML = `
-        <span class="text-3xl">${icons[type]}</span>
-        <span class="flex-1 font-semibold">${message}</span>
-        <button onclick="this.parentElement.remove()" class="text-2xl hover:scale-110 transition-transform" aria-label="Close">×</button>
-      `;
-      
-      container.appendChild(toast);
+      document.getElementById('toast-container').appendChild(toast);
       
       setTimeout(() => {
-        toast.style.animation = 'fadeOut 0.3s ease-out';
+        toast.style.animation = 'slideDown 0.3s ease-out reverse';
         setTimeout(() => toast.remove(), 300);
       }, 5000);
-    };
+    }
 
-    const log = (message, type = 'INFO') => {
-      console.log(`[${type}] ${message}`);
-    };
+    function hideToast(toast) {
+      toast.style.animation = 'slideDown 0.3s ease-out reverse';
+      setTimeout(() => toast.remove(), 300);
+    }
 
-    // ==================== COUNTDOWN ====================
-    
-    const updateCountdown = () => {
-      const now = new Date();
-      const midnight = new Date(now);
-      midnight.setDate(midnight.getDate() + 1);
-      midnight.setHours(0, 0, 0, 0);
+    function formatUptime(seconds) {
+      const days = Math.floor(seconds / 86400);
+      const hours = Math.floor((seconds % 86400) / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
       
-      const diff = midnight - now;
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      const countdownEl = document.getElementById('countdown-text');
-      if (countdownEl) {
-        countdownEl.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-      }
-      
-      const progressEl = document.getElementById('progress-bar');
-      if (progressEl) {
-        const totalSeconds = 24 * 60 * 60;
-        const elapsedSeconds = totalSeconds - (diff / 1000);
-        const percentage = (elapsedSeconds / totalSeconds) * 100;
-        progressEl.style.width = `${percentage}%`;
-      }
-    };
+      if (days > 0) return `${days}d ${hours}h ${minutes}m`;
+      if (hours > 0) return `${hours}h ${minutes}m`;
+      return `${minutes}m`;
+    }
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
-
-    // ==================== UPTIME ====================
-    
-    const updateUptime = () => {
-      fetch('/api/health')
-        .then(res => res.json())
-        .then(data => {
-          if (data.uptime) {
-            const hours = Math.floor(data.uptime / 3600);
-            const minutes = Math.floor((data.uptime % 3600) / 60);
-            const uptimeEl = document.getElementById('uptime-text');
-            if (uptimeEl) {
-              uptimeEl.textContent = `${hours}h ${minutes}m`;
-            }
-          }
-        })
-        .catch(() => {});
-    };
-
-    setInterval(updateUptime, 30000);
-    updateUptime();
-
-    // ==================== TAB SWITCHING ====================
-    
-    const switchTab = (tabName) => {
-      console.log('Switching to:', tabName);
-      
-      document.querySelectorAll('.tab').forEach((t, i) => {
-        t.classList.remove('active');
-        if ((i === 0 && tabName === 'overview') ||
-            (i === 1 && tabName === 'servers') ||
-            (i === 2 && tabName === 'holidays') ||
-            (i === 3 && tabName === 'custom') ||
-            (i === 4 && tabName === 'scheduled') ||
-            (i === 5 && tabName === 'logs')) {
-          t.classList.add('active');
-        }
+    function switchTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+        tab.classList.add('text-gray-400');
       });
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      document.querySelector(`[data-tab="${tabName}"]`).classList.remove('text-gray-400');
       
-      document.querySelectorAll('.panel').forEach(p => {
-        p.classList.add('hidden');
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
       });
+      document.getElementById(`${tabName}-tab`).classList.remove('hidden');
       
-      const targetPanel = document.getElementById(`${tabName}-panel`);
-      if (targetPanel) {
-        targetPanel.classList.remove('hidden');
-      }
+      currentTab = tabName;
       
-      if (tabName === 'scheduled') {
-        loadScheduledItems();
-      } else if (tabName === 'logs') {
-        loadLogs();
-      }
-      
-      showToast(`Switched to ${tabName}`, 'info');
-    };
+      // Load tab-specific data
+      if (tabName === 'servers') loadServers();
+      if (tabName === 'logs') loadLogs();
+    }
 
-    // ==================== IMAGE HANDLING ====================
-    
-    let currentImageMode = 'url';
-    let selectedImageSize = '1024x1024';
-    let currentImageData = null;
-    let lastGenerationParams = null;
+    // ============================================
+    // DATA LOADING FUNCTIONS
+    // ============================================
 
-    const switchImageMode = (mode) => {
-      currentImageMode = mode;
-      
-      document.querySelectorAll('.image-mode-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.dataset.mode === mode) {
-          btn.classList.add('active');
-        }
-      });
-      
-      document.querySelectorAll('.image-mode-content').forEach(content => {
-        content.classList.remove('active');
-      });
-      document.getElementById(`mode-${mode}`).classList.add('active');
-      
-      clearImage();
-    };
-
-    const selectSize = (element, size) => {
-      selectedImageSize = size;
-      document.querySelectorAll('.size-option').forEach(opt => {
-        opt.classList.remove('active');
-      });
-      element.classList.add('active');
-    };
-
-    const handleFileUpload = async (event) => {
-      const file = event.target.files[0];
-      if (!file) return;
-      
-      document.getElementById('upload-info').classList.add('hidden');
-      
+    async function loadStatus() {
       try {
-        const infoDiv = document.getElementById('upload-info');
-        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-        const sizeStatus = file.size < 5 * 1024 * 1024 ? '✓ Optimal' : '⚠ Large';
-        
-        infoDiv.innerHTML = `
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="font-semibold">${file.name}</div>
-              <div class="text-xs text-gray-400">${sizeMB} MB • ${file.type} • ${sizeStatus}</div>
-            </div>
-            <div class="text-green-400 text-2xl">✓</div>
-          </div>
-        `;
-        infoDiv.classList.remove('hidden');
-        
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          currentImageData = e. target.result;
-          showImagePreview(currentImageData);
-          showToast('✅ Image uploaded successfully', 'success');
-        };
-        reader.readAsDataURL(file);
-        
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        showToast('Failed to upload image', 'error');
-      }
-    };
-
-    const setupDragAndDrop = () => {
-      const uploadArea = document.getElementById('upload-area');
-      
-      if (! uploadArea) return;
-      
-      uploadArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-      });
-      
-      uploadArea.addEventListener('dragleave', () => {
-        uploadArea.classList.remove('dragover');
-      });
-      
-      uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-        
-        const file = e.dataTransfer.files[0];
-        if (file) {
-          const input = document.getElementById('file-upload');
-          const dataTransfer = new DataTransfer();
-          dataTransfer.items. add(file);
-          input.files = dataTransfer.files;
-          
-          const event = new Event('change', { bubbles: true });
-          input.dispatchEvent(event);
-        }
-      });
-    };
-
-    const generateAutoImage = async () => {
-      const title = document.getElementById('custom-title').value;
-      const message = document.getElementById('custom-message').value;
-      
-      if (!title && !message) {
-        showToast('Please enter a title or message first', 'warning');
-        return;
-      }
-      
-      showGenerationStatus('Analyzing your announcement and generating image...', 'loading');
-      
-      try {
-        const autoPrompt = `Create a professional, modern announcement image for:  "${title}".  ${message. substring(0, 200)}. Style: clean, corporate, inspiring, with vibrant colors. `;
-        
-        lastGenerationParams = {
-          prompt: autoPrompt,
-          size: selectedImageSize
-        };
-        
-        const imageUrl = await callImageGenerationAPI(autoPrompt, selectedImageSize);
-        
-        if (imageUrl) {
-          currentImageData = imageUrl;
-          showImagePreview(imageUrl);
-          showGenerationStatus('Image generated successfully!', 'success');
-          setTimeout(() => hideGenerationStatus(), 3000);
-        } else {
-          throw new Error('Failed to generate image');
-        }
-        
-      } catch (error) {
-        console.error('Error generating image:', error);
-        showGenerationStatus('Failed to generate image.  Please try again.', 'error');
-        setTimeout(() => hideGenerationStatus(), 5000);
-      }
-    };
-
-    const generateCustomImage = async () => {
-      const prompt = document.getElementById('ai-prompt-input').value.trim();
-      
-      if (! prompt) {
-        showToast('Please enter a prompt', 'warning');
-        return;
-      }
-      
-      showGenerationStatus('Generating your custom image...', 'loading');
-      
-      try {
-        lastGenerationParams = {
-          prompt: prompt,
-          size: selectedImageSize
-        };
-        
-        const imageUrl = await callImageGenerationAPI(prompt, selectedImageSize);
-        
-        if (imageUrl) {
-          currentImageData = imageUrl;
-          showImagePreview(imageUrl);
-          showGenerationStatus('Image generated successfully!', 'success');
-          setTimeout(() => hideGenerationStatus(), 3000);
-        } else {
-          throw new Error('Failed to generate image');
-        }
-        
-      } catch (error) {
-        console.error('Error generating image:', error);
-        showGenerationStatus('Failed to generate image. Please try again.', 'error');
-        setTimeout(() => hideGenerationStatus(), 5000);
-      }
-    };
-
-    const callImageGenerationAPI = async (prompt, size) => {
-      try {
-        const response = await fetch('/api/generate-image', {
-          method:  'POST',
-          headers:  { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt, size })
-        });
-        
-        if (!response.ok) {
-          throw new Error('Image generation failed');
-        }
-        
+        const response = await fetch('/api/status');
         const data = await response.json();
         
-        if (data.success && data.imageUrl) {
-          return data. imageUrl;
-        } else {
-          throw new Error(data. error || 'Failed to generate image');
-        }
-        
-      } catch (error) {
-        console.error('Image generation error:', error);
-        showToast('⚠️ Using placeholder image', 'warning');
-        
-        const [width, height] = size.split('x');
-        return `https://placehold.co/${width}x${height}/1a1447/00d4ff? text=${encodeURIComponent('Generated+Image')}`;
-      }
-    };
-
-    const regenerateImage = async () => {
-      if (!lastGenerationParams) {
-        showToast('No image to regenerate', 'warning');
-        return;
-      }
-      
-      showGenerationStatus('Regenerating image...', 'loading');
-      
-      try {
-        const imageUrl = await callImageGenerationAPI(
-          lastGenerationParams.prompt,
-          lastGenerationParams.size
-        );
-        
-        if (imageUrl) {
-          currentImageData = imageUrl;
-          showImagePreview(imageUrl);
-          showGenerationStatus('Image regenerated successfully!', 'success');
-          setTimeout(() => hideGenerationStatus(), 3000);
+        if (data) {
+          document.getElementById('today-holiday').textContent = data.state?.lastHoliday || 'No holiday today';
+          document.getElementById('total-announcements').textContent = data.totalHolidayAnnouncements || 0;
+          document.getElementById('next-check').textContent = data.nextScheduledCheck || 'Daily at 00:00';
+          document.getElementById('uptime').textContent = formatUptime(data.uptime || 0);
+          
+          // Update bot status
+          const botStatus = document.getElementById('bot-status');
+          if (data.running) {
+            botStatus.classList.add('connected');
+            botStatus.querySelector('span').textContent = 'Bot Online';
+          } else {
+            botStatus.classList.add('error');
+            botStatus.querySelector('span').textContent = 'Bot Offline';
+          }
         }
       } catch (error) {
-        console.error('Error regenerating image:', error);
-        showGenerationStatus('Failed to regenerate image', 'error');
-        setTimeout(() => hideGenerationStatus(), 5000);
+        console.error('Failed to load status:', error);
       }
-    };
+    }
 
-    const showImagePreview = (imageData) => {
-      const container = document.getElementById('image-preview-container');
-      const preview = document.getElementById('image-preview');
-      
-      preview.src = imageData;
-      container.classList.remove('hidden');
-    };
-
-    const clearImage = () => {
-      currentImageData = null;
-      lastGenerationParams = null;
-      
-      const container = document.getElementById('image-preview-container');
-      const preview = document.getElementById('image-preview');
-      
-      preview.src = '';
-      container. classList.add('hidden');
-      
-      document.getElementById('file-upload').value = '';
-      document.getElementById('image-url-input').value = '';
-      document.getElementById('ai-prompt-input').value = '';
-      
-      document.getElementById('upload-info').classList.add('hidden');
-      
-      hideGenerationStatus();
-    };
-
-    const showGenerationStatus = (message, type) => {
-      const statusDiv = document.getElementById('generation-status');
-      
-      let icon = '';
-      let className = '';
-      
-      if (type === 'loading') {
-        icon = '<div class="spinner"></div>';
-        className = 'generating-indicator';
-      } else if (type === 'success') {
-        icon = '<span class="text-2xl">✅</span>';
-        className = 'success-message';
-      } else if (type === 'error') {
-        icon = '<span class="text-2xl">❌</span>';
-        className = 'error-message';
-      }
-      
-      statusDiv.innerHTML = `
-        <div class="${className}">
-          ${icon}
-          <span>${message}</span>
-        </div>
-      `;
-      statusDiv.classList.remove('hidden');
-    };
-
-    const hideGenerationStatus = () => {
-      const statusDiv = document.getElementById('generation-status');
-      statusDiv.classList.add('hidden');
-      statusDiv.innerHTML = '';
-    };
-
-    const getFinalImageUrl = () => {
-      if (currentImageMode === 'url') {
-        return document.getElementById('image-url-input').value;
-      }
-      return currentImageData;
-    };
-
-    const resetForm = () => {
-      document. getElementById('custom-form').reset();
-      clearImage();
-      switchImageMode('url');
-      selectedImageSize = '1024x1024';
-      document.getElementById('delivery-status').classList.add('hidden');
-      showToast('Form cleared', 'info');
-    };
-
-    // ==================== DISCORD CHANNELS ====================
-    
-    window.discordChannels = [];
-    window.discordServerData = null;
-
-    const loadDiscordChannels = async () => {
-      const select = document.getElementById('custom-webhook');
-      const loadingIndicator = document.getElementById('channel-loading');
-      const botStatus = document.getElementById('bot-status');
-      const errorDiv = document.getElementById('channel-error');
-      
-      loadingIndicator.classList.remove('hidden');
-      botStatus.classList.remove('hidden');
-      botStatus.className = 'text-xs px-3 py-1 rounded-full';
-      botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1 bg-yellow-400 animate-pulse"></span><span>Connecting to Discord...</span>';
-      
+    async function loadChannels() {
       try {
         const response = await fetch('/api/discord/channels');
         const data = await response.json();
         
-        loadingIndicator.classList.add('hidden');
-        
-        if (data.success && data.channels && data.channels.length > 0) {
-          window.discordChannels = data. channels;
-          window.discordServerData = data;
-          
-          const channelsByCategory = {};
-          const uncategorized = [];
-          
-          data. channels.forEach(ch => {
-            if (ch. categoryName) {
-              if (!channelsByCategory[ch. categoryName]) {
-                channelsByCategory[ch.categoryName] = [];
-              }
-              channelsByCategory[ch.categoryName].push(ch);
-            } else {
-              uncategorized. push(ch);
-            }
-          });
-          
-          let optionsHTML = '';
-          
-          if (uncategorized.length > 0) {
-            uncategorized.forEach(ch => {
-              const icon = ch.type === 'announcement' ? '📢' : '#';
-              optionsHTML += `<option value="${ch.id}">${icon} ${ch.name}</option>`;
-            });
-          }
-          
-          Object.entries(channelsByCategory).forEach(([category, channels]) => {
-            optionsHTML += `<optgroup label="── ${category. toUpperCase()} ──">`;
-            channels.forEach(ch => {
-              const icon = ch.type === 'announcement' ? '📢' :  '#';
-              optionsHTML += `<option value="${ch.id}">${icon} ${ch.name}</option>`;
-            });
-            optionsHTML += `</optgroup>`;
-          });
-          
-          select.innerHTML = optionsHTML;
-          
-          document.getElementById('server-name').textContent = data.serverName || 'Digital Labour';
-          document.getElementById('channel-count').textContent = data.totalChannels;
-          
-          if (data. serverIcon) {
-            const iconEl = document.getElementById('server-icon');
-            iconEl.innerHTML = `<img src="https://cdn.discordapp.com/icons/${data.serverName}/${data.serverIcon}.png" class="w-full h-full rounded-full object-cover" />`;
-          }
-          
-          botStatus.classList.add('connected');
-          botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1"></span><span id="bot-status-text">Bot Connected</span>';
-          
-          if (data.channels.length > 0) {
-            select.value = data.channels[0].id;
-            updateChannelPreview(data.channels[0]. id);
-          }
-          
-          errorDiv.classList.add('hidden');
-          
-          showToast(`✓ Connected!  Found ${data.totalChannels} channels in ${data.serverName}`, 'success');
-          
+        if (data.success) {
+          channels = data.channels || [];
+          // Update channel preview if needed
         } else {
-          throw new Error(data.error || 'No channels found');
+          console.warn('Failed to load channels:', data.error);
         }
-        
       } catch (error) {
-        console.error('Error loading Discord channels:', error);
-        loadingIndicator.classList.add('hidden');
-        
-        botStatus.classList.add('error');
-        botStatus.innerHTML = '<span class="w-2 h-2 rounded-full inline-block mr-1"></span><span>Connection Failed</span>';
-        
-        errorDiv.classList.remove('hidden');
-        document.getElementById('error-message').textContent = error.message || 'Could not connect to Discord bot';
-        
-        select.innerHTML = `
-          <option value="ANNOUNCEMENTS">📢 Announcements Channel</option>
-          <option value="HOLIDAYS">🎉 Holidays Channel</option>
-          <option value="UPDATES">📰 Updates Channel</option>
-          <option value="GENERAL">💬 General Channel</option>
-        `;
-        
-        document.getElementById('server-name').textContent = 'Digital Labour (Fallback)';
-        document.getElementById('channel-count').textContent = '4';
-        
-        showToast('Using fallback channels.  Check bot token in . env', 'warning');
+        console.error('Failed to load channels:', error);
       }
-    };
+    }
 
-    const updateChannelPreview = (channelId) => {
-      const channel = window.discordChannels. find(ch => ch.id === channelId);
-      
-      if (! channel) {
-        document.getElementById('channel-preview').classList.add('hidden');
-        return;
-      }
-      
-      const emoji = channel.type === 'announcement' ? '📢' : 
-                   channel.nsfw ? '🔞' :  '💬';
-      
-      document. getElementById('preview-emoji').textContent = emoji;
-      document.getElementById('preview-type').textContent = channel.type. toUpperCase();
-      document.getElementById('preview-name').textContent = `#${channel.name}`;
-      document.getElementById('preview-category').textContent = channel.categoryName ?  `in ${channel.categoryName}` : 'No category';
-      document.getElementById('preview-description').textContent = 
-        channel.type === 'announcement' 
-          ? 'Announcement channel - followers can see messages' 
-          : 'Text channel for conversations';
-      
-      document.getElementById('channel-preview').classList.remove('hidden');
-    };
-        // ==================== DISCORD ROLES LOADING ====================
-    
-    window.discordRoles = [];
-
-    const loadDiscordRoles = async () => {
+    async function loadRoles() {
       try {
         const response = await fetch('/api/discord/roles');
         const data = await response.json();
         
-        if (data.success && data.roles && data.roles.length > 0) {
-          window.discordRoles = data.roles;
-          
-          const holidaySelect = document.getElementById('holiday-roles');
-          const customSelect = document.getElementById('custom-roles');
-          
-          // Build options HTML
-          let optionsHTML = '';
-          data.roles.forEach(role => {
-            const color = role.color !== 0 ? 
-              `#${role.color.toString(16).padStart(6, '0')}` : 
-              '#99aab5';
-            
-            optionsHTML += `<option value="${role.id}" style="color: ${color}">
-              ${role.name}
-            </option>`;
-          });
-          
-          // Add to holiday select (keep @everyone selected by default)
-          if (holidaySelect) {
-            const everyoneOption = holidaySelect.querySelector('option[value="everyone"]');
-            holidaySelect.innerHTML = '';
-            if (everyoneOption) {
-              holidaySelect. appendChild(everyoneOption);
-              everyoneOption.selected = true;
-            }
-            holidaySelect.innerHTML += optionsHTML;
-          }
-          
-          // Add to custom select (no default selection)
-          if (customSelect) {
-            customSelect.innerHTML = '<option value="everyone">@everyone</option>' + optionsHTML;
-          }
-          
-          log(`Loaded ${data.roles.length} roles from Discord`, 'SUCCESS');
-          showToast(`✅ Loaded ${data.roles. length} roles from server`, 'success');
-          
-        } else {
-          throw new Error(data.error || 'No roles found');
-        }
-        
-      } catch (error) {
-        console.error('Error loading Discord roles:', error);
-        log(`Failed to load roles: ${error.message}`, 'WARNING');
-        showToast('⚠️ Could not load server roles. Using defaults.', 'warning');
-      }
-    };
-
-    // ==================== DATA LOADING ====================
-    
-    let allLogs = [];
-
-    const loadDashboard = async () => {
-      try {
-        const [status, todayHoliday, upcomingHolidays] = await Promise.all([
-          fetch('/api/status').then(r => r.json()).catch(() => null),
-          fetch('/api/holidays/today').then(r => r.json()).catch(() => null),
-          fetch('/api/holidays/upcoming').then(r => r.json()).catch(() => null),
-        ]);
-
-        if (status) {
-          const statusEl = document.getElementById('status-text');
-          if (statusEl) statusEl.textContent = status. running ? 'ACTIVE' : 'PAUSED';
-          
-          const timezoneEl = document.getElementById('timezone-text');
-          if (timezoneEl) timezoneEl.textContent = status.config?. timezone || 'N/A';
-          
-          const holidayCountEl = document.getElementById('holiday-count');
-          if (holidayCountEl) holidayCountEl.textContent = status.totalHolidayAnnouncements || 0;
-          
-          const customCountEl = document.getElementById('custom-count');
-          if (customCountEl) customCountEl.textContent = status.totalCustomAnnouncements || 0;
-          
-          const lastRunEl = document.getElementById('last-run-date');
-          if (lastRunEl) lastRunEl.textContent = status.state?. lastRunDate || '—';
-        }
-
-        updateTodayHoliday(todayHoliday?. holiday);
-        updateUpcomingHolidays(upcomingHolidays?.holidays);
-
-      } catch (error) {
-        console.error('Error loading dashboard:', error);
-        showToast('Failed to load dashboard data', 'error');
-      }
-    };
-
-    const updateTodayHoliday = (holiday) => {
-      const container = document.getElementById('today-holiday');
-      if (!container) return;
-      
-      if (! holiday) {
-        container.innerHTML = `
-          <div class="empty-state py-12">
-            <div class="empty-icon">📅</div>
-            <h3 class="text-2xl font-bold mb-2">No Holiday Today</h3>
-            <p class="text-gray-400">Check back tomorrow for upcoming holidays! </p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = `
-        <div class="glass p-6 rounded-xl border-l-4 border-neon-blue hover:scale-[1.02] transition-transform">
-          <div class="flex items-center justify-between">
-            <div class="flex-1">
-              <h3 class="text-2xl font-black mb-2 glow">${holiday.name}</h3>
-              <p class="text-gray-400">${holiday.description || holiday.type || ''}</p>
-            </div>
-            <div class="text-right ml-6">
-              <div class="text-3xl font-black glow-pink mb-2">${holiday.date}</div>
-              <span class="badge">
-                <span class="w-2 h-2 bg-neon-pink rounded-full pulse"></span>
-                Today
-              </span>
-            </div>
-          </div>
-        </div>
-      `;
-    };
-
-    const updateUpcomingHolidays = (holidays) => {
-      const container = document.getElementById('upcoming-holidays');
-      if (!container) return;
-      
-      if (! holidays || holidays.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state py-12">
-            <div class="empty-icon">🔮</div>
-            <h3 class="text-2xl font-bold mb-2">No Upcoming Holidays</h3>
-            <p class="text-gray-400">No holidays found in the next 30 days</p>
-          </div>
-        `;
-        return;
-      }
-
-      const today = new Date();
-      const filtered = holidays
-        .filter(h => {
-          const hDate = new Date(h.date);
-          return hDate >= today && hDate <= new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000);
-        })
-        .slice(0, 20);
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state py-12">
-            <div class="empty-icon">🔮</div>
-            <h3 class="text-2xl font-bold mb-2">No Holidays Soon</h3>
-            <p class="text-gray-400">No holidays in the next 30 days</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = filtered.map((h, i) => `
-        <div class="glass p-5 rounded-xl hover:scale-[1.02] transition-all cursor-pointer fade-in" style="animation-delay: ${i * 0.05}s">
-          <div class="flex items-center justify-between">
-            <div class="flex-1">
-              <h4 class="font-bold text-lg mb-1">${h.name}</h4>
-              <p class="text-sm text-gray-400">${h.description || h.type || ''}</p>
-            </div>
-            <div class="font-mono font-bold text-neon-purple ml-4">${h.date}</div>
-          </div>
-        </div>
-      `).join('');
-    };
-
-    const loadScheduledItems = async () => {
-      try {
-        const data = await fetch('/api/announcements/scheduled').then(r => r.json());
-        const items = data.scheduled || [];
-        
-        const countEl = document.getElementById('scheduled-count');
-        if (countEl) countEl.textContent = items. length;
-        
-        const container = document.getElementById('scheduled-list');
-        if (!container) return;
-
-        if (items.length === 0) {
-          container.innerHTML = `
-            <div class="empty-state py-12">
-              <div class="empty-icon">📅</div>
-              <h3 class="text-2xl font-bold mb-2">No Scheduled Items</h3>
-              <p class="text-gray-400">Schedule announcements via the Custom tab</p>
-            </div>
-          `;
-          return;
-        }
-
-        container.innerHTML = items.map((item, i) => {
-          const statusClass = 
-            item.status === 'scheduled' ? 'bg-yellow-500/20 border-yellow-400' : 
-            item.status === 'sent' ? 'bg-green-500/20 border-green-400' : 
-            'bg-red-500/20 border-red-400';
-          
-          return `
-            <div class="glass p-6 rounded-xl fade-in" style="animation-delay: ${i * 0.05}s">
-              <div class="flex items-center justify-between mb-4">
-                <h4 class="font-bold text-lg">ID: ${item.id}</h4>
-                <span class="badge ${statusClass}">
-                  ${item.status. toUpperCase()}
-                </span>
-              </div>
-              <p class="text-sm text-gray-400">
-                <span class="font-semibold">Scheduled: </span> ${new Date(item. scheduleTime).toLocaleString()}
-              </p>
-            </div>
-          `;
-        }).join('');
-      } catch (error) {
-        console.error('Error loading scheduled items:', error);
-        showToast('Failed to load scheduled items', 'error');
-      }
-    };
-
-    const loadLogs = async () => {
-      try {
-        const data = await fetch('/api/logs').then(r => r.json());
-        allLogs = data || [];
-        renderLogs(allLogs);
-      } catch (error) {
-        console.error('Error loading logs:', error);
-        showToast('Failed to load logs', 'error');
-      }
-    };
-
-    const renderLogs = (logs) => {
-      const container = document.getElementById('logs-container');
-      if (!container) return;
-      
-      if (! logs || logs.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state py-8">
-            <div class="empty-icon">📋</div>
-            <p class="text-gray-400">No logs available</p>
-          </div>
-        `;
-        return;
-      }
-
-      const typeColors = {
-        'ERROR': 'text-red-400',
-        'SUCCESS': 'text-green-400',
-        'WARNING': 'text-yellow-400',
-        'INFO': 'text-neon-blue',
-      };
-
-      container.innerHTML = logs.slice(0, 100).map(log => {
-        const color = typeColors[log.type] || 'text-gray-400';
-
-        return `
-          <div class="mb-3 pb-3 border-b border-white/5">
-            <div class="flex items-center gap-3 mb-1">
-              <span class="text-xs text-gray-500">${new Date(log.timestamp).toLocaleString()}</span>
-              <span class="${color} font-bold text-xs">[${log.type}]</span>
-            </div>
-            <p class="text-gray-300">${log.message}</p>
-          </div>
-        `;
-      }).join('');
-    };
-
-    const filterLogs = (query) => {
-      if (!query) {
-        renderLogs(allLogs);
-        return;
-      }
-      const filtered = allLogs.filter(log => 
-        log.message.toLowerCase().includes(query.toLowerCase()) ||
-        log.type. toLowerCase().includes(query.toLowerCase())
-      );
-      renderLogs(filtered);
-    };
-
-    // ==================== ACTIONS ====================
-    
-    const triggerHolidayCheck = async (button) => {
-      button.disabled = true;
-      const originalHTML = button.innerHTML;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Checking... ';
-      
-      try {
-        // Get selected roles
-        const holidayRolesSelect = document.getElementById('holiday-roles');
-        const selectedRoles = holidayRolesSelect ?  
-          Array.from(holidayRolesSelect.selectedOptions).map(opt => opt.value) : 
-          ['everyone'];
-        
-        log(`Triggering holiday check with roles: ${selectedRoles.join(', ')}`, 'INFO');
-        
-        const response = await fetch('/api/trigger/holiday', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ roles: selectedRoles })
-        });
-        const data = await response.json();
-        
         if (data.success) {
-          showToast('✅ Holiday check completed successfully!', 'success');
+          roles = data.roles || [];
+          renderRoles();
         } else {
-          showToast(data.message || 'Failed to trigger holiday check', 'error');
+          console.warn('Failed to load roles:', data.error);
         }
-        
-        await loadDashboard();
       } catch (error) {
-        console.error('Error triggering holiday check:', error);
-        showToast('Error:  ' + error.message, 'error');
-      } finally {
-        button.disabled = false;
-        button.innerHTML = originalHTML;
+        console.error('Failed to load roles:', error);
       }
-    };
+    }
 
-    const testNewYear = async (button) => {
-      button.disabled = true;
-      const originalHTML = button.innerHTML;
-      button.innerHTML = '<span class="text-2xl">⏳</span> Sending...';
+    function renderRoles() {
+      const container = document.getElementById('roles-container');
+      container.innerHTML = '';
       
-      try {
-        // Get selected roles
-        const holidayRolesSelect = document.getElementById('holiday-roles');
-        const selectedRoles = holidayRolesSelect ? 
-          Array. from(holidayRolesSelect.selectedOptions).map(opt => opt.value) : 
-          ['everyone'];
-        
-        log(`Testing New Year announcement with roles: ${selectedRoles. join(', ')}`, 'INFO');
-        
-        const response = await fetch('/api/test/newyear', {
-          method:  'POST',
-          headers:  { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ roles: selectedRoles })
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-          showToast('✅ New Year test sent successfully!', 'success');
-        } else {
-          showToast('Failed to send test announcement', 'error');
-        }
-        
-        await loadDashboard();
-      } catch (error) {
-        console.error('Error testing New Year:', error);
-        showToast('Error: ' + error.message, 'error');
-      } finally {
-        button.disabled = false;
-        button.innerHTML = originalHTML;
-      }
-    };
-
-    const loadTodayHoliday = async () => {
-      try {
-        const data = await fetch('/api/holidays/today').then(r => r.json());
-        updateTodayHoliday(data?. holiday);
-        showToast('Today\'s holiday refreshed', 'info');
-      } catch (error) {
-        showToast('Failed to refresh', 'error');
-      }
-    };
-
-    const loadUpcomingHolidays = async () => {
-      try {
-        const data = await fetch('/api/holidays/upcoming').then(r => r.json());
-        updateUpcomingHolidays(data?.holidays);
-        showToast('Upcoming holidays refreshed', 'info');
-      } catch (error) {
-        showToast('Failed to refresh', 'error');
-      }
-    };
-
-    // ==================== SERVER & CHANNEL MANAGEMENT ====================
-    
-    // Load servers for custom announcement form
-    const loadServersForForm = async () => {
-      const serverSelect = document.getElementById('custom-server');
-      const serverSpinner = document.getElementById('server-spinner');
-      const serverLoading = document.getElementById('server-loading');
+      // Add "everyone" option
+      const everyoneBtn = document.createElement('button');
+      everyoneBtn.type = 'button';
+      everyoneBtn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+        selectedRoles.includes('everyone') 
+          ? 'bg-neon-blue text-black' 
+          : 'glass text-gray-300 hover:bg-neon-blue hover:bg-opacity-20'
+      }`;
+      everyoneBtn.textContent = '@everyone';
+      everyoneBtn.onclick = () => toggleRole('everyone');
+      container.appendChild(everyoneBtn);
       
-      if (!serverSelect) return;
-      
+      // Add server roles
+      roles.forEach(role => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+          selectedRoles.includes(role.id) 
+            ? 'bg-neon-blue text-black' 
+            : 'glass text-gray-300 hover:bg-neon-blue hover:bg-opacity-20'
+        }`;
+        btn.textContent = role.name;
+        btn.onclick = () => toggleRole(role.id);
+        container.appendChild(btn);
+      });
+    }
+
+    function toggleRole(roleId) {
+      if (selectedRoles.includes(roleId)) {
+        selectedRoles = selectedRoles.filter(r => r !== roleId);
+      } else {
+        selectedRoles.push(roleId);
+      }
+      renderRoles();
+    }
+
+    async function loadServers() {
       try {
-        // Show loading state
-        serverSpinner.classList.remove('hidden');
-        serverLoading.classList.remove('hidden');
-        
         const response = await fetch('/api/servers');
         const data = await response.json();
         
         if (data.success) {
-          const servers = data.servers;
-          
-          // Clear existing options
-          serverSelect.innerHTML = '<option value="" disabled selected>🌐 Select a server...</option>';
-          
-          // Add server options
-          Object.entries(servers).forEach(([serverId, server]) => {
-            const option = document.createElement('option');
-            option.value = serverId;
-            option.textContent = server.name || `Server ${serverId}`;
-            
-            // Add icon indicator if available
-            if (server.iconUrl) {
-              option.textContent = `🖼️ ${server.name || `Server ${serverId}`}`;
-            }
-            
-            serverSelect.appendChild(option);
-          });
-          
-          // Enable server selection
-          serverSelect.disabled = false;
-        } else {
-          console.error('Failed to load servers:', data.error);
-          serverSelect.innerHTML = '<option value="" disabled>❌ Failed to load servers</option>';
+          servers = data.servers || [];
+          renderServers();
         }
       } catch (error) {
-        console.error('Error loading servers:', error);
-        serverSelect.innerHTML = '<option value="" disabled>❌ Error loading servers</option>';
-      } finally {
-        // Hide loading state
-        serverSpinner.classList.add('hidden');
-        serverLoading.classList.add('hidden');
+        console.error('Failed to load servers:', error);
       }
-    };
-    
-    // Load channels for selected server
-    const loadServerChannels = async (serverId) => {
-      const channelSelect = document.getElementById('custom-webhook');
-      const channelLoading = document.getElementById('channel-loading');
-      const botStatus = document.getElementById('bot-status');
-      const botStatusText = document.getElementById('bot-status-text');
+    }
+
+    function renderServers() {
+      const container = document.getElementById('servers-list');
+      container.innerHTML = '';
       
-      if (!serverId || !channelSelect) {
-        // Reset channel dropdown
-        channelSelect.innerHTML = '<option value="" disabled selected>📡 Please select a server first</option>';
-        channelSelect.disabled = true;
+      if (servers.length === 0) {
+        container.innerHTML = '<div class="text-gray-400 text-center py-8">No servers registered yet</div>';
         return;
       }
       
-      try {
-        // Show loading state
-        channelLoading.classList.remove('hidden');
-        channelSelect.disabled = true;
-        
-        const response = await fetch(`/api/servers/${serverId}/channels`);
-        const data = await response.json();
-        
-        if (data.success) {
-          const channels = data.channels;
-          
-          // Clear existing options
-          channelSelect.innerHTML = '<option value="" disabled selected>💬 Select a channel...</option>';
-          
-          // Group channels by category
-          const channelsByCategory = {};
-          channels.forEach(channel => {
-            const category = channel.categoryName || 'Uncategorized';
-            if (!channelsByCategory[category]) {
-              channelsByCategory[category] = [];
-            }
-            channelsByCategory[category].push(channel);
-          });
-          
-          // Add channels with optgroups
-          Object.entries(channelsByCategory).forEach(([category, categoryChannels]) => {
-            if (category !== 'Uncategorized') {
-              const optgroup = document.createElement('optgroup');
-              optgroup.label = `📁 ${category}`;
-              
-              categoryChannels.forEach(channel => {
-                const option = document.createElement('option');
-                option.value = channel.id;
-                option.textContent = `${channel.type === 'announcement' ? '📢' : '💬'} ${channel.name}`;
-                optgroup.appendChild(option);
-              });
-              
-              channelSelect.appendChild(optgroup);
-            } else {
-              // Add uncategorized channels directly
-              categoryChannels.forEach(channel => {
-                const option = document.createElement('option');
-                option.value = channel.id;
-                option.textContent = `${channel.type === 'announcement' ? '📢' : '💬'} ${channel.name}`;
-                channelSelect.appendChild(option);
-              });
-            }
-          });
-          
-          // Enable channel selection
-          channelSelect.disabled = false;
-          
-          // Update bot status
-          if (botStatus && botStatusText) {
-            botStatus.classList.remove('hidden');
-            botStatus.classList.add('connected');
-            botStatusText.textContent = 'Bot Connected';
-          }
-          
-          // Update server info display
-          updateServerInfo(serverId, data.serverName, data.serverIcon, channels.length);
-          
-          // Load roles for this server
-          loadServerRoles(serverId);
-        } else {
-          console.error('Failed to load channels:', data.error);
-          channelSelect.innerHTML = '<option value="" disabled>❌ Failed to load channels</option>';
-          
-          // Show error state
-          if (botStatus && botStatusText) {
-            botStatus.classList.remove('hidden');
-            botStatus.classList.remove('connected');
-            botStatusText.textContent = 'Connection Failed';
-          }
-        }
-      } catch (error) {
-        console.error('Error loading channels:', error);
-        channelSelect.innerHTML = '<option value="" disabled>❌ Error loading channels</option>';
-      } finally {
-        // Hide loading state
-        channelLoading.classList.add('hidden');
-      }
-    };
-    
-    // Load roles for selected server
-    const loadServerRoles = async (serverId) => {
-      const rolesSelect = document.getElementById('custom-roles');
-      
-      if (!serverId || !rolesSelect) return;
-      
-      try {
-        const response = await fetch(`/api/servers/${serverId}/roles`);
-        const data = await response.json();
-        
-        if (data.success) {
-          const roles = data.roles;
-          
-          // Clear existing options (keep @everyone)
-          rolesSelect.innerHTML = '<option value="everyone">@everyone</option>';
-          
-          // Add role options with better formatting
-          roles.forEach(role => {
-            const option = document.createElement('option');
-            option.value = role.id;
-            option.textContent = `@${role.name}`;
-            
-            // Add color indicator if role has color
-            if (role.color && role.color !== 0) {
-              const colorHex = role.color.toString(16).padStart(6, '0');
-              option.style.color = `#${colorHex}`;
-              option.textContent = `🎨 @${role.name}`;
-            }
-            
-            rolesSelect.appendChild(option);
-          });
-        } else {
-          console.error('Failed to load roles:', data.error);
-        }
-      } catch (error) {
-        console.error('Error loading roles:', error);
-      }
-    };
-    
-    // Update server info display
-    const updateServerInfo = (serverId, serverName, serverIcon, channelCount) => {
-      const serverIconEl = document.getElementById('server-icon');
-      const serverNameEl = document.getElementById('server-name');
-      const channelCountEl = document.getElementById('channel-count');
-      
-      if (serverIconEl) {
-        if (serverIcon) {
-          serverIconEl.innerHTML = `<img src="${serverIcon}" class="w-12 h-12 rounded-full" alt="${serverName}" onerror="this.style.display='none'; this.parentElement.innerHTML='🎮';">`;
-        } else {
-          serverIconEl.textContent = serverName ? serverName.charAt(0).toUpperCase() : '🎮';
-        }
-      }
-      
-      if (serverNameEl) {
-        serverNameEl.textContent = serverName || `Server ${serverId}`;
-      }
-      
-      if (channelCountEl) {
-        channelCountEl.textContent = channelCount;
-      }
-    };
+      servers.forEach(server => {
+        const serverDiv = document.createElement('div');
+        serverDiv.className = 'glass p-4 rounded-lg';
+        serverDiv.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="font-bold">${server.name}</div>
+              <div class="text-sm text-gray-400">${server.GUILD_ID}</div>
+            </div>
+            <div class="flex gap-2">
+              <button class="text-xs px-3 py-1 bg-neon-blue bg-opacity-20 text-neon-blue rounded hover:bg-opacity-30" onclick="testServer('${server.id}')">
+                Test
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(serverDiv);
+      });
+    }
 
-    // ==================== FORM SUBMISSION ====================
-    
-    document.getElementById('custom-form')?.addEventListener('submit', async (e) => {
+    async function loadLogs() {
+      try {
+        const response = await fetch('/api/logs');
+        const logs = await response.json();
+        
+        const container = document.getElementById('logs-container');
+        container.innerHTML = '';
+        
+        if (logs.length === 0) {
+          container.innerHTML = '<div class="text-gray-400 text-center py-8">No logs available</div>';
+          return;
+        }
+        
+        logs.slice(0, 50).forEach(log => {
+          const logDiv = document.createElement('div');
+          logDiv.className = `text-sm p-2 rounded ${
+            log.type === 'ERROR' ? 'bg-red-900 bg-opacity-20 text-red-400' :
+            log.type === 'WARNING' ? 'bg-yellow-900 bg-opacity-20 text-yellow-400' :
+            log.type === 'SUCCESS' ? 'bg-green-900 bg-opacity-20 text-green-400' :
+            'bg-gray-800 bg-opacity-20 text-gray-300'
+          }`;
+          logDiv.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="font-mono text-xs">${new Date(log.timestamp).toLocaleString()}</span>
+                <span class="ml-2 px-2 py-1 text-xs rounded ${log.type === 'ERROR' ? 'bg-red-600' : log.type === 'WARNING' ? 'bg-yellow-600' : log.type === 'SUCCESS' ? 'bg-green-600' : 'bg-gray-600'}">${log.type}</span>
+              </div>
+            </div>
+            <div class="mt-1">${log.message}</div>
+          `;
+          container.appendChild(logDiv);
+        });
+      } catch (error) {
+        console.error('Failed to load logs:', error);
+      }
+    }
+
+    // ============================================
+    // EVENT HANDLERS
+    // ============================================
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    });
+
+    // Announcement form submission
+    document.getElementById('announcement-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const title = document.getElementById('custom-title').value;
-      const message = document.getElementById('custom-message').value;
-      const selectedServer = document.getElementById('custom-server').value;
-      const webhookChannel = document.getElementById('custom-webhook').value;
-      const imageUrl = getFinalImageUrl();
-      const useAI = document.getElementById('use-ai').checked;
+      const formData = new FormData(e.target);
+      const data = {
+        title: formData.get('announcement-title'),
+        message: formData.get('announcement-message'),
+        roles: selectedRoles,
+        webhookChannel: formData.get('webhook-channel'),
+        useAI: document.getElementById('use-ai').checked
+      };
       
-      // Get selected roles
-      const customRolesSelect = document.getElementById('custom-roles');
-      const selectedRoles = customRolesSelect ?  
-        Array.from(customRolesSelect.selectedOptions).map(opt => opt.value) : 
-        [];
-      
-      if (!title || !message) {
-        showToast('Please fill in title and message', 'warning');
-        return;
+      // Add image based on selected mode
+      if (selectedImageMode === 'url') {
+        data.imageUrl = document.getElementById('image-url').value;
+      } else if (selectedImageMode === 'upload') {
+        // Handle file upload
+      } else if (selectedImageMode === 'generate') {
+        // Generate image first
       }
-      
-      if (!selectedServer) {
-        showToast('Please select a server', 'warning');
-        return;
-      }
-      
-      if (!webhookChannel) {
-        showToast('Please select a channel', 'warning');
-        return;
-      }
-      
-      const deliveryStatus = document.getElementById('delivery-status');
-      deliveryStatus.classList.add('hidden');
       
       try {
-        const response = await fetch(`/api/servers/${selectedServer}/announcement/send`, {
+        const response = await fetch('/api/announcement/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title,
-            message,
-            channelId: webhookChannel,
-            imageUrl,
-            useAI,
-            roles: selectedRoles
-          })
+          body: JSON.stringify(data)
         });
         
-        const data = await response.json();
+        const result = await response.json();
         
-        if (data.success) {
-          showToast('✅ Announcement sent successfully!', 'success');
-          deliveryStatus.classList.remove('hidden');
-          document.getElementById('delivery-message').textContent = 
-            `Your announcement "${title}" has been sent to the selected channel.`;
-          
-          setTimeout(() => resetForm(), 3000);
-          await loadDashboard();
+        if (result.success) {
+          showToast('Success', 'Announcement sent successfully!', 'success');
+          // Do not clear form automatically to keep user selections
         } else {
-          showToast('❌ Failed to send announcement: ' + (data.error || 'Unknown error'), 'error');
+          showToast('Error', result.error || 'Failed to send announcement', 'error');
         }
       } catch (error) {
-        console.error('Error sending announcement:', error);
-        showToast('❌ Error: ' + error.message, 'error');
+        showToast('Error', 'Network error occurred', 'error');
       }
     });
 
-    const scheduleAnnouncement = async () => {
-      const title = document.getElementById('custom-title').value;
-      const message = document.getElementById('custom-message').value;
-      const webhookChannel = document.getElementById('custom-webhook').value;
-      const imageUrl = getFinalImageUrl();
-      const scheduleTime = document.getElementById('schedule-time').value;
-      const useAI = document.getElementById('use-ai').checked;
+    // Clear form button
+    document.getElementById('clear-form').addEventListener('click', () => {
+      document.getElementById('announcement-form').reset();
+      selectedRoles = [];
+      renderRoles();
+      selectedImageMode = 'url';
+      document.querySelectorAll('.image-mode-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector('[data-mode="url"]').classList.add('active');
+      document.querySelectorAll('.image-mode-content').forEach(content => content.classList.remove('active'));
+      document.getElementById('url-mode').classList.add('active');
+      currentImageUrl = '';
+      document.getElementById('image-preview').src = '';
+      document.querySelector('.image-preview-container').classList.add('hidden');
+    });
+
+    // Image mode switching
+    document.querySelectorAll('.image-mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.image-mode-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.image-mode-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(`${btn.dataset.mode}-mode`).classList.add('active');
+        selectedImageMode = btn.dataset.mode;
+      });
+    });
+
+    // File upload handling
+    document.getElementById('upload-area').addEventListener('click', () => {
+      document.getElementById('file-input').click();
+    });
+
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('image-preview').src = e.target.result;
+          document.querySelector('.image-preview-container').classList.remove('hidden');
+          currentImageUrl = e.target.result; // This will be base64, but Discord doesn't support it
+          showToast('Warning', 'File uploaded but Discord requires HTTPS URLs. Use URL mode for best results.', 'warning');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Drag and drop for file upload
+    document.getElementById('upload-area').addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.currentTarget.classList.add('dragover');
+    });
+
+    document.getElementById('upload-area').addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
+    });
+
+    document.getElementById('upload-area').addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.currentTarget.classList.remove('dragover');
       
-      // Get selected roles
-      const customRolesSelect = document.getElementById('custom-roles');
-      const selectedRoles = customRolesSelect ? 
-        Array.from(customRolesSelect.selectedOptions).map(opt => opt.value) : 
-        [];
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        document.getElementById('file-input').files = files;
+        document.getElementById('file-input').dispatchEvent(new Event('change'));
+      }
+    });
+
+    // AI image generation
+    document.getElementById('generate-btn').addEventListener('click', async () => {
+      const prompt = document.getElementById('ai-prompt').value;
+      const size = document.querySelector('.size-option.active').dataset.size;
       
-      if (!title || !message) {
-        showToast('Please fill in title and message', 'warning');
+      if (!prompt) {
+        showToast('Error', 'Please enter a prompt for image generation', 'error');
         return;
       }
       
-      if (!scheduleTime) {
-        showToast('Please select a schedule time', 'warning');
-        return;
-      }
-      
-      const scheduleDate = new Date(scheduleTime);
-      if (scheduleDate <= new Date()) {
-        showToast('Schedule time must be in the future', 'error');
-        return;
-      }
-      
-      const deliveryStatus = document.getElementById('delivery-status');
-      deliveryStatus.classList.add('hidden');
+      document.getElementById('generating-indicator').classList.remove('hidden');
       
       try {
-        const response = await fetch('/api/announcement/schedule', {
+        const response = await fetch('/api/generate-image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:  JSON.stringify({
-            scheduleTime:  scheduleDate.toISOString(),
-            title,
-            message,
-            webhookChannel,
-            imageUrl,
-            useAI,
-            roles: selectedRoles
-          })
+          body: JSON.stringify({ prompt, size })
         });
         
-        const data = await response.json();
+        const result = await response.json();
         
-        if (data. success) {
-          showToast('✅ Announcement scheduled successfully!', 'success');
-          deliveryStatus.classList.remove('hidden');
-          document.getElementById('delivery-message').textContent = 
-            `Your announcement "${title}" has been scheduled for ${scheduleDate.toLocaleString()}.`;
-          
-          setTimeout(() => resetForm(), 3000);
-          await loadDashboard();
+        if (result.success) {
+          currentImageUrl = result.imageUrl;
+          document.getElementById('image-preview').src = result.imageUrl;
+          document.querySelector('.image-preview-container').classList.remove('hidden');
+          showToast('Success', 'Image generated successfully!', 'success');
         } else {
-          showToast('❌ Failed to schedule announcement: ' + (data. error || 'Unknown error'), 'error');
+          showToast('Error', result.error || 'Failed to generate image', 'error');
         }
       } catch (error) {
-        console.error('Error scheduling announcement:', error);
-        showToast('❌ Error: ' + error.message, 'error');
+        showToast('Error', 'Network error occurred', 'error');
+      } finally {
+        document.getElementById('generating-indicator').classList.add('hidden');
       }
-    };
+    });
 
-    // ==================== SERVER MANAGEMENT ====================
-    
-    let serversData = {};
-    
-    // Load all servers
-    const loadServers = async () => {
+    // Size selector
+    document.querySelectorAll('.size-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.size-option').forEach(o => o.classList.remove('active'));
+        option.classList.add('active');
+      });
+    });
+
+    // Quick action buttons
+    document.getElementById('trigger-holiday').addEventListener('click', async () => {
       try {
-        const response = await fetch('/api/servers');
-        const data = await response.json();
+        const response = await fetch('/api/trigger/holiday', { method: 'POST' });
+        const result = await response.json();
         
-        if (data.success) {
-          serversData = data.servers;
-          renderServers();
-          updateServerStats();
+        if (result.success) {
+          showToast('Success', result.message || 'Holiday check triggered!', 'success');
+          loadStatus();
         } else {
-          console.error('Failed to load servers:', data.error);
+          showToast('Info', result.message || 'No holiday today', 'warning');
         }
       } catch (error) {
-        console.error('Error loading servers:', error);
+        showToast('Error', 'Failed to trigger holiday check', 'error');
       }
-    };
-    
-    // Render server cards
-    const renderServers = () => {
-      const serversGrid = document.getElementById('servers-grid');
-      
-      if (!serversGrid) return;
-      
-      const serverCards = Object.entries(serversData).map(([serverId, server]) => {
-        const isDefault = serverId === 'default';
-        const webhookCount = server.webhooks ? Object.keys(server.webhooks).length : 0;
+    });
+
+    document.getElementById('test-announcement').addEventListener('click', async () => {
+      try {
+        const response = await fetch('/api/test/newyear', { method: 'POST' });
+        const result = await response.json();
         
-        return `
-          <div class="glass-strong rounded-2xl p-6 card hover:scale-105 transition-all">
-            <div class="flex items-start justify-between mb-4">
-              <div class="flex items-center gap-3">
-                ${server.iconUrl ? 
-                  `<img src="${server.iconUrl}" class="w-12 h-12 rounded-full" alt="${server.name}" onerror="this.style.display='none'">` :
-                  `<div class="w-12 h-12 rounded-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-white font-bold">${server.name.charAt(0).toUpperCase()}</div>`
-                }
-                <div>
-                  <h3 class="font-bold text-lg">${server.name}</h3>
-                  <p class="text-sm text-gray-400">${isDefault ? 'Default Server' : 'Server ID: ' + serverId}</p>
-                </div>
-              </div>
-              ${!isDefault ? `
-                <button 
-                  onclick="removeServer('${serverId}')" 
-                  class="text-red-400 hover:text-red-300 transition-colors"
-                  title="Remove server"
-                >
-                  ✕
-                </button>
-              ` : ''}
-            </div>
-            
-            <div class="space-y-3">
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-400">Webhooks</span>
-                <span class="badge">${webhookCount}</span>
-              </div>
-              
-              <div class="flex justify-between items-center">
-                <span class="text-sm text-gray-400">Status</span>
-                <span class="badge ${webhookCount > 0 ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
-                  ${webhookCount > 0 ? 'Active' : 'Setup Required'}
-                </span>
-              </div>
-              
-              <div class="flex gap-2 mt-4">
-                <button 
-                  onclick="manageServerWebhooks('${serverId}')" 
-                  class="flex-1 bg-neon-blue/20 hover:bg-neon-blue/30 text-neon-blue px-3 py-2 rounded-lg text-sm font-medium transition-all"
-                >
-                  📡 Webhooks
-                </button>
-                <button 
-                  onclick="testServerConnection('${serverId}')" 
-                  class="flex-1 bg-neon-purple/20 hover:bg-neon-purple/30 text-neon-purple px-3 py-2 rounded-lg text-sm font-medium transition-all"
-                >
-                  🧪 Test
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-      
-      serversGrid.innerHTML = serverCards || '<p class="text-center text-gray-400 col-span-full">No servers configured. Click "Add Server" to get started.</p>';
-    };
-    
-    // Update server statistics
-    const updateServerStats = () => {
-      const totalServers = Object.keys(serversData).length;
-      const activeServers = Object.values(serversData).filter(server => 
-        server.webhooks && Object.keys(server.webhooks).length > 0
-      ).length;
-      const totalWebhooks = Object.values(serversData).reduce((total, server) => 
-        total + (server.webhooks ? Object.keys(server.webhooks).length : 0), 0
-      );
-      
-      const totalServersEl = document.getElementById('total-servers');
-      const activeServersEl = document.getElementById('active-servers');
-      const totalWebhooksEl = document.getElementById('total-webhooks');
-      
-      if (totalServersEl) totalServersEl.textContent = totalServers;
-      if (activeServersEl) activeServersEl.textContent = activeServers;
-      if (totalWebhooksEl) totalWebhooksEl.textContent = totalWebhooks;
-    };
-    
-    // Show add server modal
-    const showAddServerModal = () => {
-      const modal = document.createElement('div');
-      modal.className = 'fixed inset-0 bg-black/50 flex items-center justify-center z-50 fade-in';
-      modal.innerHTML = `
-        <div class="glass-strong rounded-2xl p-8 max-w-md w-full mx-4 scale-in">
-          <h3 class="text-2xl font-bold mb-6">Add New Server</h3>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-2">Server Name (Optional)</label>
-              <input 
-                type="text" 
-                id="server-name" 
-                placeholder="My Server" 
-                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue focus:outline-none"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-2">Server ID *</label>
-              <input 
-                type="text" 
-                id="server-id" 
-                placeholder="123456789012345678" 
-                required
-                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue focus:outline-none"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium mb-2">Bot Token *</label>
-              <input 
-                type="password" 
-                id="bot-token" 
-                placeholder="Bot token here..." 
-                required
-                class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-neon-blue focus:outline-none"
-              />
-            </div>
-          </div>
-          
-          <div class="flex gap-3 mt-6">
-            <button 
-              onclick="this.closest('.fixed').remove()" 
-              class="flex-1 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-all font-medium"
-            >
-              Cancel
-            </button>
-            <button 
-              onclick="addServer()" 
-              class="flex-1 px-6 py-3 rounded-xl bg-gradient-to-r from-neon-blue to-neon-purple text-white font-medium transition-all hover:scale-105"
-            >
-              Add Server
-            </button>
-          </div>
-        </div>
-      `;
-      
-      document.body.appendChild(modal);
-    };
-    
-    // Add server
-    const addServer = async () => {
-      const name = document.getElementById('server-name')?.value.trim();
-      const guildId = document.getElementById('server-id')?.value.trim();
-      const botToken = document.getElementById('bot-token')?.value.trim();
-      
-      if (!guildId || !botToken) {
-        showToast('Server ID and Bot Token are required', 'error');
-        return;
+        if (result.success) {
+          showToast('Success', 'Test announcement sent!', 'success');
+        } else {
+          showToast('Error', result.error || 'Failed to send test', 'error');
+        }
+      } catch (error) {
+        showToast('Error', 'Network error occurred', 'error');
       }
+    });
+
+    document.getElementById('refresh-status').addEventListener('click', () => {
+      loadStatus();
+      loadChannels();
+      loadRoles();
+      showToast('Success', 'Status refreshed!', 'success');
+    });
+
+    // Add server form
+    document.getElementById('add-server-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const data = {
+        guildId: formData.get('server-guild-id'),
+        botToken: formData.get('server-bot-token'),
+        name: formData.get('server-name')
+      };
       
       try {
         const response = await fetch('/api/servers/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ guildId, botToken, name })
+          body: JSON.stringify(data)
         });
         
-        const data = await response.json();
+        const result = await response.json();
         
-        if (data.success) {
-          showToast(`✅ Server "${data.server.name}" added successfully!`, 'success');
-          document.querySelector('.fixed').remove();
-          await loadServers();
+        if (result.success) {
+          showToast('Success', 'Server added successfully!', 'success');
+          loadServers();
+          e.target.reset();
         } else {
-          showToast('❌ Failed to add server: ' + (data.error || 'Unknown error'), 'error');
+          showToast('Error', result.error || 'Failed to add server', 'error');
         }
       } catch (error) {
-        console.error('Error adding server:', error);
-        showToast('❌ Error: ' + error.message, 'error');
+        showToast('Error', 'Network error occurred', 'error');
       }
-    };
-    
-    // Remove server
-    const removeServer = async (serverId) => {
-      if (!confirm('Are you sure you want to remove this server? This action cannot be undone.')) {
-        return;
-      }
-      
-      // Remove from local data (in a real implementation, this would call an API)
-      delete serversData[serverId];
-      renderServers();
-      updateServerStats();
-      showToast('✅ Server removed successfully', 'success');
-    };
-    
-    // Test server connection
-    const testServerConnection = async (serverId) => {
-      const server = serversData[serverId];
-      if (!server) return;
-      
-      try {
-        const response = await fetch('/api/test/newyear', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            serverId,
-            roles: ['everyone'] 
-          })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          showToast(`✅ Test announcement sent to "${server.name}"!`, 'success');
-        } else {
-          showToast('❌ Test failed: ' + (data.error || 'Unknown error'), 'error');
-        }
-      } catch (error) {
-        console.error('Error testing server:', error);
-        showToast('❌ Error: ' + error.message, 'error');
-      }
-    };
-    
-    // Manage server webhooks
-    const manageServerWebhooks = (serverId) => {
-      const server = serversData[serverId];
-      if (!server) return;
-      
-      showToast(`📡 Webhook management for "${server.name}" coming soon!`, 'info');
-    };
-    
-    // Refresh servers
-    const refreshServers = async () => {
-      await loadServers();
-      showToast('🔄 Servers refreshed', 'success');
-    };
+    });
 
-    // ==================== PIPELINE EFFECTS ====================
-    
-    const initPipelineEffects = () => {
-      const pipelineBoxes = document.querySelectorAll('.pipeline-box');
-      
-      pipelineBoxes.forEach((box, index) => {
-        setTimeout(() => {
-          box.classList.add('active');
-          setTimeout(() => {
-            box.classList.remove('active');
-          }, 1000);
-        }, index * 600);
-        
-        setInterval(() => {
-          box.classList.add('active');
-          setTimeout(() => {
-            box.classList.remove('active');
-          }, 1000);
-        }, pipelineBoxes.length * 600 + 3000);
-      });
-    };
+    // ============================================
+    // INITIALIZATION
+    // ============================================
 
-    // ==================== INITIALIZATION ====================
-    
-    const init = () => {
-      console.log('Initializing dashboard...');
-      
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 20 + 's';
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Initialize app
+    async function init() {
       createParticles();
-      loadDashboard();
-      setupDragAndDrop();
-      loadDiscordChannels();
-      loadDiscordRoles(); // ← NEW: Load server roles
-      loadServers(); // ← NEW: Load servers for multi-server management
-      loadServersForForm(); // ← NEW: Load servers for custom announcement form
+      await loadStatus();
+      await loadChannels();
+      await loadRoles();
       
-      setInterval(loadDashboard, 60000);
-      setTimeout(initPipelineEffects, 2000);
-      
-      console.log('Dashboard initialized');
-    };
+      // Auto-refresh status every 30 seconds
+      setInterval(loadStatus, 30000);
+    }
 
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', init);
-    } else {
-      init();
+    // Start the app
+    init();
+
+    // Test server function (for future use)
+    function testServer(serverId) {
+      showToast('Info', 'Server testing not yet implemented', 'warning');
     }
   </script>
 </body>

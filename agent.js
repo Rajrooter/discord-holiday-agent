@@ -355,19 +355,45 @@ function todayDateString() {
 // AI MESSAGE GENERATION (Gemini) - fallback template if no key
 // ============================================
 
-async function generateHolidayMessage(holidayName, holidayDescription = '') {
+async function generateHolidayMessage(holidayName, holidayDescription = '', serverInfo = null) {
   if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') {
     log('No AI API key configured, using template message', 'WARNING');
     return `Happy ${holidayName}! 🎉
 
-Wishing the entire Digital Labour community a joyful and memorable celebration.  May this special day bring happiness, peace, and prosperity to you and your loved ones.  Let us take a moment to appreciate the significance of this occasion and celebrate together! 
+Wishing the entire Digital Labour community a joyful and memorable celebration.  May this special day bring happiness, peace, and prosperity to you and your loved ones.  Let us take a moment to appreciate the significance of this day and celebrate together.
 
 Enjoy the festivities! 🌟`;
   }
 
   try {
     log(`Generating AI message for: ${holidayName}`);
-    const prompt = `Generate a warm, festive announcement for ${holidayName} celebration in India. 
+    // Fetch server info if not provided
+    let serverDetails = serverInfo;
+    if (!serverDetails && CONFIG.SERVERS.default.GUILD_ID && CONFIG.SERVERS.default.BOT_TOKEN) {
+      try {
+        serverDetails = await fetchServerInfo(CONFIG.SERVERS.default.GUILD_ID, CONFIG.SERVERS.default.BOT_TOKEN);
+      } catch (e) {
+        log('Could not fetch server info for AI prompt', 'WARNING');
+      }
+    }
+    // Get channels and roles
+    let channelCount = 0;
+    let roleCount = 0;
+    if (serverDetails) {
+      try {
+        const channels = await axios.get(`https://discord.com/api/v10/guilds/${serverDetails.id}/channels`, {
+          headers: { Authorization: `Bot ${CONFIG.SERVERS.default.BOT_TOKEN}` }, timeout: 5000
+        });
+        channelCount = channels.data.filter(ch => ch.type === 0 || ch.type === 5).length;
+      } catch (e) {}
+      try {
+        const roles = await axios.get(`https://discord.com/api/v10/guilds/${serverDetails.id}/roles`, {
+          headers: { Authorization: `Bot ${CONFIG.SERVERS.default.BOT_TOKEN}` }, timeout: 5000
+        });
+        roleCount = roles.data.filter(r => !r.managed && r.name !== '@everyone').length;
+      } catch (e) {}
+    }
+    const prompt = `Generate a warm, festive announcement for ${holidayName} celebration in India on the server "${serverDetails?.name || 'Digital Labour'}" with ${channelCount} text/announcement channels and ${roleCount} custom roles.
 
 ${holidayDescription ? `Context: ${holidayDescription}` : ''}
 
@@ -375,11 +401,11 @@ Requirements:
 - 80-140 words
 - Uplifting and celebratory tone
 - Mention the significance briefly
-- Include well-wishes for the Digital Labour community
+- Include well-wishes for the community
 - Professional yet friendly
 - No greetings like "Dear team" or signatures
 
-Return ONLY the message text. `;
+Return ONLY the message text.`;
 
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
@@ -398,7 +424,7 @@ Return ONLY the message text. `;
     log(`AI generation failed: ${err.message}`, 'ERROR');
     return `Happy ${holidayName}! 🎉
 
-Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of this occasion and celebrate together! 
+Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of this day and celebrate together.
 
 Enjoy the festivities! 🌟`;
   }
@@ -508,6 +534,13 @@ async function sendCustomAnnouncement(data) {
     
     if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
 
+    // Validate channel for announcements (only general channels allowed)
+    const allowedChannels = ['general', 'announcements', 'announcement', 'general-chat', 'main', 'lounge'];
+    const channelName = webhookChannel?.toLowerCase() || 'announcements';
+    if (!allowedChannels.some(ch => channelName.includes(ch))) {
+      return { success: false, error: 'Announcements are only allowed in general/standard channels' };
+    }
+
     let finalMessage = message;
     if (useAI) finalMessage = await enhanceCustomMessage(message);
 
@@ -536,7 +569,13 @@ async function sendCustomAnnouncement(data) {
       },
       timestamp: new Date().toISOString()
     };
-    if (imageUrl) embed.image = { url: imageUrl };
+    // Validate image URL
+    if (imageUrl) {
+      if (imageUrl.startsWith('data:image') || !imageUrl.startsWith('https://')) {
+        return { success: false, error: 'Invalid image URL. Only public HTTPS URLs are supported.' };
+      }
+      embed.image = { url: imageUrl };
+    }
     
     const payload = {
       content: roleMentions,
@@ -1429,4 +1468,3 @@ async function startAgent() {
 }
 
 startAgent();
-

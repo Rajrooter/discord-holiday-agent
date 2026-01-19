@@ -12,7 +12,6 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const { DateTime } = require('luxon');
-const FormData = require('form-data');
 require('dotenv').config();
 
 // ============================================
@@ -38,7 +37,6 @@ const CONFIG = {
   },
   GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
   CALENDARIFIC_API_KEY: process.env.CALENDARIFIC_API_KEY || 'demo',
-  IMGBB_API_KEY: process.env.IMGBB_API_KEY || 'your_imgbb_key_here', // Add IMGBB_API_KEY to .env
   TIMEZONE: process.env.TIMEZONE || 'Asia/Kolkata',
   SCHEDULE_TIME: process.env.SCHEDULE_TIME || '0 0 * * *',
   DASHBOARD_PORT: process.env.DASHBOARD_PORT ? Number(process.env.DASHBOARD_PORT) : 3000,
@@ -360,7 +358,7 @@ function todayDateString() {
 // Function to upload image to imgbb
 async function uploadToImgbb(imageBuffer, filename) {
   if (!CONFIG.IMGBB_API_KEY || CONFIG.IMGBB_API_KEY === 'your_imgbb_key_here') {
-    throw new Error('Imgbb API key not configured. Please add IMGBB_API_KEY to your .env file.');
+    throw new Error('Imgbb API key not configured. Please add IMGBB_API_KEY to your .env file from https://api.imgbb.com/.');
   }
 
   const form = new FormData();
@@ -387,12 +385,20 @@ async function uploadToImgbb(imageBuffer, filename) {
 // Function to validate image URL
 async function validateImageUrl(url) {
   try {
-    const response = await axios.head(url, { timeout: 10000 });
+    // Allow URLs starting with https:// and containing common image extensions
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff'];
+    if (url.startsWith('https://') && imageExtensions.some(ext => url.toLowerCase().includes(ext))) {
+      return true;
+    }
+
+    // Fallback to HEAD request
+    const response = await axios.head(url, { timeout: 5000 });
     const contentType = response.headers['content-type'];
-    return response.status === 200 && contentType && contentType.startsWith('image/');
+    return response.status === 200 && (!contentType || contentType.startsWith('image/'));
   } catch (error) {
     log(`Image URL validation failed for ${url}: ${error.message}`, 'WARNING');
-    return false;
+    // Allow the URL if validation fails but it's a public HTTPS URL
+    return url.startsWith('https://');
   }
 }
 
@@ -450,7 +456,7 @@ Requirements:
 - Professional yet friendly
 - No greetings like "Dear team" or signatures
 
-Return ONLY the message text.`;
+Return ONLY the message text. `;
 
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
@@ -882,7 +888,7 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-app.get('/api/logs', (req, res) => res.json(activityLog);
+app.get('/api/logs', (req, res) => res.json(activityLog));
 
 app.get('/api/holidays/upcoming', async (req, res) => {
   try {

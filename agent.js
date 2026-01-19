@@ -801,7 +801,7 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-app.get('/api/logs', (req, res) => res.json(activityLog));
+app.get('/api/logs', (req, res) => res.json(activityLog);
 
 app.get('/api/holidays/upcoming', async (req, res) => {
   try {

@@ -12,6 +12,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 const { DateTime } = require('luxon');
+const FormData = require('form-data');
 require('dotenv').config();
 
 // ============================================
@@ -37,6 +38,7 @@ const CONFIG = {
   },
   GOOGLE_AI_API_KEY: process.env.GOOGLE_AI_API_KEY,
   CALENDARIFIC_API_KEY: process.env.CALENDARIFIC_API_KEY || 'demo',
+  IMGBB_API_KEY: process.env.IMGBB_API_KEY || 'your_imgbb_key_here', // Add IMGBB_API_KEY to .env
   TIMEZONE: process.env.TIMEZONE || 'Asia/Kolkata',
   SCHEDULE_TIME: process.env.SCHEDULE_TIME || '0 0 * * *',
   DASHBOARD_PORT: process.env.DASHBOARD_PORT ? Number(process.env.DASHBOARD_PORT) : 3000,
@@ -352,6 +354,48 @@ function todayDateString() {
 }
 
 // ============================================
+// IMAGE UTILITIES
+// ============================================
+
+// Function to upload image to imgbb
+async function uploadToImgbb(imageBuffer, filename) {
+  if (!CONFIG.IMGBB_API_KEY || CONFIG.IMGBB_API_KEY === 'your_imgbb_key_here') {
+    throw new Error('Imgbb API key not configured');
+  }
+
+  const form = new FormData();
+  form.append('image', imageBuffer, { filename });
+
+  try {
+    const response = await axios.post(
+      `https://api.imgbb.com/1/upload?key=${CONFIG.IMGBB_API_KEY}`,
+      form,
+      { headers: form.getHeaders(), timeout: 30000 }
+    );
+
+    if (response.data?.success) {
+      return response.data.data.url;
+    } else {
+      throw new Error('Imgbb upload failed');
+    }
+  } catch (error) {
+    log(`Imgbb upload failed: ${error.message}`, 'ERROR');
+    throw error;
+  }
+}
+
+// Function to validate image URL
+async function validateImageUrl(url) {
+  try {
+    const response = await axios.head(url, { timeout: 10000 });
+    const contentType = response.headers['content-type'];
+    return response.status === 200 && contentType && contentType.startsWith('image/');
+  } catch (error) {
+    return false;
+  }
+}
+
+// ============================================
 // AI MESSAGE GENERATION (Gemini) - fallback template if no key
 // ============================================
 
@@ -443,7 +487,7 @@ Return ONLY the enhanced message. `;
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
       {
-        contents: [{ parts: [{ text: prompt }] },
+        contents: [{ parts: [{ text: prompt }] }],
         generationConfig: { temperature: 0.7, maxOutputTokens: 250 }
       },
       { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
@@ -521,7 +565,7 @@ async function sendHolidayAnnouncement(holiday, message, imageUrl, webhookUrl, r
 
 async function sendCustomAnnouncement(data) {
   try {
-    const { title, message, roles, imageUrl, webhookChannel, useAI, serverInfo } = data;
+    const { title, message, roles, imageUrl, imageFile, webhookChannel, useAI, serverInfo } = data;
     const channelKey = webhookChannel || 'ANNOUNCEMENTS';
     
     // Get server-specific webhook or fallback to default
@@ -562,10 +606,22 @@ async function sendCustomAnnouncement(data) {
       },
       timestamp: new Date().toISOString()
     };
-    // Validate image URL
-    if (imageUrl) {
-      if (imageUrl.startsWith('data:image') || !imageUrl.startsWith('https://')) {
-        return { success: false, error: 'Invalid image URL. Only public HTTPS URLs are supported.' };
+
+    // Handle image
+    if (imageFile && imageFile.buffer && imageFile.originalname) {
+      // Upload file to imgbb
+      try {
+        const uploadedUrl = await uploadToImgbb(imageFile.buffer, imageFile.originalname);
+        embed.image = { url: uploadedUrl };
+        log('Image uploaded to imgbb successfully', 'SUCCESS');
+      } catch (error) {
+        return { success: false, error: 'Failed to upload image' };
+      }
+    } else if (imageUrl) {
+      // Validate image URL
+      const isValid = await validateImageUrl(imageUrl);
+      if (!isValid) {
+        return { success: false, error: 'Invalid or inaccessible image URL' };
       }
       embed.image = { url: imageUrl };
     }
@@ -783,6 +839,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
+// Multer for file uploads
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
+
 app.get('/api/status', (req, res) => {
   res.json({
     ...botStatus,
@@ -827,9 +887,17 @@ app.post('/api/trigger/holiday', async (req, res) => {
   }
 });
 
-app.post('/api/announcement/send', async (req, res) => {
+// Updated to handle file uploads
+app.post('/api/announcement/send', upload.single('imageFile'), async (req, res) => {
   try {
-    const result = await sendCustomAnnouncement(req.body);
+    const data = { ...req.body };
+    if (req.file) {
+      data.imageFile = {
+        buffer: req.file.buffer,
+        originalname: req.file.originalname
+      };
+    }
+    const result = await sendCustomAnnouncement(data);
     res.json(result);
   } catch (error) {
     res.json({ success: false, error: error.message });
@@ -1066,7 +1134,7 @@ app.post('/api/servers/:serverId/webhooks/create', async (req, res) => {
 });
 
 // Send custom announcement to specific server
-app.post('/api/servers/:serverId/announcement/send', async (req, res) => {
+app.post('/api/servers/:serverId/announcement/send', upload.single('imageFile'), async (req, res) => {
   try {
     const { serverId } = req.params;
     const serverConfig = getServerConfig(serverId);
@@ -1087,6 +1155,13 @@ app.post('/api/servers/:serverId/announcement/send', async (req, res) => {
         webhooks: serverConfig.webhooks
       }
     };
+    
+    if (req.file) {
+      announcementData.imageFile = {
+        buffer: req.file.buffer,
+        originalname: req.file.originalname
+      };
+    }
     
     const result = await sendCustomAnnouncement(announcementData);
     res.json(result);
@@ -1307,6 +1382,12 @@ app.post('/api/generate-image', async (req, res) => {
         .join(',');
       const [width, height] = (size || '1024x1024').split('x');
       const unsplashUrl = `https://source.unsplash.com/${width}x${height}/?${encodeURIComponent(keywords)}`;
+
+      // Validate the generated URL
+      const isValid = await validateImageUrl(unsplashUrl);
+      if (!isValid) {
+        throw new Error('Generated URL is not accessible');
+      }
 
       log(`Using Unsplash image for: ${keywords}`, 'SUCCESS');
       return res.json({ success: true, imageUrl: unsplashUrl });

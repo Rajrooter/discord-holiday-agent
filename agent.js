@@ -443,7 +443,7 @@ Return ONLY the enhanced message. `;
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
       {
-        contents: [{ parts: [{ text: prompt }] }],
+        contents: [{ parts: [{ text: prompt }] },
         generationConfig: { temperature: 0.7, maxOutputTokens: 250 }
       },
       { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
@@ -533,13 +533,6 @@ async function sendCustomAnnouncement(data) {
     }
     
     if (!webhookUrl) return { success: false, error: 'Webhook not configured' };
-
-    // Validate channel for announcements (only general channels allowed)
-    const allowedChannels = ['general', 'announcements', 'announcement', 'general-chat', 'main', 'lounge'];
-    const channelName = webhookChannel?.toLowerCase() || 'announcements';
-    if (!allowedChannels.some(ch => channelName.includes(ch))) {
-      return { success: false, error: 'Announcements are only allowed in general/standard channels' };
-    }
 
     let finalMessage = message;
     if (useAI) finalMessage = await enhanceCustomMessage(message);

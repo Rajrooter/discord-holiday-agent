@@ -1287,9 +1287,44 @@
       }
     }
 
-    function renderRoles() {
-      const container = document.getElementById('roles-container');
-      container.innerHTML = '<button type="button" class="deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30" onclick="deselectAllRoles()">Deselect All</button>';
+    // Add virtual scrolling for activity logs (already partially implemented)
+// Use requestAnimationFrame for smooth animations (already implemented)
+// Add lazy loading for server list
+
+// Optimize role rendering with document fragments
+function renderRoles() {
+  const container = document.getElementById('roles-container');
+  const fragment = document.createDocumentFragment();
+  
+  // Create deselect button
+  const deselectBtn = document.createElement('button');
+  deselectBtn.type = 'button';
+  deselectBtn.className = 'deselect-btn px-3 py-1 bg-red-500 bg-opacity-20 text-red-400 rounded hover:bg-opacity-30';
+  deselectBtn.onclick = deselectAllRoles;
+  deselectBtn.textContent = 'Deselect All';
+  fragment.appendChild(deselectBtn);
+  
+  // Batch DOM updates using fragment
+  roles.forEach(role => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+      selectedRoles.includes(role.id) 
+        ? 'bg-neon-blue text-black' 
+        : 'glass text-gray-300 hover:bg-neon-blue hover:bg-opacity-20'
+    }`;
+    btn.textContent = role.name;
+    btn.onclick = () => toggleRole(role.id);
+    fragment.appendChild(btn);
+  });
+  
+  // Single DOM update (performance optimization)
+  container.innerHTML = '';
+  container.appendChild(fragment);
+}
+
+// Add CSS containment for better performance
+// Already implemented via .optimized-scroll and .optimized-animation classes
       
       // Add server roles
       roles.forEach(role => {
@@ -1315,28 +1350,50 @@
       renderRoles();
     }
 
-    function deselectAllRoles() {
-      selectedRoles = [];
-      renderRoles();
-    }
+   // Enhanced deselect functions with visual feedback
 
-    function clearImageUrl() {
-      document.getElementById('image-url').value = '';
-      currentImageUrl = '';
-    }
+function deselectAllRoles() {
+  const previousCount = selectedRoles.length;
+  selectedRoles = [];
+  renderRoles();
+  showToast('Success', `Deselected ${previousCount} role${previousCount !== 1 ? 's' : ''}`, 'success');
+}
 
-    function clearUpload() {
-      document.getElementById('file-input').value = '';
-      document.getElementById('image-preview').src = '';
-      document.querySelector('.image-preview-container').classList.add('hidden');
-      currentImageUrl = '';
-    }
+function clearImageUrl() {
+  const urlInput = document.getElementById('image-url');
+  const previousValue = urlInput.value;
+  urlInput.value = '';
+  currentImageUrl = '';
+  
+  if (previousValue) {
+    showToast('Info', 'Image URL cleared', 'info');
+  }
+}
 
-    function clearGifUrl() {
-      document.getElementById('gif-url').value = '';
-      currentImageUrl = '';
-    }
+function clearUpload() {
+  const fileInput = document.getElementById('file-input');
+  const previousFile = fileInput.files[0]?.name;
+  
+  fileInput.value = '';
+  document.getElementById('image-preview').src = '';
+  document.querySelector('.image-preview-container').classList.add('hidden');
+  currentImageUrl = '';
+  
+  if (previousFile) {
+    showToast('Info', `Removed: ${previousFile}`, 'info');
+  }
+}
 
+function clearGifUrl() {
+  const gifInput = document.getElementById('gif-url');
+  const previousValue = gifInput.value;
+  gifInput.value = '';
+  currentImageUrl = '';
+  
+  if (previousValue) {
+    showToast('Info', 'GIF URL cleared', 'info');
+  }
+}
     async function loadServers() {
       try {
         const response = await fetch('/api/servers');
@@ -1439,6 +1496,56 @@
       formData.append('useAI', document.getElementById('use-ai').checked);
       
       // Add image based on selected mode
+      // Add to image URL input handler
+document.getElementById('image-url').addEventListener('blur', async (e) => {
+  const url = e.target.value.trim();
+  if (!url) return;
+
+  // Client-side validation
+  if (url.startsWith('data:')) {
+    showToast('Error', 'Base64/Data URIs are not supported by Discord. Please use imgbb upload or a public HTTPS URL.', 'error');
+    e.target.value = '';
+    return;
+  }
+
+  if (!url.startsWith('https://')) {
+    showToast('Error', 'Discord requires HTTPS URLs. Please use a secure URL.', 'error');
+    return;
+  }
+
+  // Check for Google Images redirect URLs
+  if (url.includes('encrypted-tbn') || url.includes('googleusercontent.com/')) {
+    showToast('Warning', 'Google Images URLs may not work. Consider uploading to imgbb instead.', 'warning');
+  }
+
+  // Show loading indicator
+  const originalValue = e.target.value;
+  e.target.value = 'Validating...';
+  e.target.disabled = true;
+
+  try {
+    const response = await fetch('/api/validate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+
+    const result = await response.json();
+    
+    if (!result.valid) {
+      showToast('Error', result.error || 'Invalid image URL', 'error');
+      e.target.value = '';
+    } else {
+      showToast('Success', 'Image URL validated successfully!', 'success');
+      e.target.value = originalValue;
+    }
+  } catch (error) {
+    showToast('Error', 'Could not validate image URL', 'error');
+    e.target.value = originalValue;
+  } finally {
+    e.target.disabled = false;
+  }
+});
       if (selectedImageMode === 'url') {
         formData.append('imageUrl', document.getElementById('image-url').value);
       } else if (selectedImageMode === 'upload') {
@@ -1472,13 +1579,20 @@
     });
 
     // Clear form button - modified to keep user selections
-    document.getElementById('clear-form').addEventListener('click', () => {
-      document.getElementById('announcement-form').reset();
-      // Do not reset selectedRoles or image selections
-      // selectedRoles remains as is
-      // currentImageUrl remains as is
-      document.getElementById('use-ai').checked = false;
-    });
+   // Replace the clear form button handler in dashboard.html
+document.getElementById('clear-form').addEventListener('click', () => {
+  // Only clear text inputs and checkboxes
+  document.getElementById('announcement-title').value = '';
+  document.getElementById('announcement-message').value = '';
+  document.getElementById('use-ai').checked = false;
+
+  // IMPORTANT: Do NOT reset these - keep user selections:
+  // - selectedRoles (keep role selections)
+  // - webhook-channel (keep channel selection)
+  // - image selections (keep image mode and URLs)
+
+  showToast('Info', 'Form cleared. Your selections (roles, channel, image) have been preserved.', 'info');
+});
 
     // Image mode switching
     document.querySelectorAll('.image-mode-btn').forEach(btn => {
@@ -1493,7 +1607,35 @@
 
     // File upload handling
     document.getElementById('upload-area').addEventListener('click', () => {
-      document.getElementById('file-input').click();
+      // Update file upload handler in dashboard.html
+document.getElementById('file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Validate file type
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  if (!validTypes.includes(file.type)) {
+    showToast('Error', 'Invalid file type. Supported: JPG, PNG, GIF, WebP', 'error');
+    e.target.value = '';
+    return;
+  }
+
+  // Validate file size (8MB limit for Discord)
+  if (file.size > 8 * 1024 * 1024) {
+    showToast('Error', `File too large: ${(file.size / 1024 / 1024).toFixed(2)}MB. Maximum: 8MB`, 'error');
+    e.target.value = '';
+    return;
+  }
+
+  // Show preview
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('image-preview').src = e.target.result;
+    document.querySelector('.image-preview-container').classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+
+  showToast('Success', `File loaded: ${file.name} (${(file.size / 1024).toFixed(0)}KB)`, 'success');
     });
 
     document.getElementById('file-input').addEventListener('change', (e) => {
@@ -1687,3 +1829,4 @@
   </script>
 </body>
 </html>
+

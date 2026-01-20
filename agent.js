@@ -466,7 +466,7 @@ async function validateImageUrl(url) {
 async function generateHolidayMessage(holidayName, holidayDescription = '', serverInfo = null) {
   if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') {
     log('No AI API key configured, using template message', 'WARNING');
-    return `Happy ${holidayName}! 🎉\n\nWishing the entire ${serverInfo?.name || 'community'} a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones.\n\nEnjoy the festivities! 🌟`;
+    return `Happy ${holidayName}! 🎉\n\nWishing the entire ${serverInfo?.name || 'community'} a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones.`;
   }
 
   try {
@@ -574,7 +574,7 @@ OUTPUT ONLY THE ANNOUNCEMENT TEXT - NO PREAMBLE, EXPLANATION, OR MARKDOWN.`;
   } catch (err) {
     log(`❌ AI generation failed: ${err.message}`, 'ERROR');
     
-    return `Happy ${holidayName}! 🎉\n\nWishing the entire ${serverInfo?.name || 'community'} a joyful celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of this day and celebrate together.\n\nEnjoy the festivities! 🌟`;
+    return `Happy ${holidayName}! 🎉\n\nWishing the entire ${serverInfo?.name || 'community'} a joyful celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones.`;
   }
 }
 
@@ -708,11 +708,6 @@ async function sendCustomAnnouncement(data) {
     const roleMentions =
       parsedRoles && parsedRoles.length > 0
         ? parsedRoles
-          // ============================================
-// CONTINUATION OF agent.js - PART 2
-// Place this after line ~880 in the previous part
-// ============================================
-
             .map((roleId) => {
               if (roleId === 'everyone') return '@everyone';
               if (ROLES[roleId]) return ROLES[roleId];
@@ -1547,11 +1542,6 @@ app.post('/api/test/newyear', async (req, res) => {
         log('Could not fetch server info for test, using defaults', 'WARNING');
       }
     } else {
-      webhookUrl = CONFIG.SERVERS.default.webhooks.HOLIDAYS || CONFIG.
-        // ============================================
-// FINAL PART OF agent.js - Place after Part 2
-// ============================================
-
       webhookUrl = CONFIG.SERVERS.default.webhooks.HOLIDAYS || CONFIG.SERVERS.default.webhooks.ANNOUNCEMENTS;
       try {
         serverInfo = await fetchServerInfo(CONFIG.SERVERS.default.GUILD_ID, CONFIG.SERVERS.default.BOT_TOKEN);

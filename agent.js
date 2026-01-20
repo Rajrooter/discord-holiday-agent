@@ -1,9 +1,6 @@
-// ============================================
+
 // DISCORD HOLIDAY AI AGENT - RELIABLE MIDNIGHT TRIGGER
-// Using:  Nager.Date (free) + Calendarific (fallback) + Google Gemini (optional)
-// Improvements: persistent state, dual scheduling (cron + minute-guard), retry logic,
-// and re-tries-until-success behavior so the midnight check is never "missed".
-// ============================================
+
 
 const axios = require('axios');
 const cron = require('node-cron');
@@ -356,28 +353,44 @@ function todayDateString() {
 // ============================================
 
 // Function to upload image to imgbb
+// Update uploadToImgbb function in agent.js
 async function uploadToImgbb(imageBuffer, filename) {
   if (!CONFIG.IMGBB_API_KEY || CONFIG.IMGBB_API_KEY === 'your_imgbb_key_here') {
-    throw new Error('Imgbb API key not configured. Please add IMGBB_API_KEY to your .env file from https://api.imgbb.com/.');
+    throw new Error('imgbb API key not configured. Add IMGBB_API_KEY to .env file. Get your free key at https://api.imgbb.com/');
   }
 
-  const form = new FormData();
-  form.append('image', imageBuffer, { filename });
-
   try {
+    // Convert buffer to base64
+    const base64Image = imageBuffer.toString('base64');
+
+    // Use axios with proper content-type
     const response = await axios.post(
       `https://api.imgbb.com/1/upload?key=${CONFIG.IMGBB_API_KEY}`,
-      form,
-      { headers: form.getHeaders(), timeout: 30000 }
+      {
+        image: base64Image,
+        name: filename
+      },
+      {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        timeout: 30000
+      }
     );
 
-    if (response.data?.success) {
+    if (response.data?.success && response.data?.data?.url) {
+      log(`✅ Image uploaded to imgbb: ${response.data.data.url}`, 'SUCCESS');
       return response.data.data.url;
     } else {
-      throw new Error('Imgbb upload failed: ' + (response.data?.error?.message || 'Unknown error'));
+      throw new Error('imgbb upload failed: ' + (response.data?.error?.message || 'Unknown error'));
     }
   } catch (error) {
-    log(`Imgbb upload failed: ${error.message}`, 'ERROR');
+    log(`❌ imgbb upload failed: ${error.message}`, 'ERROR');
+    
+    if (error.response?.status === 400) {
+      throw new Error('Invalid image data. Ensure file is a valid image (JPG, PNG, GIF).');
+    } else if (error.response?.status === 403) {
+      throw new Error('Invalid imgbb API key. Check IMGBB_API_KEY in .env file.');
+    }
+    
     throw error;
   }
 }
@@ -385,20 +398,54 @@ async function uploadToImgbb(imageBuffer, filename) {
 // Function to validate image URL
 async function validateImageUrl(url) {
   try {
-    // Allow URLs starting with https:// and containing common image extensions
-    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff'];
-    if (url.startsWith('https://') && imageExtensions.some(ext => url.toLowerCase().includes(ext))) {
-      return true;
+    // CRITICAL: Discord webhook embeds ONLY support direct HTTPS URLs
+    // Reject data URIs and base64 immediately
+    if (url.startsWith('data:')) {
+      log('❌ Data URIs (base64 images) are NOT supported by Discord webhooks', 'ERROR');
+      return false;
     }
 
-    // Fallback to HEAD request
-    const response = await axios.head(url, { timeout: 5000 });
+    // Must be HTTPS
+    if (!url.startsWith('https://')) {
+      log('❌ Discord requires HTTPS URLs for images', 'ERROR');
+      return false;
+    }
+
+    // Check for common image file extensions
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    const hasExtension = imageExtensions.some(ext => url.toLowerCase().includes(ext));
+    
+    if (!hasExtension) {
+      log(`⚠️ URL does not contain common image extension: ${url}`, 'WARNING');
+    }
+
+    // Perform HEAD request to verify
+    const response = await axios.head(url, { 
+      timeout: 5000,
+      maxRedirects: 5, // Follow redirects
+      validateStatus: (status) => status < 400
+    });
+    
     const contentType = response.headers['content-type'];
-    return response.status === 200 && (!contentType || contentType.startsWith('image/'));
+    const isImage = contentType && contentType.startsWith('image/');
+    
+    if (!isImage) {
+      log(`❌ URL does not return image content-type: ${contentType}`, 'ERROR');
+      return false;
+    }
+
+    // Check file size (Discord limit: 8MB for embeds)
+    const contentLength = parseInt(response.headers['content-length'] || '0');
+    if (contentLength > 8 * 1024 * 1024) {
+      log(`❌ Image exceeds Discord's 8MB limit: ${(contentLength / 1024 / 1024).toFixed(2)}MB`, 'ERROR');
+      return false;
+    }
+
+    log(`✅ Image URL validated: ${url} (${contentType}, ${(contentLength / 1024).toFixed(0)}KB)`, 'SUCCESS');
+    return true;
   } catch (error) {
-    log(`Image URL validation failed for ${url}: ${error.message}`, 'WARNING');
-    // Allow the URL if validation fails but it's a public HTTPS URL
-    return url.startsWith('https://');
+    log(`❌ Image validation failed for ${url}: ${error.message}`, 'ERROR');
+    return false;
   }
 }
 
@@ -409,78 +456,118 @@ async function validateImageUrl(url) {
 async function generateHolidayMessage(holidayName, holidayDescription = '', serverInfo = null) {
   if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') {
     log('No AI API key configured, using template message', 'WARNING');
-    return `Happy ${holidayName}! 🎉
-
-Wishing the entire Digital Labour community a joyful and memorable celebration.  May this special day bring happiness, peace, and prosperity to you and your loved ones.  Let us take a moment to appreciate the significance of this day and celebrate together.
-
-Enjoy the festivities! 🌟`;
+    return `Happy ${holidayName}! 🎉\n\nWishing everyone a joyful celebration.`;
   }
 
   try {
     log(`Generating AI message for: ${holidayName}`);
-    // Fetch server info if not provided
+    
+    // Fetch COMPLETE server context
     let serverDetails = serverInfo;
-    if (!serverDetails && CONFIG.SERVERS.default.GUILD_ID && CONFIG.SERVERS.default.BOT_TOKEN) {
-      try {
-        serverDetails = await fetchServerInfo(CONFIG.SERVERS.default.GUILD_ID, CONFIG.SERVERS.default.BOT_TOKEN);
-      } catch (e) {
-        log('Could not fetch server info for AI prompt', 'WARNING');
-      }
-    }
-    // Get channels and roles
     let channelCount = 0;
     let roleCount = 0;
-    if (serverDetails) {
+    let channelNames = [];
+    let roleNames = [];
+    
+    if (!serverDetails && CONFIG.SERVERS.default.GUILD_ID && CONFIG.SERVERS.default.BOT_TOKEN) {
       try {
-        const channels = await axios.get(`https://discord.com/api/v10/guilds/${serverDetails.id}/channels`, {
-          headers: { Authorization: `Bot ${CONFIG.SERVERS.default.BOT_TOKEN}` }, timeout: 5000
-        });
-        channelCount = channels.data.filter(ch => ch.type === 0 || ch.type === 5).length;
-      } catch (e) {}
-      try {
-        const roles = await axios.get(`https://discord.com/api/v10/guilds/${serverDetails.id}/roles`, {
-          headers: { Authorization: `Bot ${CONFIG.SERVERS.default.BOT_TOKEN}` }, timeout: 5000
-        });
-        roleCount = roles.data.filter(r => !r.managed && r.name !== '@everyone').length;
-      } catch (e) {}
+        // Get server info
+        serverDetails = await fetchServerInfo(CONFIG.SERVERS.default.GUILD_ID, CONFIG.SERVERS.default.BOT_TOKEN);
+        
+        // Get channels
+        const channels = await axios.get(
+          `https://discord.com/api/v10/guilds/${serverDetails.id}/channels`,
+          {
+            headers: { Authorization: `Bot ${CONFIG.SERVERS.default.BOT_TOKEN}` },
+            timeout: 5000
+          }
+        );
+        const textChannels = channels.data.filter(ch => ch.type === 0 || ch.type === 5);
+        channelCount = textChannels.length;
+        channelNames = textChannels.map(ch => ch.name).slice(0, 5); // Top 5 channels
+
+        // Get roles
+        const roles = await axios.get(
+          `https://discord.com/api/v10/guilds/${serverDetails.id}/roles`,
+          {
+            headers: { Authorization: `Bot ${CONFIG.SERVERS.default.BOT_TOKEN}` },
+            timeout: 5000
+          }
+        );
+        const customRoles = roles.data.filter(r => !r.managed && r.name !== '@everyone');
+        roleCount = customRoles.length;
+        roleNames = customRoles.map(r => r.name).slice(0, 5); // Top 5 roles
+      } catch (e) {
+        log('Could not fetch server details for AI prompt', 'WARNING');
+      }
     }
-    const prompt = `Generate a warm, festive announcement for ${holidayName} celebration in India on the server "${serverDetails?.name || 'Digital Labour'}" with ${channelCount} text/announcement channels and ${roleCount} custom roles.
 
-${holidayDescription ? `Context: ${holidayDescription}` : ''}
+    // IMPROVED PROMPT with strict constraints
+    const prompt = `Generate a warm, professional holiday announcement for ${holidayName} in India.
 
-Requirements:
-- 80-140 words
-- Uplifting and celebratory tone
-- Mention the significance briefly
-- Include well-wishes for the community
-- Professional yet friendly
-- No greetings like "Dear team" or signatures
+SERVER CONTEXT (Use ONLY this information - do NOT invent details):
+- Server Name: ${serverDetails?.name || 'Discord Community'}
+- Text/Announcement Channels: ${channelCount} (${channelNames.length > 0 ? channelNames.join(', ') : 'various channels'})
+- Custom Roles: ${roleCount} (${roleNames.length > 0 ? roleNames.join(', ') : 'community roles'})
+${holidayDescription ? `- Holiday Context: ${holidayDescription}` : ''}
 
-Return ONLY the message text. `;
+STRICT REQUIREMENTS:
+1. Length: 80-140 words EXACTLY
+2. Tone: Uplifting, celebratory, professional yet friendly
+3. Structure:
+   - Opening: Mention the holiday and its significance (1-2 sentences)
+   - Middle: Brief cultural/historical context (1-2 sentences)
+   - Closing: Well-wishes for the community (1-2 sentences)
+4. DO NOT mention:
+   - Random features or updates
+   - Specific dates or times
+   - Greetings like "Dear team" or signatures
+   - Any information not provided in SERVER CONTEXT above
+5. DO include:
+   - 2-3 relevant emojis
+   - Mention of the community/server name
+   - Warm, inclusive language
+
+OUTPUT ONLY THE ANNOUNCEMENT TEXT - NO PREAMBLE OR MARKDOWN.`;
 
     const response = await axios.post(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${CONFIG.GOOGLE_AI_API_KEY}`,
       {
         contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.9, maxOutputTokens: 250, topP: 0.95 }
+        generationConfig: {
+          temperature: 0.7, // Lower temperature for more focused output
+          maxOutputTokens: 250,
+          topP: 0.9,
+          topK: 40
+        }
       },
-      { headers: { 'Content-Type': 'application/json' }, timeout: 15000 }
+      {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 15000
+      }
     );
 
     const messageText = response?.data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-    if (!messageText) throw new Error('Empty AI response');
-    log('AI message generated successfully', 'SUCCESS');
+    
+    if (!messageText) {
+      throw new Error('Empty AI response');
+    }
+
+    // Validate output length
+    const wordCount = messageText.split(/\s+/).length;
+    if (wordCount < 50 || wordCount > 200) {
+      log(`⚠️ AI response length outside expected range: ${wordCount} words`, 'WARNING');
+    }
+
+    log(`✅ AI message generated successfully (${wordCount} words)`, 'SUCCESS');
     return messageText;
   } catch (err) {
-    log(`AI generation failed: ${err.message}`, 'ERROR');
-    return `Happy ${holidayName}! 🎉
-
-Wishing the entire Digital Labour community a joyful and memorable celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of this day and celebrate together.
-
-Enjoy the festivities! 🌟`;
+    log(`❌ AI generation failed: ${err.message}`, 'ERROR');
+    
+    // Enhanced fallback template
+    return `Happy ${holidayName}! 🎉\n\nWishing the entire ${serverInfo?.name || 'community'} a joyful celebration. May this special day bring happiness, peace, and prosperity to you and your loved ones. Let us take a moment to appreciate the significance of this day and celebrate together.\n\nEnjoy the festivities! 🌟`;
   }
 }
-
 async function enhanceCustomMessage(messageContent) {
   if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') return messageContent;
   try {
@@ -509,6 +596,7 @@ Return ONLY the enhanced message. `;
 // ============================================
 // DISCORD WEBHOOK (with retries)
 // ============================================
+
 
 async function postWebhookWithRetry(webhookUrl, payload) {
   if (!webhookUrl || webhookUrl.trim() === '') {
@@ -1398,6 +1486,19 @@ app.get('/api/discord/roles', async (req, res) => {
 // ============================================
 // IMAGE GENERATION ENDPOINT (Using Unsplash)
 // ============================================
+app.post('/api/validate-image', async (req, res) => {
+  try {
+    const { url } = req.body;
+    const isValid = await validateImageUrl(url);
+    
+    res.json({
+      valid: isValid,
+      error: isValid ? null : 'Invalid or inaccessible image URL. Ensure it\'s a direct HTTPS link to an image file.'
+    });
+  } catch (error) {
+    res.json({ valid: false, error: error.message });
+  }
+});
 
 app.post('/api/generate-image', async (req, res) => {
   try {
@@ -1488,13 +1589,29 @@ app.get('/', (req, res) => {
 // STARTUP
 // ============================================
 
+// Add to validateConfig() function
 function validateConfig() {
   const defaultServer = CONFIG.SERVERS.default;
+  const errors = [];
+
   if (!defaultServer.webhooks.ANNOUNCEMENTS && !defaultServer.webhooks.HOLIDAYS) {
-    log('ERROR: No webhook configured!', 'ERROR');
-    log('Add to .env: WEBHOOK_ANNOUNCEMENTS=your_webhook_url', 'INFO');
+    errors.push('❌ No webhook configured! Add WEBHOOK_ANNOUNCEMENTS or WEBHOOK_HOLIDAYS to .env');
+  }
+
+  if (!CONFIG.IMGBB_API_KEY || CONFIG.IMGBB_API_KEY === 'your_imgbb_key_here') {
+    log('⚠️ WARNING: imgbb API key not configured. File uploads will fail.', 'WARNING');
+    log('   Get your free API key at: https://api.imgbb.com/', 'INFO');
+  }
+
+  if (!CONFIG.GOOGLE_AI_API_KEY || CONFIG.GOOGLE_AI_API_KEY === 'your_api_key_here') {
+    log('⚠️ WARNING: Google AI API key not configured. AI features will use fallback templates.', 'WARNING');
+  }
+
+  if (errors.length > 0) {
+    errors.forEach(err => log(err, 'ERROR'));
     return false;
   }
+
   return true;
 }
 
@@ -1577,3 +1694,4 @@ async function startAgent() {
 }
 
 startAgent();
+
